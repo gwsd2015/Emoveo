@@ -13,6 +13,32 @@ use PDL;
 use Plucene;
 use Algorithm::NaiveBayes;
 
+#the build currently only works in Linux, need a dict to build on Windows
+#use Lingua::EN::NamedEntity;
+
+
+#use Inline::C;
+#use Inline::Python;
+#use Inline::Java;
+#use Inline::Ruby;
+#use GATE::ANNIE::Simple;
+ 
+
+#next step is to actually implement the PDF::API2, really useful as it can extract information from the PDF even
+#if we haven't ocr'd yet. The vector space algorithm allows me to potentially place weight so giving a bit more
+#weight potentially given by PDF API2 and Lingua::EN::NamedEntity / GATE::ANNIE::Simple
+use PDF::API2;
+
+
+#implementation of Text SenseClusters is a latent semantic analysis, but not sure how useful it will be
+#most of the weight is going to be placed on Vector Space Searching algorithm, however, it might be useful
+#to identify decoument connections, but that doesn't really have anything to do. Originally had a plan to use
+#this for something but can't remember at the moment
+
+use Text::SenseClusters;
+
+
+
 #$input will be the document to be examined
 #my $input = 
 #open(	INPUT,	$input	) or die;
@@ -266,13 +292,13 @@ while(	my $query = <>	){
 #haven't figured out how to build the query yet, I think I'm going to take the subroutine get_words and use that for my query
 
 my $doc = Plucene::Document->new;
-$doc->add(Plucene::Document::Field->Text(content => $content));
-$doc->add(Plucene::Document::Field->Text(author => "Your Name"));
+$doc->add(	Plucene::Document::Field->Text(	content => $content	)	);
+$doc->add(	Plucene::Document::Field->Text(	author => "Your Name"	)	);
 
 
 my $analyzer = Plucene::Analysis::SimpleAnalyzer->new();
-my $writer = Plucene::Index::Writer->new("my_index", $analyzer, 1);
-$writer->add_document($doc);
+my $writer = Plucene::Index::Writer->new(	"my_index",	$analyzer,	1	);
+$writer->add_document(	$doc	);
 undef $writer;
 
 my $parser = Plucene::QueryParser->new(	{
