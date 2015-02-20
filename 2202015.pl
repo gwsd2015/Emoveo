@@ -51,7 +51,11 @@ use Lingua::NegEx;
 use Text::Identify::BoilerPlate;
 use Text::IdMor;
 use WebService::Prismatic::InterestGraph;
+use Lingua::EN::NameParse;
+use Lingua::EN::Titlecase;
+use Lingua::Norms::SUBTLEX;
 #module below did not install properly
+#update: I believe it is only installable on Linux
 #use Lingua::Identify::CLD;
 
 #take the input file from the user
@@ -64,7 +68,7 @@ chop $inputfile;
 print "Input file, $inputfile, read.\n";
 print "Enter a title for the txt file:\t";
 my $title = <STDIN>;
-chop $title;
+chomp $title;
 my $textfile = read_file($inputfile);
 print "$textfile\n\n";
 
@@ -86,14 +90,18 @@ close CHK;
 #maybe I just have to curl it
 #curl -H "X-API-TOKEN: <API-TOKEN>" 'http://interest-graph.getprismatic.com/url/topic' --data 'url=http%3A%2F%2Fen.wikipedia.org%2Fwiki%2FMachine_learning'
 
-#print "\n\nNow generating potential tags for the following document...\n";
-#my $key = "MTQyNDQ0MjY1NzU5MA.cHJvZA.anduaW5nbGlAZ3d1LmVkdQ.Yv0MSCbxZK1l3k-6J-vlkTQsywA";
-#my $ig = WebService::Prismatic::InterestGraph->new(api_key => $key);
-#my @tags = $ig->tag_url($textfile, $title);
-#for(my $a = 0; $a < $#tags; $a++){
-#	print $tags[$a]."\n";
-#}
-#system('pause');
+print "\n\nNow generating potential tags for the following document...\n";
+my $key = "MTQyNDQ0MjY1NzU5MA.cHJvZA.anduaW5nbGlAZ3d1LmVkdQ.Yv0MSCbxZK1l3k-6J-vlkTQsywA";
+my $ig = WebService::Prismatic::InterestGraph->new(api_token => $key);
+my @tags = $ig->tag_text($textfile, $title);
+for(my $a = 0; $a < $#tags; $a++){
+	print $tags[$a]."\n";
+}
+foreach my $tag(@tags){
+	print "\n", $tag->topic, $tag->score;
+}
+print "\n\n";
+system('pause');
 
 print "Preparing to do initial analysis of the readability of the text file...\n\n\n";
 my $analysisfile = "C:/Perl/analysis.txt";
@@ -331,6 +339,23 @@ if($languages{'en'} > 0.357){
 #}
 #print "\nLanguage analysis completed. Please review the data before continuing.\n";
 #system('pause');
+
+my @tagsplitstore;
+for(my $s = 0; $s < $#tags; $s++){
+	my $tagsub = $tags[$s];
+	$tagsub =~ tr/.,:;!&?"'(){}\-\$\+\=\{\}\@\/\*\>\<//d;
+	$tagsub =~ s/\sand\s/ /ig;
+	$tagsub =~ s/\sthe\s/ /ig;
+	$tagsub =~ s/\s{2,}/ /g;
+	my @tagadd = split(/\s/, $_);
+	push @tagsplitstore, @tagadd;
+}
+push @tagsplitstore, @tags;
+for(my $t = 0; $t < $#tagsplitstore; $t++){
+	my $tagtorem = $tagsplitstore[$t];
+	$datatosub =~ s/\s$tagtorem\s/ /ig;
+}
+system('pause');
 
 print MODIFY $datatomod."\n============================\n";
 
