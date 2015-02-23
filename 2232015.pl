@@ -58,6 +58,9 @@ use Lingua::Norms::SUBTLEX;
 use Lingua::Concordance;
 use Lingua::EN::Ngram;
 use Lingua::Orthon;
+use WWW::Babelfish;
+use WWW::Translate::Apertium;
+use Speech::Google::TTS;
 #module below did not install properly
 #update: I believe it is only installable on Linux
 #use Lingua::Identify::CLD;
