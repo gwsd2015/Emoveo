@@ -102,7 +102,7 @@ for(my $a = 0; $a < $#tags; $a++){
 	print $tags[$a]."\n";
 }
 foreach my $tag(@tags){
-	print "\n", $tag->topic, $tag->score;
+	print "\n", $tag->topic, "\t", $tag->score;
 }
 print "\n\n";
 system('pause');
