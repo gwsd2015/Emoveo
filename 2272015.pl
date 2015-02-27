@@ -411,6 +411,11 @@ print "This process can take a lot of time and memory... please be patient.\n";
 #	}
 #}
 
+for(my $zz = 0; $zz < $#topicfromweblist; $zz++){
+	my $searchtop = $topicfromweblist[$zz];
+	$datatomod =~ s/$searchtop/ /ig;
+}
+
 $datatomod =~ s/restricted/ /ig;
 $datatomod =~ s/confidential/ /ig;
 $datatomod =~ s/top secret/ /ig;
@@ -505,11 +510,6 @@ $datatomod =~ s/([A-Z](\.)?){2,}/ /g;
 $datatomod =~ s/\((\s)?([A-Z](\.)?){2,}(\s)?\)/ /ig;
 print "Task completed.\n";
 system('pause');
-
-for(my $zz = 0; $zz < $#topicfromweblist; $zz++){
-	my $searchtop = $topicfromweblist[$zz];
-	$datatomod =~ s/$searchtop/ /ig;
-}
 
 #need to use a transliterated list or Regexp::Common to identify quotes and parenthesis
 
