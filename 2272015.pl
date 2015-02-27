@@ -260,12 +260,12 @@ my $datatomod = $textfile;
 
 #error ends program with unmatched regex
 
-#my @twoset;
-#my @threeset;
-#my @fourset;
-#my @fiveset;
-#my @sixset;
-#my @sevenset;
+my @twoset;
+my @threeset;
+my @fourset;
+my @fiveset;
+my @sixset;
+my @sevenset;
 
 my $twogramfile = "C:/Perl/2gram.txt";
 open(TWOGRAM, '>'.$twogramfile) or die "Can't create file to store 2grams.\n";
@@ -506,6 +506,11 @@ $datatomod =~ s/\((\s)?([A-Z](\.)?){2,}(\s)?\)/ /ig;
 print "Task completed.\n";
 system('pause');
 
+for(my $zz = 0; $zz < $#topicfromweblist; $zz++){
+	my $searchtop = $topicfromweblist[$zz];
+	$datatomod =~ s/$searchtop/ /ig;
+}
+
 #need to use a transliterated list or Regexp::Common to identify quotes and parenthesis
 
 #$Authorship = $x*$organization + $y*$classification + $z*$topic + error;
@@ -678,5 +683,3 @@ for my $problem (@cautions_or_errors){
 #might hint at important information to remove before declassification 
 
 exit;
-
-
