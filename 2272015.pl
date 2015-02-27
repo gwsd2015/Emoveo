@@ -258,12 +258,14 @@ close WORD;
 
 my $datatomod = $textfile;
 
-my @twoset;
-my @threeset;
-my @fourset;
-my @fiveset;
-my @sixset;
-my @sevenset;
+#error ends program with unmatched regex
+
+#my @twoset;
+#my @threeset;
+#my @fourset;
+#my @fiveset;
+#my @sixset;
+#my @sevenset;
 
 my $twogramfile = "C:/Perl/2gram.txt";
 open(TWOGRAM, '>'.$twogramfile) or die "Can't create file to store 2grams.\n";
@@ -371,6 +373,43 @@ my $modify = "C:/Perl/removal.txt";
 print "Beginning to remove uniquely identifying material in text.\n";
 print "Output will be located in $modify \n";
 print "This process can take a lot of time and memory... please be patient.\n";
+
+#for(my $bb = 0; $bb < $#twoset; $bb++){
+#	my $two = $twoset[$bb];
+#	if($datatomod =~ /$two/){
+#	$datatomod =~ s/\b$two\b//g;
+#	}
+#}
+#for(my $cc = 0; $cc < $#threeset; $cc++){
+#	my $three = $threeset[$cc];
+#	if($datatomod =~ /$three/){
+#	$datatomod =~ s/\b$three\b//g;
+#	}
+#}
+#for(my $dd = 0; $dd < $#fourset; $dd++){
+#	my $four = $fourset[$dd];
+#	if($datatomod =~ /$four/){
+#	$datatomod =~ s/\b$four\b//g;
+#	}
+#}
+#for(my $ee = 0; $ee < $#fiveset; $ee++){
+#	my $five = $fiveset[$ee];
+#	if($datatomod =~ /$five/){
+#	$datatomod =~ s/\b$five\b//g;
+#	}
+#}
+#for(my $ff = 0; $ff < $#sixset; $ff++){
+#	my $six = $sixset[$ff];
+#	if($datatomod =~ /$six/){
+#	$datatomod =~ s/\b$six\b//g;
+#	}
+#}
+#for(my $gg = 0; $gg < $#sevenset; $gg++){
+#	my $seven = $sevenset[$gg];
+#	if($datatomod =~ /$seven/){
+#	$datatomod =~ s/\b$seven\b//g;
+#	}
+#}
 
 $datatomod =~ s/restricted/ /ig;
 $datatomod =~ s/confidential/ /ig;
