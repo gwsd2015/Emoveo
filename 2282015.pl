@@ -131,7 +131,7 @@ for(my $h = 0; $h < $#topicfromweblist; $h++){
 print "Make sure that the pdf is save as a txt file using the save as other function built into Adobe Reader.\n";
 print "Enter txt file location:\t";
 my $inputfile = <STDIN>;
-chop $inputfile;
+chomp $inputfile;
 print "Input file, $inputfile, read.\n";
 #print "Enter a title for the txt file:\t";
 #my $title = <STDIN>;
@@ -182,7 +182,7 @@ open (ASYS, '>'.$analysisfile) or die "Can't create file to store initial analys
 my $text = new Lingua::EN::Fathom;
 $text->analyse_file($inputfile);
 my $accumulate = 1;
-$text->analyse_block(my $text_string,$accumulate);
+$text->analyse_block(my $text_string, $accumulate);
 
 my $num_chars = $text->num_chars;
 my $num_words = $text->num_words;
@@ -258,7 +258,36 @@ print "File storing the unique words is now available at $wordlist \n";
 
 close WORD;
 
+=pod
+my $gramsplitter = $textfile;
+my @wordsplitstore = split(/\s/, $gramsplitter);
+print @wordsplitstore;
+system('pause');
+my %twogramfrequency;
+my %threegramfrequency;
+my %fourgramfrequency;
+my %fivegramfrequency;
+my %sixgramfrequency;
+my %sevengramfrequency;
+for(my $ijk = 0; $ijk < $#wordsplitstore; $ijk++){
+	my $bigramtomodel = $wordsplitstore[$ijk]." ".$wordsplitstore[$ijk+1];
+	my $trigramtomodel = $wordsplitstore[$ijk]." ".$wordsplitstore[$ijk+1]." ".$wordsplitstore[$ijk+2];
+	my $fourgramtomodel = $wordsplitstore[$ijk]." ".$wordsplitstore[$ijk+1]." ".$wordsplitstore[$ijk+2]." ".$wordsplitstore[$ijk+3];
+	my $fivegramtomodel = $wordsplitstore[$ijk]." ".$wordsplitstore[$ijk+1]." ".$wordsplitstore[$ijk+2]." ".$wordsplitstore[$ijk+3]." ".$wordsplitstore[$ijk+4];
+	my $sixgramtomodel = $wordsplitstore[$ijk]." ".$wordsplitstore[$ijk+1]." ".$wordsplitstore[$ijk+2]." ".$wordsplitstore[$ijk+3].." ".$wordsplitstore[$ijk+4]." ".$wordsplitstore[$ijk+5];
+	my $sevengramtomodel = $wordsplitstore[$ijk]." ".$wordsplitstore[$ijk+1]." ".$wordsplitstore[$ijk+2]." "..$wordsplitstore[$ijk+3]." ".$wordsplitstore[$ijk+4]." ".$wordsplitstore[$ijk+5]." ".$wordsplitstore[$ijk+6];
+	$twogramfrequency{$bigramtomodel}++;
+	$threegramfrequency{$trigramtomodel}++;
+	$fourgramfrequency{$fourgramtomodel}++;
+	$fivegramfrequency{$fivegramtomodel}++;
+	$sixgramfrequency{$sixgramtomodel}++;
+	$sevengramfrequency{$sevengramtomodel}++;
+}
+system('pause');
+=cut
+
 my $datatomod = $textfile;
+#my $datatomod =~ s/(\.|\?|!)/ ./g;
 
 #error ends program with unmatched regex
 
@@ -268,7 +297,7 @@ my @fourset;
 my @fiveset;
 my @sixset;
 my @sevenset;
-=pod
+
 my $twogramfile = "C:/Perl/2gram.txt";
 open(TWOGRAM, '>'.$twogramfile) or die "Can't create file to store 2grams.\n";
 #bigrams to sevengrams to sort
@@ -343,7 +372,7 @@ foreach my $sevengram(sort {$$sevengrams{my $b} <=> $$sevengrams{my $a}} keys %$
 print "Sevengrams created...\n";
 close SEVENGRAM;
 system('pause');
-=cut
+
 
 #no idea what I'm going to use this for yet. 
 #The splitting is terrible and I still have to fix it.
@@ -498,7 +527,7 @@ my @morecountries = qw/Bolivia Bonaire Saba Antigua Barbuda Bosnia Herzegovina C
 push @countrynames, @morecountries;
 for(my $p = 0; $p < $#countrynames; $p++){
 	my $countryparse = $countrynames[$p];
-	$datatomod =~ s/$countryparse/ /ig;
+	$datatomod =~ s/$countryparse([A-Z]+)?/ /ig;
 }
 my @countrylanguage = all_language_names();
 for(my $q = 0; $q < $#countrylanguage; $q++){
