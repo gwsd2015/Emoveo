@@ -1,22 +1,32 @@
 #################################################################
 #Newest info
 
+#increased reliability of redaction. sometimes, names that occur the most don't
+#get redacted so I need to find a way to just identify that reaccuring name
+#and substitute it with the first letter or something.
+#Mr. Rogers -> Mr. R
+
 #concordance isn't looping properly, going to double check on that
 
-#read the files as utf 8 encoding to remove the funny characters
-
+#need a switch case loop to resolve this... I don't even remember how to do it...
 #created concordance key word search for the program. going to test if it works.
 
 #New reduction is able to force 3168 KB file (450k+ words) to 1536 KB (about 50% reduction)
 
-#Some regex result in removal of inital vowels from words that start a sentence
-
+#more of a security issue than anything, will figure some stuff out after I finalize more of the
+#algorithm
 #I need my sentences to achieve randomness so you can't use patterns in attempts to unredact
 
 #Next step is to create the file split for file > 7000 words to increase the speed of reduction
 
 #################################################################
 #Previous notes in chronological order
+
+#fixed the ngram regex's to be more reliable in removal
+#Some regex result in removal of inital vowels from words that start a sentence
+
+#non-issue using encoding now... not sure if even necessary
+#read the files as utf 8 encoding to remove the funny characters
 
 #not sure if I should use this anymore. Causes errors in substitution from ({$a} <=> {$b}) which results in
 #the last element of the array invalid. This can be inferred from "uninit value" from the cmd line.
@@ -162,6 +172,7 @@ use Lingua::EN::Ngram;
 use Lingua::Orthon;
 use Date::Extract;
 use Date::Extract::Surprise;
+use Encode qw(decode encode);
 
 #take topics from website and use it to clear document
 #topics of interest are common and searched for in a document
@@ -170,7 +181,7 @@ use Date::Extract::Surprise;
 #to increase the chances of taking out the right words
 
 my $topicfile = "C:/Perl/topicsfile.txt";
-open(TOPIC, '>'. $topicfile) or die "Can't generate $topicfile from HTML::TreeBuilder and HTML::FormatText\n";
+open(TOPIC, ">:utf8", $topicfile) or die "Can't generate $topicfile from HTML::TreeBuilder and HTML::FormatText\n";
 print "Checking online database...\n";
 system('pause');
 my $topicurl = get("http://interest-graph.getprismatic.com/topic/all/human");
@@ -191,7 +202,7 @@ $topicdata =~ s/[0-9]{1,6}\n//ig;
 $topicdata =~ s/(\s|\t|\n){2,}}//g;
 $topicdata =~ s/(\(|\)|\,)//g;
 my $substitutioncheck = "C:/Perl/topicsfilesub.txt";
-open(TSUB, '>'. $substitutioncheck) or die "Can't create $substitutioncheck.\n";
+open(TSUB, ">:utf8", $substitutioncheck) or die "Can't create $substitutioncheck.\n";
 print TSUB $topicdata;
 close TSUB;
 print "Please check $substitutioncheck to see if topic list was created successfully.\n";
@@ -237,7 +248,7 @@ print "$textfile\n\n";
 
 #building some of these file to check that I properly completed steps.
 my $check = "C:/Perl/checkfile.txt";
-open(CHK, '>'.$check) or die "Can't generate $check\n";
+open(CHK, ">:utf8",$check) or die "Can't generate $check\n";
 print "File $check generated.\n";
 print CHK "$textfile";
 close CHK;
@@ -268,7 +279,7 @@ close CHK;
 
 print "Preparing to do initial analysis of the readability of the text file...\n\n\n";
 my $analysisfile = "C:/Perl/analysis.txt";
-open (ASYS, '>'.$analysisfile) or die "Can't create file to store initial analysis.\n";
+open (ASYS, ">:utf8",$analysisfile) or die "Can't create file to store initial analysis.\n";
 
 my $text = new Lingua::EN::Fathom;
 $text->analyse_file($inputfile);
@@ -323,7 +334,7 @@ system('pause');
 close ASYS;
 
 #my $translatedfile = "C:/Perl/translatedfile.txt;
-#open(TRANSLATE, '>'. $translatedfile) or die "Can't create $translatedfile\n";
+#open(TRANSLATE, ">:utf8", $translatedfile) or die "Can't create $translatedfile\n";
 #my $float = rand();
 #close TRANSLATE;
 
@@ -335,7 +346,7 @@ for(my $i = 0; $i < $#commonwords; $i++){
 system('pause');
 
 my $wordlist = "C:/Perl/wordlist.txt";
-open(WORD, '>'.$wordlist) or die "Can't create file to store wordlist.\n";
+open(WORD, ">:utf8",$wordlist) or die "Can't create file to store wordlist.\n";
 
 print "List of words that make this document unique: \n";
 #print @characterizingwords;
@@ -349,9 +360,10 @@ print "File storing the unique words is now available at $wordlist \n";
 
 close WORD;
 
-my $datatomod = $textfile;
+my $datatomod = ($textfile);
 #my $datatomod =~ s/(\.|\?|!)/ ./g;
 
+=pod
 my $exitsign = "Time to exit!";
 print "Traverse the file for targeted removal...\n";
 print "If you ever want to stop the query after it has complete a search, type $exitsign\n";
@@ -379,6 +391,8 @@ while(my $querysearch != $exitsign){
 		}
 	}
 }
+=cut
+
 
 #error resolved
 #error ends program with unmatched regex
@@ -393,7 +407,7 @@ my @sevenset;
 my $ngram = Lingua::EN::Ngram->new(file => $check);
 
 my $sevengramfile = "C:/Perl/7gram.txt";
-open(SEVENGRAM, '>'.$sevengramfile) or die "Can't create file to store 7grams.\n";
+open(SEVENGRAM, ">:utf8",$sevengramfile) or die "Can't create file to store 7grams.\n";
 my $sevengrams = $ngram->ngram(7);
 foreach my $sevengram(sort {$$sevengrams{my $b} <=> $$sevengrams{my $a}} keys %$sevengrams){
 	print SEVENGRAM $$sevengrams{$sevengram}, "\t$sevengram\n";
@@ -407,11 +421,16 @@ system('pause');
 for( my $y = 0; $y < $#sevenset; $y++ ){
 	print $sevenset[$y]."\n";
 	my $seventosub = $sevenset[$y];
+	$seventosub =~ s/\s\././g;
+	$seventosub =~ s/\s,/,/g;
+	$seventosub =~ s/\s?\(\s?/(/g;
+	$seventosub =~ s/\s?\)\s?/)/g;
+	$seventosub =~ s/\b[a-z]\b/[thisisnothingtosubandwontmatchtoanything]/ig;
 	$datatomod =~ s/\Q$seventosub/ /ig;
 	
 }
 my $seventohold = "C:/Perl/7gramhold.txt";
-open(SEVENHOLD, '>'.$seventohold) or die "Can't make $seventohold\n";
+open(SEVENHOLD, ">:utf8",$seventohold) or die "Can't make $seventohold\n";
 print SEVENHOLD $datatomod;
 close SEVENHOLD;
 system('pause');
@@ -419,7 +438,7 @@ system('pause');
 $ngram = Lingua::EN::Ngram->new(file => $seventohold);
 
 my $sixgramfile = "C:/Perl/6gram.txt";
-open(SIXGRAM, '>'.$sixgramfile) or die "Can't create file to store 6grams.\n";
+open(SIXGRAM, ">:utf8",$sixgramfile) or die "Can't create file to store 6grams.\n";
 my $sixgrams = $ngram->ngram(6);
 foreach my $sixgram(sort {$$sixgrams{my $b} <=> $$sixgrams{my $a}} keys %$sixgrams){
 	print SIXGRAM $$sixgrams{$sixgram}, "\t$sixgram\n";
@@ -433,11 +452,16 @@ system('pause');
 for( my $x = 0; $x < $#sixset; $x++ ){
 	print $sixset[$x]."\n";
 	my $sixtosub = $sixset[$x];
+	$sixtosub =~ s/\s\././g;
+	$sixtosub =~ s/\s,/,/g;
+	$sixtosub =~ s/\s?\(\s?/(/g;
+	$sixtosub =~ s/\s?\)\s?/)/g;
+	$sixtosub =~ s/\b[a-z]\b/[thisisnothingtosubandwontmatchtoanything]/ig;
 	$datatomod =~ s/\Q$sixtosub/ /ig;
 	
 }
 my $sixtohold = "C:/Perl/6gramhold.txt";
-open(SIXHOLD, '>'.$sixtohold) or die "Can't make $sixtohold\n";
+open(SIXHOLD, ">:utf8",$sixtohold) or die "Can't make $sixtohold\n";
 print SIXHOLD $datatomod;
 close SIXHOLD;
 system('pause');
@@ -445,7 +469,7 @@ system('pause');
 $ngram = Lingua::EN::Ngram->new(file => $sixtohold);
 
 my $fivegramfile = "C:/Perl/5gram.txt";
-open(FIVEGRAM, '>'.$fivegramfile) or die "Can't create file to store 5grams.\n";
+open(FIVEGRAM, ">:utf8",$fivegramfile) or die "Can't create file to store 5grams.\n";
 my $fivegrams = $ngram->ngram(5);
 foreach my $fivegram(sort {$$fivegrams{my $b} <=> $$fivegrams{my $a}} keys %$fivegrams){
 	print FIVEGRAM $$fivegrams{$fivegram}, "\t$fivegram\n";
@@ -459,11 +483,16 @@ system('pause');
 for( my $v = 0; $v < $#fiveset; $v++ ){
 	print $fiveset[$v]."\n";
 	my $fivetosub = $fiveset[$v];
+	$fivetosub =~ s/\s\././g;
+	$fivetosub =~ s/\s,/,/g;
+	$fivetosub =~ s/\s?\(\s?/(/g;
+	$fivetosub =~ s/\s?\)\s?/)/g;
+	$fivetosub =~ s/\b[a-z]\b/[thisisnothingtosubandwontmatchtoanything]/ig;
 	$datatomod =~ s/\Q$fivetosub/ /ig;
 	
 }
 my $fivetohold = "C:/Perl/5gramhold.txt";
-open(FIVEHOLD, '>'.$fivetohold) or die "Can't make $fivetohold\n";
+open(FIVEHOLD, ">:utf8",$fivetohold) or die "Can't make $fivetohold\n";
 print FIVEHOLD $datatomod;
 close FIVEHOLD;
 system('pause');
@@ -471,7 +500,7 @@ system('pause');
 $ngram = Lingua::EN::Ngram->new(file => $fivetohold);
 
 my $fourgramfile = "C:/Perl/4gram.txt";
-open(FOURGRAM, '>'.$fourgramfile) or die "Can't create file to store 4grams.\n";
+open(FOURGRAM, ">:utf8",$fourgramfile) or die "Can't create file to store 4grams.\n";
 my $fourgrams = $ngram->ngram(4);
 foreach my $fourgram(sort {$$fourgrams{my $b} <=> $$fourgrams{my $a}} keys %$fourgrams){
 	print FOURGRAM $$fourgrams{$fourgram}, "\t$fourgram\n";
@@ -485,11 +514,16 @@ system('pause');
 for( my $w = 0; $w < $#fourset; $w++ ){
 	print $fourset[$w]."\n";
 	my $fourtosub = $fourset[$w];
+	$fourtosub =~ s/\s\././g;
+	$fourtosub =~ s/\s,/,/g;
+	$fourtosub =~ s/\s?\(\s?/(/g;
+	$fourtosub =~ s/\s?\)\s?/)/g;
+	$fourtosub =~ s/\b[a-z]\b/[thisisnothingtosubandwontmatchtoanything]/ig;
 	$datatomod =~ s/\Q$fourtosub/ /ig;
 	
 }
 my $fourtohold = "C:/Perl/4gramhold.txt";
-open(FOURHOLD, '>'.$fourtohold) or die "Can't make $fourtohold\n";
+open(FOURHOLD, ">:utf8",$fourtohold) or die "Can't make $fourtohold\n";
 print FOURHOLD $datatomod;
 close FOURHOLD;
 system('pause');
@@ -497,7 +531,7 @@ system('pause');
 $ngram = Lingua::EN::Ngram->new(file => $fourtohold);
 
 my $threegramfile = "C:/Perl/3gram.txt";
-open(THREEGRAM, '>'.$threegramfile) or die "Can't create file to store 3grams.\n";
+open(THREEGRAM, ">:utf8",$threegramfile) or die "Can't create file to store 3grams.\n";
 my $trigrams = $ngram->ngram(3);
 foreach my $trigram(sort {$$trigrams{my $b} <=> $$trigrams{my $a}} keys %$trigrams){
 	print THREEGRAM $$trigrams{$trigram}, "\t$trigram\n";
@@ -511,11 +545,16 @@ system('pause');
 for( my $abcd = 0; $abcd < $#threeset; $abcd++ ){
 	print $threeset[$abcd]."\n";
 	my $threetosub = $threeset[$abcd];
+	$threetosub =~ s/\s\././g;
+	$threetosub =~ s/\s,/,/g;
+	$threetosub =~ s/\s?\(\s?/(/g;
+	$threetosub =~ s/\s?\)\s?/)/g;
+	$threetosub =~ s/\b[a-z]\b/[thisisnothingtosubandwontmatchtoanything]/ig;
 	$datatomod =~ s/\Q$threetosub/ /ig;
 	
 }
 my $threetohold = "C:/Perl/3gramhold.txt";
-open(THREEHOLD, '>'.$threetohold) or die "Can't make $threetohold\n";
+open(THREEHOLD, ">:utf8",$threetohold) or die "Can't make $threetohold\n";
 print THREEHOLD $datatomod;
 close THREEHOLD;
 system('pause');
@@ -523,7 +562,7 @@ system('pause');
 $ngram = Lingua::EN::Ngram->new(file => $threetohold);
 
 my $twogramfile = "C:/Perl/2gram.txt";
-open(TWOGRAM, '>'.$twogramfile) or die "Can't create file to store 2grams.\n";
+open(TWOGRAM, ">:utf8",$twogramfile) or die "Can't create file to store 2grams.\n";
 #bigrams to sevengrams to sort
 
 my $bigrams = $ngram->ngram(2);
@@ -539,11 +578,16 @@ system('pause');
 for( my $defg = 0; $defg < $#twoset; $defg++ ){
 	print $twoset[$defg]."\n";
 	my $twotosub = $twoset[$defg];
+	$twotosub =~ s/\s\././g;
+	$twotosub =~ s/\s,/,/g;
+	$twotosub =~ s/\s?\(\s?/(/g;
+	$twotosub =~ s/\s?\)\s?/)/g;
+	$twotosub =~ s/\b[a-z]\b/[thisisnothingtosubandwontmatchtoanything]/ig;
 	$datatomod =~ s/\Q$twotosub/ /ig;
 	
 }
 my $twotohold = "C:/Perl/2gramhold.txt";
-open(TWOHOLD, '>'.$twotohold) or die "Can't make $twotohold\n";
+open(TWOHOLD, ">:utf8",$twotohold) or die "Can't make $twotohold\n";
 print TWOHOLD $datatomod;
 close TWOHOLD;
 system('pause');
@@ -551,7 +595,7 @@ system('pause');
 #no idea what I'm going to use this for yet. 
 #The splitting is terrible and I still have to fix it.
 my $splitstorage = "C:/Perl/splitfile.txt";
-open(SSTORE, '>'.$splitstorage) or die "Can't create file to store the subsections.\n";
+open(SSTORE, ">:utf8",$splitstorage) or die "Can't create file to store the subsections.\n";
 print "File $splitstorage created to prepare for spliting the file's subsections.\n";
 
 print "Beginning to split file's subsections.\n";
@@ -634,7 +678,7 @@ for(my $k = 0; $k < $#characterizingwords; $k++){
 
 print "Removal completed...\n";
 print "Printing to $modify...\n";
-open(MODIFY, '>'.$modify) or die "Can't open $modify.\n";
+open(MODIFY, ">:utf8",$modify) or die "Can't open $modify.\n";
 
 print "Searching document for generic time indicators.\n";
 my @months = qw/january february march april may june july august september october november december/;
