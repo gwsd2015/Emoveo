@@ -207,7 +207,7 @@ foreach my $word(sort keys %words){
 		if ($words{$word}/$num_words > 0.002){
 			push @commonwords, $word;
 		}
-		elsif ($words{$word} < 11){
+		elsif ($words{$word} < 7){
 			push @characterizingwords, $word;
 		}
 	}
@@ -269,7 +269,7 @@ my @fourset;
 my @fiveset;
 my @sixset;
 my @sevenset;
-=pod
+
 my $ngram = Lingua::EN::Ngram->new(file => $check);
 
 my $sevengramfile = "C:/Perl/7gram.txt";
@@ -284,6 +284,19 @@ foreach my $sevengram(sort {$$sevengrams{my $b} <=> $$sevengrams{my $a}} keys %$
 print "Sevengrams created...\n";
 close SEVENGRAM;
 system('pause');
+for( my $y = 0; $y < $#sevenset; $y++ ){
+	print $sevenset[$y]."\n";
+	my $seventosub = $sevenset[$y];
+	$datatomod =~ s/\Q$seventosub/ /ig;
+	
+}
+my $seventohold = "C:/Perl/7gramhold.txt";
+open(SEVENHOLD, '>'.$seventohold) or die "Can't make $seventohold\n";
+print SEVENHOLD $datatomod;
+close SEVENHOLD;
+system('pause');
+
+$ngram = Lingua::EN::Ngram->new(file => $seventohold);
 
 my $sixgramfile = "C:/Perl/6gram.txt";
 open(SIXGRAM, '>'.$sixgramfile) or die "Can't create file to store 6grams.\n";
@@ -297,6 +310,19 @@ foreach my $sixgram(sort {$$sixgrams{my $b} <=> $$sixgrams{my $a}} keys %$sixgra
 print "Sixgrams created...\n";
 close SIXGRAM;
 system('pause');
+for( my $x = 0; $x < $#sixset; $x++ ){
+	print $sixset[$x]."\n";
+	my $sixtosub = $sixset[$x];
+	$datatomod =~ s/\Q$sixtosub/ /ig;
+	
+}
+my $sixtohold = "C:/Perl/6gramhold.txt";
+open(SIXHOLD, '>'.$sixtohold) or die "Can't make $sixtohold\n";
+print SIXHOLD $datatomod;
+close SIXHOLD;
+system('pause');
+
+$ngram = Lingua::EN::Ngram->new(file => $sixtohold);
 
 my $fivegramfile = "C:/Perl/5gram.txt";
 open(FIVEGRAM, '>'.$fivegramfile) or die "Can't create file to store 5grams.\n";
@@ -310,6 +336,19 @@ foreach my $fivegram(sort {$$fivegrams{my $b} <=> $$fivegrams{my $a}} keys %$fiv
 print "Fivegrams created...\n";
 close FIVEGRAM;
 system('pause');
+for( my $v = 0; $v < $#fiveset; $v++ ){
+	print $fiveset[$v]."\n";
+	my $fivetosub = $fiveset[$v];
+	$datatomod =~ s/\Q$fivetosub/ /ig;
+	
+}
+my $fivetohold = "C:/Perl/5gramhold.txt";
+open(FIVEHOLD, '>'.$fivetohold) or die "Can't make $fivetohold\n";
+print FIVEHOLD $datatomod;
+close FIVEHOLD;
+system('pause');
+
+$ngram = Lingua::EN::Ngram->new(file => $fivetohold);
 
 my $fourgramfile = "C:/Perl/4gram.txt";
 open(FOURGRAM, '>'.$fourgramfile) or die "Can't create file to store 4grams.\n";
@@ -323,19 +362,45 @@ foreach my $fourgram(sort {$$fourgrams{my $b} <=> $$fourgrams{my $a}} keys %$fou
 print "Fourgrams created...\n";
 close FOURGRAM;
 system('pause');
+for( my $w = 0; $w < $#fourset; $w++ ){
+	print $fourset[$w]."\n";
+	my $fourtosub = $fourset[$w];
+	$datatomod =~ s/\Q$fourtosub/ /ig;
+	
+}
+my $fourtohold = "C:/Perl/4gramhold.txt";
+open(FOURHOLD, '>'.$fourtohold) or die "Can't make $fourtohold\n";
+print FOURHOLD $datatomod;
+close FOURHOLD;
+system('pause');
+
+$ngram = Lingua::EN::Ngram->new(file => $fourtohold);
 
 my $threegramfile = "C:/Perl/3gram.txt";
 open(THREEGRAM, '>'.$threegramfile) or die "Can't create file to store 3grams.\n";
 my $trigrams = $ngram->ngram(3);
 foreach my $trigram(sort {$$trigrams{my $b} <=> $$trigrams{my $a}} keys %$trigrams){
 	print THREEGRAM $$trigrams{$trigram}, "\t$trigram\n";
-	if($$trigrams{$trigram} > 1){
+	if($$trigrams{$trigram} > 5){
 		push @threeset, $trigram;
 	}
 }
 print "Trigrams created...\n";
 close THREEGRAM;
 system('pause');
+for( my $abcd = 0; $abcd < $#threeset; $abcd++ ){
+	print $threeset[$abcd]."\n";
+	my $threetosub = $threeset[$abcd];
+	$datatomod =~ s/\Q$threetosub/ /ig;
+	
+}
+my $threetohold = "C:/Perl/3gramhold.txt";
+open(THREEHOLD, '>'.$threetohold) or die "Can't make $threetohold\n";
+print THREEHOLD $datatomod;
+close THREEHOLD;
+system('pause');
+
+$ngram = Lingua::EN::Ngram->new(file => $threetohold);
 
 my $twogramfile = "C:/Perl/2gram.txt";
 open(TWOGRAM, '>'.$twogramfile) or die "Can't create file to store 2grams.\n";
@@ -344,20 +409,24 @@ open(TWOGRAM, '>'.$twogramfile) or die "Can't create file to store 2grams.\n";
 my $bigrams = $ngram->ngram(2);
 foreach my $bigram(sort {$$bigrams{my $b} <=> $$bigrams{my $a}} keys %$bigrams){
 	print TWOGRAM $$bigrams{$bigram}, "\t$bigram\n";
-	if(($$bigrams{$bigram}) > 1){
+	if(($$bigrams{$bigram}) > 5){
 		push @twoset, $bigram;
 	}
 }
 print "Bigrams created...\n";
 close TWOGRAM;
 system('pause');
-
-for( my $y = 0; $y < $#sevenset; $y++ ){
-	print $sevenset[$y]."\n";
-	my $seventosub = $sevenset[$y];
-	$datatomod =~ s/$seventosub/ /ig;
+for( my $defg = 0; $defg < $#twoset; $defg++ ){
+	print $twoset[$defg]."\n";
+	my $twotosub = $twoset[$defg];
+	$datatomod =~ s/\Q$twotosub/ /ig;
+	
 }
-=cut
+my $twotohold = "C:/Perl/2gramhold.txt";
+open(TWOHOLD, '>'.$twotohold) or die "Can't make $twotohold\n";
+print TWOHOLD $datatomod;
+close TWOHOLD;
+system('pause');
 
 #no idea what I'm going to use this for yet. 
 #The splitting is terrible and I still have to fix it.
@@ -589,7 +658,7 @@ print MODIFY $datatomod."\n============================\n";
 #much should be properly removed. In essence, you can argue that this is a semantics test
 #of how well I have redacted the argument.
 
-if($num_words > 500){
+if($num_words > 500 and $num_words < 7000){
 	print "Preparing to summarize the document...\n";
 
 	print "Summarization in progress...\n";
@@ -622,6 +691,9 @@ if($num_words > 500){
 	print "$modify generated.\n";
 
 	print MODIFY $buffer;
+}
+elsif($num_words >= 7000){
+	print "File too large, needs to be broken down before analysis.\n";
 }
 else{
 	print "File too small, map reduction is unnecessary.\n";
