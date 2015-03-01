@@ -1,6 +1,10 @@
 #################################################################
 #Newest info
 
+#concordance isn't looping properly, going to double check on that
+
+#read the files as utf 8 encoding to remove the funny characters
+
 #created concordance key word search for the program. going to test if it works.
 
 #New reduction is able to force 3168 KB file (450k+ words) to 1536 KB (about 50% reduction)
@@ -351,9 +355,10 @@ my $datatomod = $textfile;
 my $exitsign = "Time to exit!";
 print "Traverse the file for targeted removal...\n";
 print "If you ever want to stop the query after it has complete a search, type $exitsign\n";
+system('pause');
 my $concordance = Lingua::Concordance->new;
 $concordance->text($datatomod);
-my $querysearch;
+my $querysearch = "0";
 my $concordanceyesno;
 while(my $querysearch != $exitsign){
 	print "Enter word or phrase to query:\t";
