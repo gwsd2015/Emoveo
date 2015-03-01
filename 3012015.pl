@@ -728,11 +728,11 @@ dump %languages = langof($datatomod);
 print "\nThe probability of this text being English is:\t$languages{'en'}\n\n...\n";
 if($languages{'en'} > 0.357){
 	print "\nLanguage analysis completed.\n";	
-	print "\nSecond stage test have determined redaction is incomplete.\n\";
+	print "\nSecond stage test have determined redaction is incomplete.\n";
 	system('pause');
 } else {
 	print "\nLanguage analysis completed.\n";
-	print "nPassed second stage analysis.\n";
+	print "\nPassed second stage analysis.\n";
 }
 
 #use this instead if CLD ever installs properly
