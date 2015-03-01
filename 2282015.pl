@@ -1,5 +1,39 @@
+#################################################################
+#Newest info
+
+#New reduction is able to force 3168 KB file (450k+ words) to 1536 KB (about 50% reduction)
+
+#Some regex result in removal of inital vowels from words that start a sentence
+
+#I need my sentences to achieve randomness so you can't use patterns in attempts to unredact
+
+#Next step is to create the file split for file > 7000 words to increase the speed of reduction
+
+#################################################################
+#Previous notes in chronological order
+
+#not sure if I should use this anymore. Causes errors in substitution from ({$a} <=> {$b}) which results in
+#the last element of the array invalid. This can be inferred from "uninit value" from the cmd line.
+#solution found: use \Q to remove all meta characters that force the program to quit
+#use Lingua::EN::Ngram;
+
+#These translation modules below aren't working as I intend or aren't working as I want them to.
+#Translating things using babelfish seem to not be working 
+#don't know if obscuring is necessary, will save for a later day to work on.
+#use WWW::Babelfish;
+#use WWW::Translate::Apertium;
+#use Speech::Google::TTS;
+#use the random secure to generate between 0..1 to random select a language to translate back and forth
+#use Math::Random::Secure qw(rand);
+#module below did not install properly
+#update: I believe it is only installable on Linux
+#use Lingua::Identify::CLD;
+
+
 #I haven't subroutined my stuff yet, trying to write everything out and figure how things
 #are cutting depending on the size of the program.
+
+#################################################################
 
 #purpose of the program
 
@@ -23,6 +57,7 @@
 # 1. Confidential
 # 2. Internal Use Only
 # 3. Public
+
 
 use strict;
 use warnings;
@@ -58,20 +93,9 @@ use Lingua::Norms::SUBTLEX;
 use Lingua::Concordance;
 #not sure if I should use this anymore. Causes errors in substitution from ({$a} <=> {$b}) which results in
 #the last element of the array invalid. This can be inferred from "uninit value" from the cmd line.
+#solution found: use \Q to remove all meta characters that force the program to quit
 use Lingua::EN::Ngram;
 use Lingua::Orthon;
-#These translation modules below aren't working as I intend or aren't working as I want them to.
-#Translating things using babelfish seem to not be working 
-#don't know if obscuring is necessary, will save for a later day to work on.
-#use WWW::Babelfish;
-#use WWW::Translate::Apertium;
-#use Speech::Google::TTS;
-#use the random secure to generate between 0..1 to random select a language to translate back and forth
-#use Math::Random::Secure qw(rand);
-#module below did not install properly
-#update: I believe it is only installable on Linux
-#use Lingua::Identify::CLD;
-
 #take topics from website and use it to clear document
 #topics of interest are common and searched for in a document
 #to take them out allows us to remove prediction power in later stages
