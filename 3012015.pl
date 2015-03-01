@@ -425,6 +425,10 @@ for( my $y = 0; $y < $#sevenset; $y++ ){
 	$seventosub =~ s/\s,/,/g;
 	$seventosub =~ s/\s?\(\s?/(/g;
 	$seventosub =~ s/\s?\)\s?/)/g;
+	$seventosub =~ s/\s:/:/g;
+	$seventosub =~ s/\s?-\s?/-/g;
+	#$seventosub =~ s/\s?\\\s?/\/g;
+	#$seventosub =~ s/\s?\/\s?///g;
 	$seventosub =~ s/\b[a-z]\b/[thisisnothingtosubandwontmatchtoanything]/ig;
 	$datatomod =~ s/\Q$seventosub/ /ig;
 	
@@ -456,6 +460,10 @@ for( my $x = 0; $x < $#sixset; $x++ ){
 	$sixtosub =~ s/\s,/,/g;
 	$sixtosub =~ s/\s?\(\s?/(/g;
 	$sixtosub =~ s/\s?\)\s?/)/g;
+	$sixtosub =~ s/\s:/:/g;
+	$sixtosub =~ s/\s?-\s?/-/g;
+	#$sixtosub =~ s/\s?\\\s?/\/g;
+	#$sixtosub =~ s/\s?\/\s?///g;
 	$sixtosub =~ s/\b[a-z]\b/[thisisnothingtosubandwontmatchtoanything]/ig;
 	$datatomod =~ s/\Q$sixtosub/ /ig;
 	
@@ -487,6 +495,10 @@ for( my $v = 0; $v < $#fiveset; $v++ ){
 	$fivetosub =~ s/\s,/,/g;
 	$fivetosub =~ s/\s?\(\s?/(/g;
 	$fivetosub =~ s/\s?\)\s?/)/g;
+	$fivetosub =~ s/\s:/:/g;
+	$fivetosub =~ s/\s?-\s?/-/g;
+	#$fivetosub =~ s/\s?\\\s?/\/g;
+	#$fivetosub =~ s/\s?\/\s?///g;
 	$fivetosub =~ s/\b[a-z]\b/[thisisnothingtosubandwontmatchtoanything]/ig;
 	$datatomod =~ s/\Q$fivetosub/ /ig;
 	
@@ -518,6 +530,10 @@ for( my $w = 0; $w < $#fourset; $w++ ){
 	$fourtosub =~ s/\s,/,/g;
 	$fourtosub =~ s/\s?\(\s?/(/g;
 	$fourtosub =~ s/\s?\)\s?/)/g;
+	$fourtosub =~ s/\s:/:/g;
+	$fourtosub =~ s/\s?-\s?/-/g;
+	#$fourtosub =~ s/\s?\\\s?/\/g;
+	#$fourtosub =~ s/\s?\/\s?///g;
 	$fourtosub =~ s/\b[a-z]\b/[thisisnothingtosubandwontmatchtoanything]/ig;
 	$datatomod =~ s/\Q$fourtosub/ /ig;
 	
@@ -549,6 +565,10 @@ for( my $abcd = 0; $abcd < $#threeset; $abcd++ ){
 	$threetosub =~ s/\s,/,/g;
 	$threetosub =~ s/\s?\(\s?/(/g;
 	$threetosub =~ s/\s?\)\s?/)/g;
+	$threetosub =~ s/\s:/:/g;
+	$threetosub =~ s/\s?-\s?/-/g;
+	#$threetosub =~ s/\s?\\\s?/\/g;
+	#$threetosub =~ s/\s?\/\s?///g;
 	$threetosub =~ s/\b[a-z]\b/[thisisnothingtosubandwontmatchtoanything]/ig;
 	$datatomod =~ s/\Q$threetosub/ /ig;
 	
@@ -582,6 +602,10 @@ for( my $defg = 0; $defg < $#twoset; $defg++ ){
 	$twotosub =~ s/\s,/,/g;
 	$twotosub =~ s/\s?\(\s?/(/g;
 	$twotosub =~ s/\s?\)\s?/)/g;
+	$twotosub =~ s/\s:/:/g;
+	$twotosub =~ s/\s?-\s?/-/g;
+	#$twotosub =~ s/\s?\\\s?/\/g;
+	#$twotosub =~ s/\s?\/\s?///g;
 	$twotosub =~ s/\b[a-z]\b/[thisisnothingtosubandwontmatchtoanything]/ig;
 	$datatomod =~ s/\Q$twotosub/ /ig;
 	
@@ -768,6 +792,13 @@ system('pause');
 #my @listcontainingorgname;
 #my $organizationabbv =~ /[A-Z]{2,5}/;
 #my $orgpattern =~ /(\w{1,}\s){2,5}$organizationabbv/ig;
+
+my @impossiblebigram = qw(bk bq bx cb cf cg cj cp cv cw cx dx fk fq fv fx fz gq gv gx hk hv hx hz iy jb jc jd jf jg jh jk jl jm jn jp jq jr js jt jv jw jx jy jz kq kv kx kz lq lx mg mj mq mx mz pq pv px qa qb qc qd qe qf qg qh qj qk ql qm qn qo qp qr qs qt qv qw qx qy qz sx sz tq tx vb vc vd vf vg vh vj vk vm vn vp vq vt vw vx vz wq wv wx wz xb xg xj xk xv xz yq yv yz zb zc zg zh zj zn zq zr zs zx);
+
+for(my $ggh = 0; $ggh < $#impossiblebigram; $ggh++){
+	my $impbigramword = $impossiblebigram[$ggh];
+	$datatomod =~ s/\b([a-z]+)?$impbigramword([a-z]+)?\b//ig;
+}
 
 print "\nPreparing for second stage analysis\n";
 
