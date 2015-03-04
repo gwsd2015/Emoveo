@@ -174,6 +174,8 @@ use Lingua::Orthon;
 use Date::Extract;
 use Date::Extract::Surprise;
 use Encode qw(decode encode);
+use WWW::Translate::Apertium;
+use Math::Random::Secure qw(rand);
 
 #take topics from website and use it to clear document
 #topics of interest are common and searched for in a document
@@ -373,7 +375,7 @@ open (PNOUN, ">:utf8",$propernoun) or die;
 
 my $parsednnp = new Lingua::EN::Tagger;
 my $tagged_text = $parsednnp->add_tags($datatomod);
-my %word_list = $parsednnp->get_words($datatomod);
+my %word_list = $parsednnp->get_words($datatomod);					 
 my $readable_text = $parsednnp->get_readable($datatomod);
 my $proper_nouns = $parsednnp->get_proper_nouns($datatomod);
 print TAGOUT $readable_text;
@@ -385,8 +387,10 @@ open(TAGOUT2, $taggedtextout) or die;
 while(<TAGOUT2>){
 	my @taggedwordlist = split /\s/;
 	while (my $tagword = pop @taggedwordlist){
-		if ($tagword =~ /\w\/NNP/ig){
+		if ($tagword =~ /\w\/NN(P)?/ig){
 			print NNP $tagword."\n";
+			$tagword =~ s/\/NN(P)?/ /ig;
+			$datatomod =~ s/\b$tagword\b/ /ig;
 		}
 	}
 }
@@ -402,35 +406,34 @@ while(<TAGOUT2>){
 close TAGOUT2;
 close NNP;
 
-=pod
-my $exitsign = "Time to exit!";
-print "Traverse the file for targeted removal...\n";
-print "If you ever want to stop the query after it has complete a search, type $exitsign\n";
-system('pause');
-my $concordance = Lingua::Concordance->new;
-$concordance->text($datatomod);
-my $querysearch = "0";
-my $concordanceyesno;
-while(my $querysearch != $exitsign){
-	print "Enter word or phrase to query:\t";
-	$querysearch = <STDIN>;
-	chomp $querysearch;
-	print "\n";
-	$concordance->query($querysearch);
-	foreach my $concordancedline ($concordance->lines){
-		print "$concordancedline\n";
-		print "Would you like too subsitute this line?\t";
-		$concordanceyesno = <STDIN>;
-		chomp $concordanceyesno;
-		if($concordanceyesno =~ /yes/){
-			$datatomod =~ s/$concordancedline/ /ig;
-		}
-		else{
-			system('pause');
-		}
-	}
-}
-=cut
+
+#my $exitsign = "Time to exit!";
+#print "Traverse the file for targeted removal...\n";
+#print "If you ever want to stop the query after it has complete a search, type $exitsign\n";
+#system('pause');
+#my $concordance = Lingua::Concordance->new;
+#$concordance->text($datatomod);
+#my $querysearch = "0";
+#my $concordanceyesno;
+#while(my $querysearch != $exitsign){
+#	print "Enter word or phrase to query:\t";
+#	$querysearch = <STDIN>;
+#	chomp $querysearch;
+#	print "\n";
+#	$concordance->query($querysearch);
+#	foreach my $concordancedline ($concordance->lines){
+#		print "$concordancedline\n";
+#		print "Would you like too subsitute this line?\t";
+#		$concordanceyesno = <STDIN>;
+#		chomp $concordanceyesno;
+#		if($concordanceyesno =~ /yes/){
+#			$datatomod =~ s/$concordancedline/ /ig;
+#		}
+#		else{
+#			system('pause');
+#		}
+#	}
+#}
 
 
 #error resolved
@@ -848,15 +851,103 @@ for(my $ggh = 0; $ggh < $#impossiblebigram; $ggh++){
 
 print "\nPreparing for second stage analysis\n";
 
+my @languagegramstore;
+
 my %languages = langof($datatomod);
 dump %languages = langof($datatomod);
 #print %languages;
 print "\nThe probability of this text being English is:\t$languages{'en'}\n\n...\n";
+
 if($languages{'en'} > 0.357){
 	print "\nLanguage analysis completed.\n";	
 	print "\nSecond stage test have determined redaction is incomplete.\n";
 	system('pause');
-} else {
+=pod
+	my $engine = WWW::Translate::Apertium->new();
+	our $translated_data = $engine->translate($datatomod);
+	our $float = rand();
+	if($float >= 0 and $float < 0.25){
+		$engine->from_into(en-es);
+		$ngram = Lingua::EN::Ngram->new($translated_data);
+		my $enginetwograms = $ngram->ngram(2);
+		foreach my $enginetwogram(sort {$$enginetwograms{my $b} <=> $$enginetwograms{my $a}} keys %$enginetwograms){
+			print $$enginetwograms{$enginetwogram}, "\t$enginetwogram\n";
+			if($$enginetwograms{$enginetwogram} > 4){
+				push @languagegramstore, $enginetwogram;
+				for(my $enes = 0; $enes < $#languagegramstore; $enes++){
+					my $enessub = $languagegramstore[$enes];
+					$translated_data =~ s/$enessub/ /ig;
+				}
+			}
+		}
+		my $engine2 = WWW::Translate::Apertium->new();
+		$engine2->from_into(es-en);
+		$datatomod = $engine2->translate($translated_data);
+		system('pause');
+	}
+	elsif($float >= 0.25 and $float < 0.5){
+		$engine->from_into(en-gl);
+		$ngram = Lingua::EN::Ngram->new($translated_data);
+		my $enginetwograms = $ngram->ngram(2);	
+		foreach my $enginetwogram(sort {$$enginetwograms{my $b} <=> $$enginetwograms{my $a}} keys %$enginetwograms){	
+			print $$enginetwograms{$enginetwogram}, "\t$enginetwogram\n";	
+			if($$enginetwograms{$enginetwogram} > 4){	
+				push @languagegramstore, $enginetwogram;	
+				for(my $engl = 0; $engl < $#languagegramstore; $engl++){	
+					my $englsub = $languagegramstore[$engl];	
+					$translated_data =~ s/$englsub/ /ig;	
+				}	
+			}	
+		}	
+		my $engine3 = WWW::Translate::Apertium->new();	
+		$engine3->from_into(gl-en);	
+		$datatomod = $engine3->translate($translated_data);	
+		system('pause');	
+		}	
+	}
+	elsif($float >= 0.5 and $float < 0.75){
+		$engine->from_into(en-eo);
+		$ngram = Lingua::EN::Ngram->new($translated_data);
+		my $enginetwograms = $ngram->ngram(2);
+		foreach my $enginetwogram(sort {$$enginetwograms{my $b} <=> $$enginetwograms{my $a}} keys %$enginetwograms){
+			print $$enginetwograms{$enginetwogram}, "\t$enginetwogram\n";
+			if($$enginetwograms{$enginetwogram} > 4){
+				push @languagegramstore, $enginetwogram;
+				for(my $eneo = 0; $eneo < $#languagegramstore; $eneo++){
+					my $eneosub = $languagegramstore[$eneo];
+					$translated_data =~ s/$eneosub/ /ig;
+				}
+			}
+		}
+		my $engine4 = WWW::Translate::Apertium->new();
+		$engine4->from_into(eo-en);
+		$datatomod = $engine4->translate($translated_data);
+		system('pause');
+		}
+	}
+	elsif($float >= 0.75 and $float <= 1){
+		$engine->from_into(en-ca);
+		$ngram = Lingua::EN::Ngram->new($translated_data);
+		my $enginetwograms = $ngram->ngram(2);
+		foreach my $enginetwogram(sort {$$enginetwograms{my $b} <=> $$enginetwograms{my $a}} keys %$enginetwograms){
+			print $$enginetwograms{$enginetwogram}, "\t$enginetwogram\n";
+			if($$enginetwograms{$enginetwogram} > 4){
+				push @languagegramstore, $enginetwogram;
+				for(my $enca = 0; $enca < $#languagegramstore; $enca++){
+					my $encasub = $languagegramstore[$enca];
+					$translated_data =~ s/$encasub/ /ig;
+				}
+			}
+		}
+		my $engine5 = WWW::Translate::Apertium->new();		
+		$engine5->from_into(ca-en);		
+		$datatomod = $engine5->translate($translated_data);		
+		system('pause');		
+	}				
+	}
+=cut
+}
+else {
 	print "\nLanguage analysis completed.\n";
 	print "\nPassed second stage analysis.\n";
 }
@@ -872,6 +963,8 @@ if($languages{'en'} > 0.357){
 
 #The following is obsolete given that I'm taking out WebService::Prismatic::InterestGraph
 #Will implement new interation below code.
+
+
 
 #my @tagsplitstore;
 #for(my $s = 0; $s < $#tags; $s++){
