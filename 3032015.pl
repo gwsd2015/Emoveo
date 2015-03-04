@@ -750,6 +750,12 @@ for(my $l = 0; $l < $#months; $l++){
 	my $monthtime = $months[$l];
 	$datatomod =~ s/[0-9]{1,2}(\s)?$monthtime/ /ig;
 	$datatomod =~ s/$monthtime(\s)?[0-9]{1,2}(\s|\,)?/ /ig;
+	if($monthtime =~ /may/){
+		$datatomod =~ s/\b$monthtime\b/ /ig;
+	}
+	else{
+		$datatomod =~ s/$monthtime/ /ig;
+	}
 	$datatomod =~ s/[0-9]{2}\// /g;
 }
 for(my $m = 0; $m < $#week; $m++){
@@ -821,6 +827,7 @@ system('pause');
 print "\nPreparing organizational redaction...\n";
 $datatomod =~ s/([A-Z](\.)?){2,}/ /g;
 $datatomod =~ s/\((\s)?([A-Z](\.)?){2,}(\s)?\)/ /ig;
+$datatomod =~ s/[0-9]+(\.)?([0-9]+)?%/ /g;
 print "Task completed.\n";
 system('pause');
 
