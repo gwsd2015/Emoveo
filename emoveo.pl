@@ -160,6 +160,7 @@ use Lingua::NegEx;
 use Text::Identify::BoilerPlate;
 use Text::IdMor;
 use Text::Roman;
+use Lingua::EN::Tagger;
 use Symbol::Name;
 use String::Multibyte;
 #use WebService::Prismatic::InterestGraph;
@@ -173,6 +174,8 @@ use Lingua::Orthon;
 use Date::Extract;
 use Date::Extract::Surprise;
 use Encode qw(decode encode);
+use WWW::Translate::Apertium;
+use Math::Random::Secure qw(rand);
 
 #take topics from website and use it to clear document
 #topics of interest are common and searched for in a document
@@ -363,35 +366,74 @@ close WORD;
 my $datatomod = ($textfile);
 #my $datatomod =~ s/(\.|\?|!)/ ./g;
 
-=pod
-my $exitsign = "Time to exit!";
-print "Traverse the file for targeted removal...\n";
-print "If you ever want to stop the query after it has complete a search, type $exitsign\n";
-system('pause');
-my $concordance = Lingua::Concordance->new;
-$concordance->text($datatomod);
-my $querysearch = "0";
-my $concordanceyesno;
-while(my $querysearch != $exitsign){
-	print "Enter word or phrase to query:\t";
-	$querysearch = <STDIN>;
-	chomp $querysearch;
-	print "\n";
-	$concordance->query($querysearch);
-	foreach my $concordancedline ($concordance->lines){
-		print "$concordancedline\n";
-		print "Would you like too subsitute this line?\t";
-		$concordanceyesno = <STDIN>;
-		chomp $concordanceyesno;
-		if($concordanceyesno =~ /yes/){
-			$datatomod =~ s/$concordancedline/ /ig;
-		}
-		else{
-			system('pause');
+my $taggedtextout = 'C:\Perl\taggedtxt.txt';
+open (TAGOUT, ">:utf8",$taggedtextout) or die;
+my $nnpex = 'C:\Perl\NNPextract.txt';
+open (NNP, ">:utf8",$nnpex) or die;
+my $propernoun = 'C:\Perl\propernoun.txt';
+open (PNOUN, ">:utf8",$propernoun) or die;
+
+my $parsednnp = new Lingua::EN::Tagger;
+my $tagged_text = $parsednnp->add_tags($datatomod);
+my %word_list = $parsednnp->get_words($datatomod);					 
+my $readable_text = $parsednnp->get_readable($datatomod);
+my $proper_nouns = $parsednnp->get_proper_nouns($datatomod);
+print TAGOUT $readable_text;
+close TAGOUT;
+print PNOUN $proper_nouns;
+close PNOUN;
+
+open(TAGOUT2, $taggedtextout) or die;
+while(<TAGOUT2>){
+	my @taggedwordlist = split /\s/;
+	while (my $tagword = pop @taggedwordlist){
+		if ($tagword =~ /\w\/NN(P)?/ig){
+			print NNP $tagword."\n";
+			$tagword =~ s/\/NN(P)?/ /ig;
+			$datatomod =~ s/\b$tagword\b/ /ig;
 		}
 	}
 }
-=cut
+
+#open(PNOUN2, $propernoun) or die;
+#while(<PNOUN2>){
+#	my @propernounlist = split /\s/;
+#	while(my $pnoun = pop @propernounlist){
+#		if($pnoun =~ s/\w\/
+#	}
+#close PNOUN;
+
+close TAGOUT2;
+close NNP;
+
+
+#my $exitsign = "Time to exit!";
+#print "Traverse the file for targeted removal...\n";
+#print "If you ever want to stop the query after it has complete a search, type $exitsign\n";
+#system('pause');
+#my $concordance = Lingua::Concordance->new;
+#$concordance->text($datatomod);
+#my $querysearch = "0";
+#my $concordanceyesno;
+#while(my $querysearch != $exitsign){
+#	print "Enter word or phrase to query:\t";
+#	$querysearch = <STDIN>;
+#	chomp $querysearch;
+#	print "\n";
+#	$concordance->query($querysearch);
+#	foreach my $concordancedline ($concordance->lines){
+#		print "$concordancedline\n";
+#		print "Would you like too subsitute this line?\t";
+#		$concordanceyesno = <STDIN>;
+#		chomp $concordanceyesno;
+#		if($concordanceyesno =~ /yes/){
+#			$datatomod =~ s/$concordancedline/ /ig;
+#		}
+#		else{
+#			system('pause');
+#		}
+#	}
+#}
 
 
 #error resolved
@@ -711,6 +753,12 @@ for(my $l = 0; $l < $#months; $l++){
 	my $monthtime = $months[$l];
 	$datatomod =~ s/[0-9]{1,2}(\s)?$monthtime/ /ig;
 	$datatomod =~ s/$monthtime(\s)?[0-9]{1,2}(\s|\,)?/ /ig;
+	if($monthtime =~ /may/){
+		$datatomod =~ s/\b$monthtime\b/ /ig;
+	}
+	else{
+		$datatomod =~ s/$monthtime/ /ig;
+	}
 	$datatomod =~ s/[0-9]{2}\// /g;
 }
 for(my $m = 0; $m < $#week; $m++){
@@ -782,6 +830,7 @@ system('pause');
 print "\nPreparing organizational redaction...\n";
 $datatomod =~ s/([A-Z](\.)?){2,}/ /g;
 $datatomod =~ s/\((\s)?([A-Z](\.)?){2,}(\s)?\)/ /ig;
+$datatomod =~ s/[0-9]+(\.)?([0-9]+)?%/ /g;
 print "Task completed.\n";
 system('pause');
 
@@ -802,15 +851,103 @@ for(my $ggh = 0; $ggh < $#impossiblebigram; $ggh++){
 
 print "\nPreparing for second stage analysis\n";
 
+my @languagegramstore;
+
 my %languages = langof($datatomod);
 dump %languages = langof($datatomod);
 #print %languages;
 print "\nThe probability of this text being English is:\t$languages{'en'}\n\n...\n";
+
 if($languages{'en'} > 0.357){
 	print "\nLanguage analysis completed.\n";	
 	print "\nSecond stage test have determined redaction is incomplete.\n";
 	system('pause');
-} else {
+=pod
+	my $engine = WWW::Translate::Apertium->new();
+	our $translated_data = $engine->translate($datatomod);
+	our $float = rand();
+	if($float >= 0 and $float < 0.25){
+		$engine->from_into(en-es);
+		$ngram = Lingua::EN::Ngram->new($translated_data);
+		my $enginetwograms = $ngram->ngram(2);
+		foreach my $enginetwogram(sort {$$enginetwograms{my $b} <=> $$enginetwograms{my $a}} keys %$enginetwograms){
+			print $$enginetwograms{$enginetwogram}, "\t$enginetwogram\n";
+			if($$enginetwograms{$enginetwogram} > 4){
+				push @languagegramstore, $enginetwogram;
+				for(my $enes = 0; $enes < $#languagegramstore; $enes++){
+					my $enessub = $languagegramstore[$enes];
+					$translated_data =~ s/$enessub/ /ig;
+				}
+			}
+		}
+		my $engine2 = WWW::Translate::Apertium->new();
+		$engine2->from_into(es-en);
+		$datatomod = $engine2->translate($translated_data);
+		system('pause');
+	}
+	elsif($float >= 0.25 and $float < 0.5){
+		$engine->from_into(en-gl);
+		$ngram = Lingua::EN::Ngram->new($translated_data);
+		my $enginetwograms = $ngram->ngram(2);	
+		foreach my $enginetwogram(sort {$$enginetwograms{my $b} <=> $$enginetwograms{my $a}} keys %$enginetwograms){	
+			print $$enginetwograms{$enginetwogram}, "\t$enginetwogram\n";	
+			if($$enginetwograms{$enginetwogram} > 4){	
+				push @languagegramstore, $enginetwogram;	
+				for(my $engl = 0; $engl < $#languagegramstore; $engl++){	
+					my $englsub = $languagegramstore[$engl];	
+					$translated_data =~ s/$englsub/ /ig;	
+				}	
+			}	
+		}	
+		my $engine3 = WWW::Translate::Apertium->new();	
+		$engine3->from_into(gl-en);	
+		$datatomod = $engine3->translate($translated_data);	
+		system('pause');	
+		}	
+	}
+	elsif($float >= 0.5 and $float < 0.75){
+		$engine->from_into(en-eo);
+		$ngram = Lingua::EN::Ngram->new($translated_data);
+		my $enginetwograms = $ngram->ngram(2);
+		foreach my $enginetwogram(sort {$$enginetwograms{my $b} <=> $$enginetwograms{my $a}} keys %$enginetwograms){
+			print $$enginetwograms{$enginetwogram}, "\t$enginetwogram\n";
+			if($$enginetwograms{$enginetwogram} > 4){
+				push @languagegramstore, $enginetwogram;
+				for(my $eneo = 0; $eneo < $#languagegramstore; $eneo++){
+					my $eneosub = $languagegramstore[$eneo];
+					$translated_data =~ s/$eneosub/ /ig;
+				}
+			}
+		}
+		my $engine4 = WWW::Translate::Apertium->new();
+		$engine4->from_into(eo-en);
+		$datatomod = $engine4->translate($translated_data);
+		system('pause');
+		}
+	}
+	elsif($float >= 0.75 and $float <= 1){
+		$engine->from_into(en-ca);
+		$ngram = Lingua::EN::Ngram->new($translated_data);
+		my $enginetwograms = $ngram->ngram(2);
+		foreach my $enginetwogram(sort {$$enginetwograms{my $b} <=> $$enginetwograms{my $a}} keys %$enginetwograms){
+			print $$enginetwograms{$enginetwogram}, "\t$enginetwogram\n";
+			if($$enginetwograms{$enginetwogram} > 4){
+				push @languagegramstore, $enginetwogram;
+				for(my $enca = 0; $enca < $#languagegramstore; $enca++){
+					my $encasub = $languagegramstore[$enca];
+					$translated_data =~ s/$encasub/ /ig;
+				}
+			}
+		}
+		my $engine5 = WWW::Translate::Apertium->new();		
+		$engine5->from_into(ca-en);		
+		$datatomod = $engine5->translate($translated_data);		
+		system('pause');		
+	}				
+	}
+=cut
+}
+else {
 	print "\nLanguage analysis completed.\n";
 	print "\nPassed second stage analysis.\n";
 }
@@ -826,6 +963,8 @@ if($languages{'en'} > 0.357){
 
 #The following is obsolete given that I'm taking out WebService::Prismatic::InterestGraph
 #Will implement new interation below code.
+
+
 
 #my @tagsplitstore;
 #for(my $s = 0; $s < $#tags; $s++){
@@ -864,7 +1003,7 @@ if($num_words > 500 and $num_words < 7000){
 	dump $summarizerEn->getSummaryUsingSumbasic(listOfText => [$datatomod]);
 	print $summarizerEn;
 	my $buffer = "";
-	my $size = length($textfile)*.45;
+	my $size = length($textfile)*.25;
 	my @sentence_list = map {$_->[0]} @{$summary->{idScore}};
 	my @sentence_content;
 	foreach my $tagged_sentence(@{$summary->{listOfStemmedTaggedSentences}}){
@@ -912,3 +1051,4 @@ close MODIFY;
 
 
 exit;
+
