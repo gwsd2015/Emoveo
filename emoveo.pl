@@ -125,7 +125,18 @@ my $words_per_sentence = $text->words_per_sentence;
 #this routine is used to capture words but I want to be able to capture words in large quantities such as 
 #of, which, the, to be able to remove from the text when searching for named entities
 
+=pod
+if($num_words > 25000){
 #splitting the program to perform based on the amount of words in a text
+#$splitthetext is used to store how much of the file to split
+	my $splitthetext = shift;
+#@filesplit is used to push the files in order to split (in this case, it's really just the input file);
+	my @filesplitstore = push $inputfile;
+	foreach (@filesplit){
+		
+	}
+}
+=cut
 
 my @commonwords;
 my @characterizingwords;
@@ -182,6 +193,162 @@ system('pause');
 print "File storing the unique words is now available at $wordlist \n";
 
 close WORD;
+
+#bigrams to sort
+print "Preparing to do bigram analysis...\n";
+open(BIGRAMCHK, '>'.$check) or die "Can't read $check.\n";
+my $bigramfile = "C:/Perl/bigram.txt";
+open(BIGRAM, '>'.$bigramfile) or die "Can't generate $bigramfile.\n";
+while(<BIGRAMCHK>){
+	tr/A-Z/a-z/;
+	tr/.,:;!&?"'(){}\-\ˆ\$\_\+\=\[\]\@\/\*\>\<//d;
+	s/ \^ //g;
+	s/\s+/ /g;
+	s/\t+//g;
+	s/\n+//g; 
+	my @bigrams = split (/\s/, $_);
+	my %frequencybigram;
+	for(my $bigramcheck = 0; $bigramcheck < $#bigrams; $bigramcheck++){
+		our $bigramelement = $bigrams[$bigramcheck].$bigrams[$bigramcheck+1];
+		$frequencybigram{$bigramelement}++;
+	}
+	foreach $bigramelement(sort keys %frequencybigram){
+		print BIGRAM "$frequencybigram{$bigramelement}\t$bigramelement\n";
+	}
+}
+
+close BIGRAMCHK;
+close BIGRAM;
+
+#trigrams to sort
+print "Preparing to do trigram analysis...\n";
+open(TRIGRAMCHK, '>'.$check) or die "Can't read $check.\n";
+my $trigramfile = "C:/Perl/trigram.txt";
+open(TRIGRAM, '>'.$trigramfile) or die "Can't generate $trigramfile.\n";
+while(<TRIGRAMCHK>){
+	tr/A-Z/a-z/;
+	tr/.,:;!&?"'(){}\-\ˆ\$\_\+\=\[\]\@\/\*\>\<//d;
+	s/ \^ //g;
+	s/\s+/ /g;
+	s/\t+//g;
+	s/\n+//g; 
+	my @trigrams = split (/\s/, $_);
+	my %frequencytrigram;
+	for(my $trigramcheck = 0; $trigramcheck < $#trigrams; $trigramcheck++){
+		our $trigramelement = $trigrams[$trigramcheck].$trigrams[$trigramcheck+1].$trigrams[$trigramcheck+2];
+		$frequencytrigram{$trigramelement}++;
+	}
+	foreach $trigramelement(sort keys %frequencytrigram){
+		print TRIGRAM "$frequencytrigram{$trigramelement}\t$trigramelement\n";
+	}
+}
+
+close TRIGRAMCHK;
+close TRIGRAM;
+
+#fourgrams to sort
+print "Preparing to do bigram analysis...\n";
+open(FOURGRAMCHK, '>'.$check) or die "Can't read $check.\n";
+my $fourgramfile = "C:/Perl/fourgram.txt";
+open(FOURGRAM, '>'.$fourgramfile) or die "Can't generate $fourgramfile.\n";
+while(<FOURGRAMCHK>){
+	tr/A-Z/a-z/;
+	tr/.,:;!&?"'(){}\-\ˆ\$\_\+\=\[\]\@\/\*\>\<//d;
+	s/ \^ //g;
+	s/\s+/ /g;
+	s/\t+//g;
+	s/\n+//g; 
+	my @fourgrams = split (/\s/, $_);
+	my %frequencyfourgram;
+	for(my $fourgramcheck = 0; $fourgramcheck < $#fourgrams; $fourgramcheck++){
+		our $fourgramelement = $fourgrams[$fourgramcheck].$fourgrams[$fourgramcheck+1].$fourgrams[$fourgramcheck+2].$fourgrams[$fourgramcheck+3];
+		$frequencyfourgram{$fourgramelement}++;
+	}
+	foreach $fourgramelement(sort keys %frequencyfourgram){
+		print FOURGRAM "$frequencyfourgram{$fourgramelement}\t$fourgramelement\n";
+	}
+}
+
+close FOURGRAMCHK;
+close FOURGRAM;
+
+#fivegrams to sort
+print "Preparing to do fivegram analysis...\n";
+open(FIVEGRAMCHK, '>'.$check) or die "Can't read $check.\n";
+my $fivegramfile = "C:/Perl/fivegram.txt";
+open(FIVEGRAM, '>'.$fivegramfile) or die "Can't generate $fivegramfile.\n";
+while(<FIVEGRAMCHK>){
+	tr/A-Z/a-z/;
+	tr/.,:;!&?"'(){}\-\ˆ\$\_\+\=\[\]\@\/\*\>\<//d;
+	s/ \^ //g;
+	s/\s+/ /g;
+	s/\t+//g;
+	s/\n+//g; 
+	my @fivegrams = split (/\s/, $_);
+	my %frequencyfivegram;
+	for(my $fivegramcheck = 0; $fivegramcheck < $#fivegrams; $fivegramcheck++){
+		our $fivegramelement = $fivegrams[$fivegramcheck].$fivegrams[$fivegramcheck+1].$fivegrams[$fivegramcheck+2].$fivegrams[$fivegramcheck+3].$fivegrams[$fivegramcheck+4];
+		$frequencyfivegram{$fivegramelement}++;
+	}
+	foreach $fivegramelement(sort keys %frequencyfivegram){
+		print FIVEGRAM "$frequencyfivegram{$fivegramelement}\t$fivegramelement\n";
+	}
+}
+
+close FIVEGRAMCHK;
+close FIVEGRAM;
+
+#sixgrams to sort
+print "Preparing to do fivegram analysis...\n";
+open(SIXGRAMCHK, '>'.$check) or die "Can't read $check.\n";
+my $sixgramfile = "C:/Perl/sixgram.txt";
+open(SIXGRAM, '>'.$sixgramfile) or die "Can't generate $sixgramfile.\n";
+while(<SIXGRAMCHK>){
+	tr/A-Z/a-z/;
+	tr/.,:;!&?"'(){}\-\ˆ\$\_\+\=\[\]\@\/\*\>\<//d;
+	s/ \^ //g;
+	s/\s+/ /g;
+	s/\t+//g;
+	s/\n+//g; 
+	my @sixgrams = split (/\s/, $_);
+	my %frequencysixgram;
+	for(my $sixgramcheck = 0; $sixgramcheck < $#sixgrams; $fsixgramcheck++){
+		our $sixgramelement = $sixgrams[$sixgramcheck].$sixgrams[$sixgramcheck+1].$sixgrams[$sixgramcheck+2].$sixgrams[$sixgramcheck+3].$sixgrams[$sixgramcheck+4].$sixgrams[$sixgramcheck+5];
+		$frequencysixgram{$sixgramelement}++;
+	}
+	foreach $sixgramelement(sort keys %frequencysixgram){
+		print SIXGRAM "$frequencysixgram{$sixgramelement}\t$sixgramelement\n";
+	}
+}
+
+close SIXGRAMCHK;
+close SIXGRAM;
+
+#sevengrams to sort
+print "Preparing to do sevengram analysis...\n";
+open(SEVENGRAMCHK, '>'.$check) or die "Can't read $check.\n";
+my $sevengramfile = "C:/Perl/sevengram.txt";
+open(SEVENGRAM, '>'.$sevengramfile) or die "Can't generate $sevengramfile.\n";
+while(<SEVENGRAMCHK>){
+	tr/A-Z/a-z/;
+	tr/.,:;!&?"'(){}\-\ˆ\$\_\+\=\[\]\@\/\*\>\<//d;
+	s/ \^ //g;
+	s/\s+/ /g;
+	s/\t+//g;
+	s/\n+//g; 
+	my @sevengrams = split (/\s/, $_);
+	my %frequencysevengram;
+	for(my $sevengramcheck = 0; $sevengramcheck < $#sevengrams; $sevengramcheck++){
+		our $sevengramelement = $sevengrams[$sevengramcheck].$sevengrams[$sevengramcheck+1].$sevengrams[$sevengramcheck+2].$sevengrams[$sevengramcheck+3].$sevengrams[$sevengramcheck+4].$sevengrams[$sevengramcheck+5].$sevengrams[$sevengramcheck+6];
+		$frequencysevengram{$sevengramelement}++;
+	}
+	foreach $sevengramelement(sort keys %frequencysevengram){
+		print SEVENGRAM "$frequencysevengram{$sevengramelement}\t$sevengramelement\n";
+	}
+}
+
+close SEVENGRAMCHK;
+close SEVENGRAM;
 
 my $splitstorage = "C:/Perl/splitfile.txt";
 open(SSTORE, '>'.$splitstorage) or die "Can't create file to store the subsections.\n";
