@@ -353,7 +353,7 @@ for(my $s = 0; $s < $#tags; $s++){
 push @tagsplitstore, @tags;
 for(my $t = 0; $t < $#tagsplitstore; $t++){
 	my $tagtorem = $tagsplitstore[$t];
-	$datatosub =~ s/\s$tagtorem\s/ /ig;
+	$datatomod =~ s/\s$tagtorem\s/ /ig;
 }
 system('pause');
 
@@ -470,5 +470,4 @@ close MODIFY;
 #might hint at important information to remove before declassification 
 
 exit;
-
 
