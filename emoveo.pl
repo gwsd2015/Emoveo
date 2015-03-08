@@ -176,6 +176,8 @@ use Date::Extract::Surprise;
 use Encode qw(decode encode);
 use WWW::Translate::Apertium;
 use Math::Random::Secure qw(rand);
+use Lingua::EN::Keywords qw(keywords);
+use Text::Context;
 
 #take topics from website and use it to clear document
 #topics of interest are common and searched for in a document
@@ -233,7 +235,7 @@ for(my $h = 0; $h < $#topicfromweblist; $h++){
 #take the input file from the user
 #file slurp and extract the text
 
-print "Make sure that the pdf is save as a txt file using the save as other function built into Adobe Reader.\n";
+print "Make sure that the pdf is saved as a txt file using the save as other function built into Adobe Reader.\n";
 print "Enter txt file location:\t";
 my $inputfile = <STDIN>;
 chomp $inputfile;
@@ -372,6 +374,8 @@ my $nnpex = 'C:\Perl\NNPextract.txt';
 open (NNP, ">:utf8",$nnpex) or die;
 my $propernoun = 'C:\Perl\propernoun.txt';
 open (PNOUN, ">:utf8",$propernoun) or die;
+my $nnpex_bigram = 'C:\Perl\NNPphraseextract.txt';
+open (NNPEX, ">:utf8", $nnpex_bigram);
 
 my $parsednnp = new Lingua::EN::Tagger;
 my $tagged_text = $parsednnp->add_tags($datatomod);
@@ -383,17 +387,29 @@ close TAGOUT;
 print PNOUN $proper_nouns;
 close PNOUN;
 
+my @taggedwordlist2;
+
 open(TAGOUT2, $taggedtextout) or die;
 while(<TAGOUT2>){
 	my @taggedwordlist = split /\s/;
 	while (my $tagword = pop @taggedwordlist){
-		if ($tagword =~ /\w\/NN(P)?/ig){
+		if ($tagword =~ /\w\/((NN(P|S)?S?)|(FW)|(JJ(R|S)))/ig){
 			print NNP $tagword."\n";
-			$tagword =~ s/\/NN(P)?/ /ig;
+			$tagword =~ s/\/((NN(P|S)?S?)|(FW)|(JJ(R|S)))/ /ig;
 			$datatomod =~ s/\b$tagword\b/ /ig;
-		}
+		} 
 	}
+#	for(my $tagz = 0; $tagz < $#taggedwordlist; $tagz++){
+#		my $taggertwo = $taggedwordlist[$tagz]." ".$taggedwordlist[$tagz+1];		
+#		if ($taggertwo =~ /\w\/NNP\s\w\/NNP/){
+#			print NNPEX $taggertwo."\n";
+#			push @taggedwordlist2, $taggertwo;
+#		}
+#	}
 }
+
+print @taggedwordlist2;
+system('pause');
 
 #open(PNOUN2, $propernoun) or die;
 #while(<PNOUN2>){
@@ -405,7 +421,7 @@ while(<TAGOUT2>){
 
 close TAGOUT2;
 close NNP;
-
+close NNPEX;
 
 #my $exitsign = "Time to exit!";
 #print "Traverse the file for targeted removal...\n";
@@ -434,6 +450,61 @@ close NNP;
 #		}
 #	}
 #}
+
+#quick and dirty method to find possible keywords, not very good
+
+my $texttext = $textfile;
+
+my @keywords = keywords($texttext);
+system('pause');
+for(my $iijk = 0; $iijk < $#keywords; $iijk++){
+	my $texter = $keywords[$iijk];
+	print $texter."\n";
+}
+system('pause');
+
+#my method of finding keywords;
+
+my @search_for_sentence;
+my @sentence_split_store;
+my @key_sentences;
+my $infocentricfile = "C:/Perl/liners.txt";
+open(INFO, ">:utf8", $infocentricfile) or die;
+while(<INFO>){
+	@search_for_sentence = split(/\n/, $_);
+}
+my $datatomodstore = $datatomod;
+@sentence_split_store = split(/\./, $datatomodstore);
+for(my $eji = 0; $eji < $#sentence_split_store; $eji++){
+	my $sentence_now = $sentence_split_store[$eji];
+	for(my $ejik = 0; $ejik < $#search_for_sentence; $ejik++){
+		my $indicator = $search_for_sentence[$ejik];
+		if($sentence_now =~ /$indicator/g){
+			push @key_sentences, $sentence_now;
+			$ejik = $#search_for_sentence;
+		}
+	}
+}
+close INFO;
+
+my $keysentencefile = "C:/Perl/keysentences.txt";
+open(KEYSEN, ">:utf8", $keysentencefile);
+for(my $ejikl = 0; $ejikl < $#key_sentences; $ejikl++){
+	my $sentence_to_print = $key_sentences[$ejikl];
+	print KEYSEN $sentence_to_print."\n";
+}
+close KEYSEN;
+
+#currently problem with file reading but... will figure out how to fix it
+
+my $keyfileimport = read_file($keysentencefile);
+my @keywords2 = keywords($keyfileimport);
+system('pause');
+for(my $is = 0; $is < $#keywords2; $is++){
+	my $primer = $keywords2[$is];
+	print $primer."\n";
+}
+system('pause');
 
 
 #error resolved
@@ -685,7 +756,9 @@ close SSTORE;
 #more sense to reduce the overall space I have to search so 
 #Text::Summarize::En would work best in this part
 
-my $modify = "C:/Perl/removal.txt";
+my $inputfilemod = $inputfile;
+my $modify = $inputfile."redacted.txt";
+#my $modify = "C:/Perl/removal.txt";
 print "Beginning to remove uniquely identifying material in text.\n";
 print "Output will be located in $modify \n";
 print "This process can take a lot of time and memory... please be patient.\n";
@@ -1051,4 +1124,3 @@ close MODIFY;
 
 
 exit;
-
