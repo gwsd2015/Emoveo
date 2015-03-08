@@ -50,7 +50,7 @@ use Locale::Language;
 use Lingua::NegEx;
 use Text::Identify::BoilerPlate;
 use Text::IdMor;
-use WebService::Prismatic::InterestGraph;
+#use WebService::Prismatic::InterestGraph;
 use Lingua::EN::NameParse;
 use Lingua::EN::Titlecase;
 use Lingua::Norms::SUBTLEX;
@@ -58,12 +58,70 @@ use Lingua::Norms::SUBTLEX;
 use Lingua::Concordance;
 use Lingua::EN::Ngram;
 use Lingua::Orthon;
-use WWW::Babelfish;
-use WWW::Translate::Apertium;
-use Speech::Google::TTS;
+#These translation modules below aren't working as I intend or aren't working as I want them to.
+#Translating things using babelfish seem to not be working 
+#don't know if obscuring is necessary, will save for a later day to work on.
+#use WWW::Babelfish;
+#use WWW::Translate::Apertium;
+#use Speech::Google::TTS;
+#use the random secure to generate between 0..1 to random select a language to translate back and forth
+#use Math::Random::Secure qw(rand);
 #module below did not install properly
 #update: I believe it is only installable on Linux
 #use Lingua::Identify::CLD;
+
+#take topics from website and use it to clear document
+#topics of interest are common and searched for in a document
+#to take them out allows us to remove prediction power in later stages
+#this will be paired with the N-grams and my word frequency identifier
+#to increase the chances of taking out the right words
+
+my $topicfile = "C:/Perl/topicsfile.txt";
+open(TOPIC, '>'. $topicfile) or die "Can't generate $topicfile from HTML::TreeBuilder and HTML::FormatText\n";
+print "Checking online database...\n";
+system('pause');
+my $topicurl = get("http://interest-graph.getprismatic.com/topic/all/human");
+my $Format = HTML::FormatText->new();
+my $TreeBuilder = HTML::TreeBuilder->new();
+$TreeBuilder->parse($topicurl);
+my $topicstorage = $Format->format($TreeBuilder);
+print TOPIC $topicstorage;
+print "Data created in $topicfile. Extraction from database success.\n";
+close TOPIC;
+my $topicdata = read_file($topicfile);
+$topicdata =~ s/   Complete list of topics.//ig;
+$topicdata =~ s/   If you're looking for something specific, please use the topic search//ig;
+$topicdata =~ s/   to increase the chances you find what you're looking for.//ig;
+$topicdata =~ s/\bid\b//ig;
+$topicdata =~ s/\btopic\b//ig;
+$topicdata =~ s/[0-9]{1,6}\n//ig;
+$topicdata =~ s/(\s|\t|\n){2,}}//g;
+$topicdata =~ s/(\(|\)|\,)//g;
+my $substitutioncheck = "C:/Perl/topicsfilesub.txt";
+open(TSUB, '>'. $substitutioncheck) or die "Can't create $substitutioncheck.\n";
+print TSUB $topicdata;
+close TSUB;
+print "Please check $substitutioncheck to see if topic list was created successfully.\n";
+system('pause');
+my @topicfromweblist = split(/\n/, $topicdata);
+print @topicfromweblist;
+system('pause');
+my @topicthreebelow;
+my @topicfourtofive;
+my @topicsixup;
+for(my $h = 0; $h < $#topicfromweblist; $h++){
+	my $topicer = $topicfromweblist[$h];
+	my $counter = $topicer =~ s/((^|\s)\S)/$1/g;
+	if($counter <= 3){
+		push @topicthreebelow, $topicer;
+	}
+	elsif($counter > 3 and $counter < 6){
+		push @topicfourtofive, $topicer;
+	}
+	elsif($counter >= 6){
+		push @topicsixup, $topicer;
+	}
+}
 
 #take the input file from the user
 #file slurp and extract the text
@@ -73,9 +131,9 @@ print "Enter txt file location:\t";
 my $inputfile = <STDIN>;
 chop $inputfile;
 print "Input file, $inputfile, read.\n";
-print "Enter a title for the txt file:\t";
-my $title = <STDIN>;
-chomp $title;
+#print "Enter a title for the txt file:\t";
+#my $title = <STDIN>;
+#chomp $title;
 my $textfile = read_file($inputfile);
 print "$textfile\n\n";
 
@@ -97,18 +155,23 @@ close CHK;
 #maybe I just have to curl it
 #curl -H "X-API-TOKEN: <API-TOKEN>" 'http://interest-graph.getprismatic.com/url/topic' --data 'url=http%3A%2F%2Fen.wikipedia.org%2Fwiki%2FMachine_learning'
 
-print "\n\nNow generating potential tags for the following document...\n";
-my $key = "MTQyNDQ0MjY1NzU5MA.cHJvZA.anduaW5nbGlAZ3d1LmVkdQ.Yv0MSCbxZK1l3k-6J-vlkTQsywA";
-my $ig = WebService::Prismatic::InterestGraph->new(api_token => $key);
-my @tags = $ig->tag_text($textfile, $title);
-for(my $a = 0; $a < $#tags; $a++){
-	print $tags[$a]."\n";
-}
-foreach my $tag(@tags){
-	print "\n", $tag->topic, "\t", $tag->score;
-}
-print "\n\n";
-system('pause');
+#WebService::Prismatic::InterestGraph has a limit to 20 calls per hour so I'm implementing my own
+#version of tagging above. What I'm doing is just pulling the tags directly from their website and
+#performing my own analysis of it instead of relying on them to give me the tags. Most of the time,
+#my algorithms end up removing the tagged subject anyway.
+
+#print "\n\nNow generating potential tags for the following document...\n";
+#my $key = "MTQyNDQ0MjY1NzU5MA.cHJvZA.anduaW5nbGlAZ3d1LmVkdQ.Yv0MSCbxZK1l3k-6J-vlkTQsywA";
+#my $ig = WebService::Prismatic::InterestGraph->new(api_token => $key);
+#my @tags = $ig->tag_text($textfile, $title);
+#for(my $a = 0; $a < $#tags; $a++){
+#	print $tags[$a]."\n";
+#}
+#foreach my $tag(@tags){
+#	print "\n", $tag->topic, "\t", $tag->score;
+#}
+#print "\n\n";
+#system('pause');
 
 print "Preparing to do initial analysis of the readability of the text file...\n\n\n";
 my $analysisfile = "C:/Perl/analysis.txt";
@@ -166,6 +229,11 @@ system('pause');
 
 close ASYS;
 
+#my $translatedfile = "C:/Perl/translatedfile.txt;
+#open(TRANSLATE, '>'. $translatedfile) or die "Can't create $translatedfile\n";
+#my $float = rand();
+#close TRANSLATE;
+
 print "List of words that don't contribute to meaning: \n";
 #print @commonwords;
 for(my $i = 0; $i < $#commonwords; $i++){
@@ -188,6 +256,17 @@ print "File storing the unique words is now available at $wordlist \n";
 
 close WORD;
 
+my $datatomod = $textfile;
+
+#error ends program with unmatched regex
+
+my @twoset;
+my @threeset;
+my @fourset;
+my @fiveset;
+my @sixset;
+my @sevenset;
+
 my $twogramfile = "C:/Perl/2gram.txt";
 open(TWOGRAM, '>'.$twogramfile) or die "Can't create file to store 2grams.\n";
 #bigrams to sevengrams to sort
@@ -195,6 +274,9 @@ my $ngram = Lingua::EN::Ngram->new(file => $check);
 my $bigrams = $ngram->ngram(2);
 foreach my $bigram(sort {$$bigrams{my $b} <=> $$bigrams{my $a}} keys %$bigrams){
 	print TWOGRAM $$bigrams{$bigram}, "\t$bigram\n";
+	if(($$bigrams{$bigram})/$num_chars > 0.0005){
+		push @twoset, $bigram;
+	}
 }
 print "Bigrams created...\n";
 close TWOGRAM;
@@ -204,6 +286,9 @@ open(THREEGRAM, '>'.$threegramfile) or die "Can't create file to store 3grams.\n
 my $trigrams = $ngram->ngram(3);
 foreach my $trigram(sort {$$trigrams{my $b} <=> $$trigrams{my $a}} keys %$trigrams){
 	print THREEGRAM $$trigrams{$trigram}, "\t$trigram\n";
+	if($$trigrams{$trigram} > 1){
+		push @threeset, $trigram;
+	}
 }
 print "Trigrams created...\n";
 close THREEGRAM;
@@ -213,6 +298,9 @@ open(FOURGRAM, '>'.$fourgramfile) or die "Can't create file to store 4grams.\n";
 my $fourgrams = $ngram->ngram(4);
 foreach my $fourgram(sort {$$fourgrams{my $b} <=> $$fourgrams{my $a}} keys %$fourgrams){
 	print FOURGRAM $$fourgrams{$fourgram}, "\t$fourgram\n";
+	if($$fourgrams{$fourgram} > 1){
+		push @fourset, $fourgram;
+	}
 }
 print "Fourgrams created...\n";
 close FOURGRAM;
@@ -222,6 +310,9 @@ open(FIVEGRAM, '>'.$fivegramfile) or die "Can't create file to store 5grams.\n";
 my $fivegrams = $ngram->ngram(5);
 foreach my $fivegram(sort {$$fivegrams{my $b} <=> $$fivegrams{my $a}} keys %$fivegrams){
 	print FIVEGRAM $$fivegrams{$fivegram}, "\t$fivegram\n";
+	if($$fivegrams{$fivegram} > 1){
+		push @fiveset, $fivegram;
+	}
 }
 print "Fivegrams created...\n";
 close FIVEGRAM;
@@ -231,6 +322,9 @@ open(SIXGRAM, '>'.$sixgramfile) or die "Can't create file to store 6grams.\n";
 my $sixgrams = $ngram->ngram(6);
 foreach my $sixgram(sort {$$sixgrams{my $b} <=> $$sixgrams{my $a}} keys %$sixgrams){
 	print SIXGRAM $$sixgrams{$sixgram}, "\t$sixgram\n";
+	if($$sixgrams{$sixgram} > 1){
+		push @sixset, $sixgram;
+	}
 }
 print "Sixgrams created...\n";
 close SIXGRAM;
@@ -240,12 +334,16 @@ open(SEVENGRAM, '>'.$sevengramfile) or die "Can't create file to store 7grams.\n
 my $sevengrams = $ngram->ngram(7);
 foreach my $sevengram(sort {$$sevengrams{my $b} <=> $$sevengrams{my $a}} keys %$sevengrams){
 	print SEVENGRAM $$sevengrams{$sevengram}, "\t$sevengram\n";
+	if($$sevengrams{$sevengram} > 1){
+		push @sevenset, $sevengram;
+	}
 }
 print "Sevengrams created...\n";
 close SEVENGRAM;
 system('pause');
 
-
+#no idea what I'm going to use this for yet. 
+#The splitting is terrible and I still have to fix it.
 my $splitstorage = "C:/Perl/splitfile.txt";
 open(SSTORE, '>'.$splitstorage) or die "Can't create file to store the subsections.\n";
 print "File $splitstorage created to prepare for spliting the file's subsections.\n";
@@ -276,7 +374,48 @@ print "Beginning to remove uniquely identifying material in text.\n";
 print "Output will be located in $modify \n";
 print "This process can take a lot of time and memory... please be patient.\n";
 
-my $datatomod = $textfile;
+#for(my $bb = 0; $bb < $#twoset; $bb++){
+#	my $two = $twoset[$bb];
+#	if($datatomod =~ /$two/){
+#	$datatomod =~ s/\b$two\b//g;
+#	}
+#}
+#for(my $cc = 0; $cc < $#threeset; $cc++){
+#	my $three = $threeset[$cc];
+#	if($datatomod =~ /$three/){
+#	$datatomod =~ s/\b$three\b//g;
+#	}
+#}
+#for(my $dd = 0; $dd < $#fourset; $dd++){
+#	my $four = $fourset[$dd];
+#	if($datatomod =~ /$four/){
+#	$datatomod =~ s/\b$four\b//g;
+#	}
+#}
+#for(my $ee = 0; $ee < $#fiveset; $ee++){
+#	my $five = $fiveset[$ee];
+#	if($datatomod =~ /$five/){
+#	$datatomod =~ s/\b$five\b//g;
+#	}
+#}
+#for(my $ff = 0; $ff < $#sixset; $ff++){
+#	my $six = $sixset[$ff];
+#	if($datatomod =~ /$six/){
+#	$datatomod =~ s/\b$six\b//g;
+#	}
+#}
+#for(my $gg = 0; $gg < $#sevenset; $gg++){
+#	my $seven = $sevenset[$gg];
+#	if($datatomod =~ /$seven/){
+#	$datatomod =~ s/\b$seven\b//g;
+#	}
+#}
+
+for(my $zz = 0; $zz < $#topicfromweblist; $zz++){
+	my $searchtop = $topicfromweblist[$zz];
+	$datatomod =~ s/$searchtop/ /ig;
+}
+
 $datatomod =~ s/restricted/ /ig;
 $datatomod =~ s/confidential/ /ig;
 $datatomod =~ s/top secret/ /ig;
@@ -403,22 +542,25 @@ if($languages{'en'} > 0.357){
 #print "\nLanguage analysis completed. Please review the data before continuing.\n";
 #system('pause');
 
-my @tagsplitstore;
-for(my $s = 0; $s < $#tags; $s++){
-	my $tagsub = $tags[$s];
-	$tagsub =~ tr/.,:;!&?"'(){}\-\$\+\=\{\}\@\/\*\>\<//d;
-	$tagsub =~ s/\sand\s/ /ig;
-	$tagsub =~ s/\sthe\s/ /ig;
-	$tagsub =~ s/\s{2,}/ /g;
-	my @tagadd = split(/\s/, $_);
-	push @tagsplitstore, @tagadd;
-}
-push @tagsplitstore, @tags;
-for(my $t = 0; $t < $#tagsplitstore; $t++){
-	my $tagtorem = $tagsplitstore[$t];
-	$datatomod =~ s/\s$tagtorem\s/ /ig;
-}
-system('pause');
+#The following is obsolete given that I'm taking out WebService::Prismatic::InterestGraph
+#Will implement new interation below code.
+
+#my @tagsplitstore;
+#for(my $s = 0; $s < $#tags; $s++){
+#	my $tagsub = $tags[$s];
+#	$tagsub =~ tr/.,:;!&?"'(){}\-\$\+\=\{\}\@\/\*\>\<//d;
+#	$tagsub =~ s/\sand\s/ /ig;
+#	$tagsub =~ s/\sthe\s/ /ig;
+#	$tagsub =~ s/\s{2,}/ /g;
+#	my @tagadd = split(/\s/, $_);
+#	push @tagsplitstore, @tagadd;
+#}
+#push @tagsplitstore, @tags;
+#for(my $t = 0; $t < $#tagsplitstore; $t++){
+#	my $tagtorem = $tagsplitstore[$t];
+#	$datatomod =~ s/\s$tagtorem\s/ /ig;
+#}
+#system('pause');
 
 print MODIFY $datatomod."\n============================\n";
 
@@ -541,4 +683,3 @@ for my $problem (@cautions_or_errors){
 #might hint at important information to remove before declassification 
 
 exit;
-
