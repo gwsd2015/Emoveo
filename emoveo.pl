@@ -1,543 +1,474 @@
+#I haven't subroutined my stuff yet, trying to write everything out and figure how things
+#are cutting depending on the size of the program.
+
+#purpose of the program
+
+#ISO27k Guideline on Information Asset Valuation 
+
+#Information wherever it is handled or stored (e.g., in computers, file cabinets,
+#desktops, fax machines, Xerox, printer, verbal communication etc.) needs to be
+#suitably and appropriately protected from unauthorized access, modification,
+#disclosure, and destruction. All information will not be accorded with the same
+#importance. Consequently, classification of information into categories is necessary
+#to help identify a framework for evaluating the informationâ€™s relative value and the
+#appropriate controls required to preserve its value to the organization.
+#To achieve this purpose, upon creation of the information (whether in a computer
+#system, memo in a file cabinet etc.), the creator/owner of that information
+#(generally the information asset owner) is responsible for classification. Further, the
+#owner of information asset is responsible to review the classification of information at
+#least annually.
+#The analysis is to be done by Business Process Owner i.e. process / function head.
+
+#three major class of information
+# 1. Confidential
+# 2. Internal Use Only
+# 3. Public
+
 use strict;
 use warnings;
-use utf8;
-use Search::VectorSpace;
-use PDL;
+use Lingua::EN::StopWords qw(%StopWords);
+use Lingua::Stem::En;
 use Text::Summarize::En;
 use Data::Dump qw(dump);
-use Algorithm::MarkovChain;
 use Path::Class;
 use Lingua::EN::Fathom;
-use Lingua::Stem;
+use utf8;
+use File::Slurp qw(read_file write_file);
+use Parse::RecDescent;
+use Lingua::Identify qw(langof);
+use Text::Levenshtein::XS qw(distance);
+use Text::Soundex;
+use Search::VectorSpace;
 use PDL;
-use Plucene;
-use Algorithm::NaiveBayes;
+use Regexp::Common;
+use POSIX qw(strftime);
+use LWP::Simple;
+use HTML::TreeBuilder;
+use HTML::FormatText;
+use Locale::Country;
+use Locale::Language;
+use Lingua::NegEx;
+use Text::Identify::BoilerPlate;
+use Text::IdMor;
+use WebService::Prismatic::InterestGraph;
+use Lingua::EN::NameParse;
+use Lingua::EN::Titlecase;
+use Lingua::Norms::SUBTLEX;
+#module below did not install properly
+#update: I believe it is only installable on Linux
+#use Lingua::Identify::CLD;
 
-#the build currently only works in Linux, need a dict to build on Windows
-#use Lingua::EN::NamedEntity;
+#take the input file from the user
+#file slurp and extract the text
 
+print "Make sure that the pdf is save as a txt file using the save as other function built into Adobe Reader.\n";
+print "Enter txt file location:\t";
+my $inputfile = <STDIN>;
+chop $inputfile;
+print "Input file, $inputfile, read.\n";
+print "Enter a title for the txt file:\t";
+my $title = <STDIN>;
+chomp $title;
+my $textfile = read_file($inputfile);
+print "$textfile\n\n";
 
-#use Inline::C;
-#use Inline::Python;
-#use Inline::Java;
-#use Inline::Ruby;
-#use GATE::ANNIE::Simple;
- 
+#create regex in order to search subsections of that text
+#I think I want to define subsections as /\w{1,50}\n/ or similar pattern
+#in order to get that to work I might have to add the roman numerals
+#and the numbered system.
 
-#next step is to actually implement the PDF::API2, really useful as it can extract information from the PDF even
-#if we haven't ocr'd yet. The vector space algorithm allows me to potentially place weight so giving a bit more
-#weight potentially given by PDF API2 and Lingua::EN::NamedEntity / GATE::ANNIE::Simple
-use PDF::API2;
+#building some of these file to check that I properly completed steps.
+my $check = "C:/Perl/checkfile.txt";
+open(CHK, '>'.$check) or die "Can't generate $check\n";
+print "File $check generated.\n";
+print CHK "$textfile";
+close CHK;
 
+#My API key is not working or reading for some reason. I go onto the website
+#with my API key and it seems to be able to process and generate the text for
+#me just fine.
+#maybe I just have to curl it
+#curl -H "X-API-TOKEN: <API-TOKEN>" 'http://interest-graph.getprismatic.com/url/topic' --data 'url=http%3A%2F%2Fen.wikipedia.org%2Fwiki%2FMachine_learning'
 
-#implementation of Text SenseClusters is a latent semantic analysis, but not sure how useful it will be
-#most of the weight is going to be placed on Vector Space Searching algorithm, however, it might be useful
-#to identify decoument connections, but that doesn't really have anything to do. Originally had a plan to use
-#this for something but can't remember at the moment
-
-use Text::SenseClusters;
-
-
-
-#$input will be the document to be examined
-#my $input = 
-#open(	INPUT,	$input	) or die;
-
-
-#$output will be the summarized document
-#summarization will be important as a measure of reduction in the file
-#summarization will be used by taking a paragraph from the original document and comparing it to
-#the output documents for a comparison of size reduction
-#compare will be a subroutine
-
-#my $output = 
-#open(	OUTPUT,		'>'.$output	) or die;
-
-
-#$output2 will be a file I use to store my initial split
-#my $output2 = 
-#open(	OUTPUT2,	'>.$output2	) or die;
-
-#$output3 is currently a word masher with the MarkovChain
-#my $output3 = 
-#open(	OUTPUT3,	'>'.$output3	) or die;
-
-#$output4 will be the output of NaiveBayes
-#my output4 = 
-#open(	OUTPUT4,	'>'.$output4	) or die;
-
-my @docs = get_docs;
-
-
-while(	<INPUT>	){
-
-	tr/A-Z/a-z/;
-	
-	tr/.,:;!&?"'(){}\-\$\+\=\{\}\@\/\*\>\<//d;
-	
-	s/[0-9]//g;
-
-	my @paragraph = split(/\n/, $_);
-
-	print OUTPUT2 "$_" for paragraph;
-
-	foreach my $para(	@paragraph	){
-
-	my $Parsed = $para;
-	
-	my $summary = $summarizerEn->getSummaryUsingSumbasic(	listOfText => [$Parsed]	);
-		
-	dump $summarizerEn->getSummaryUsingSumbasic(listOfText => [$Parsed]);
-	
-	print $summarizerEn;
-	
-	my $buffer = "";
-		
-	my $size = (length($Parsed))*0.45;
-	
-	my @sentence_list = map { $_->[0] } @{$summary->{idScore}};
-		
-	my @sentence_content;
-		
-	foreach my $tagged_sentence ( @{$summary->{listOfStemmedTaggedSentences}} ) {
-    
-		my @t;
-    
-		foreach my $element ( @{ $tagged_sentence } ) {
-       
-			my $Parsed = @$element[1];
-       			
-			#issue 2
-			# remove tabs and single new lines
-        
-			$Parsed =~ s/\t/ /;
-        
-			$Parsed =~ s/\n/ /;
-			
-			#, seems to work well for non-technical texts
-	
-			$Parsed =~ s/\s{2,}/ /;
-        		
-			push @t, $Parsed;
-    		}
-	
-		#important to note here that this method uses /r in substitution so that original text files taken in $text
-	
-		#aren't substituted, rather a copy is made then the copy is placed in the substitution.
-    		
-		push @sentence_content, (join "", map { s/ +/ /gr } @t);
-
-	
-	}		
-	
-
-	#while loop adds sentences joined in @sentence_content from the join "", map @t to the buffer until it is below the size
-	#limit
-
-	while ( length($buffer) < $size ) {
-
-	$buffer .= join "\n", $sentence_content[(shift @sentence_list)];
-	
-	}	
-	
-	print OUTPUT $buffer."\n\n";	
-	
+print "\n\nNow generating potential tags for the following document...\n";
+my $key = "MTQyNDQ0MjY1NzU5MA.cHJvZA.anduaW5nbGlAZ3d1LmVkdQ.Yv0MSCbxZK1l3k-6J-vlkTQsywA";
+my $ig = WebService::Prismatic::InterestGraph->new(api_token => $key);
+my @tags = $ig->tag_text($textfile, $title);
+for(my $a = 0; $a < $#tags; $a++){
+	print $tags[$a]."\n";
 }
-
-
-
+foreach my $tag(@tags){
+	print "\n", $tag->topic, $tag->score;
 }
+print "\n\n";
+system('pause');
 
+print "Preparing to do initial analysis of the readability of the text file...\n\n\n";
+my $analysisfile = "C:/Perl/analysis.txt";
+open (ASYS, '>'.$analysisfile) or die "Can't create file to store initial analysis.\n";
 
-print "Enter the topic for generation: ";
+my $text = new Lingua::EN::Fathom;
+$text->analyse_file($inputfile);
+my $accumulate = 1;
+$text->analyse_block(my $text_string,$accumulate);
 
-my $getuserinput = <STDIN>;
+my $num_chars = $text->num_chars;
+my $num_words = $text->num_words;
+my $percent_complex_words = $text->percent_complex_words;
+my $num_sentences = $text->num_sentences;
+my $num_text_lines = $text->num_text_lines;
+my $num_blank_lines = $text->num_blank_lines;
+my $num_paragraphs = $text->num_paragraphs;
+my $syllables_per_word = $text->syllables_per_word;
+my $words_per_sentence = $text->words_per_sentence;
 
-chomp $getuserinput;
+#this routine is used to capture words but I want to be able to capture words in large quantities such as 
+#of, which, the, to be able to remove from the text when searching for named entities
 
-my @inputs = @docs; 
+#splitting the program to perform based on the amount of words in a text
 
-my $dir = dir(".");
+my @commonwords;
+my @characterizingwords;
 
-my $f = "";
-
-my @symbols = ();
-    
-foreach $f (@inputs) {
-        
-	my $file = $dir->file($f);
-    	
-	my $linecounter = 0;
-       
-	my $wordcounter = 0;
-        
-	my $file_handle = $file->openr();
-        
-	while(	my $line = $file_handle->getline()	)	{
-    		
-		chomp ($line);
-    		
-		my @words = split(' ', $line);
-            
-		push(	@symbols,	@words);
-    		
-		$linecounter++;
-    		
-		$wordcounter += scalar(	@words	);
-        }
-
-    	print "$linecounter lines, $wordcounter words read from $f\n";
-
-    }
-   
-my $chain = Algorithm::MarkovChain::->new();
-
-$chain->seed(symbols => \@symbols, longest => 6);
-    
-foreach (1 .. 20) {
-        
-	my @newness = $chain->spew(length   => 100,
-                                   complete => [ $getuserinput ]);
-	
-	print @newness;
-	
-	print "\n\nWould you like to keep this? \t\t";
-	
-	my $yesno = <STDIN>;
-	
-	chomp $yesno;
-	
-	if($yesno =~ /[Yy][Ee][Ss]\n?/){
-        
-		print OUTPUT3 join (" ", @newness), ".\n\n";
-	
-		while (<OUTPUT3>){
-	
-			s/\]/ /g;
-	
-			s/\[/ /g;
-	
+my %words = $text->unique_words;
+foreach my $word(sort keys %words){
+	print ASYS ("$words{$word} :$word\n");
+	if($num_words >= 500){
+		if ($words{$word}/$num_words > 0.002){
+			push @commonwords, $word;
+		}
+		elsif ($words{$word} < 11){
+			push @characterizingwords, $word;
+		}
+	}
+	else{
+		if ($words{$word}/$num_words > 0.06){
+			push @commonwords, $word;
+		}
+		elsif ($words{$word} < 4){
+			push @characterizingwords, $word;
 		}
 	}
 }
 
-our %stop_hash;
+my $fog     = $text->fog;
+my $flesch  = $text->flesch;
+my $kincaid = $text->kincaid;
 
+print($text->report);
+print "\n\n";
+system('pause');
 
-#default standard given by http://www.perl.com/pub/2003/02/19/engine.html to try
+close ASYS;
 
-our @stop_words = qw/a able about across after all almost also am among an and any are as at be because been but by can cannot could dear did do does either else ever every for from get got had has have he her hers him his how however i if in into is it its just least let like likely may me might most must my neither no nor not of off often on only or other our own rather said say says she should since so some than that the their them then there these they this tis to too twas us wants was we were what when where which while who whom why will with would yet you your/;
+print "List of words that don't contribute to meaning: \n";
+#print @commonwords;
+for(my $i = 0; $i < $#commonwords; $i++){
+	print $commonwords[$i]."\n";
+}
+system('pause');
 
-foreach @stop_words	{	$stop_hash{$_}++};
+my $wordlist = "C:/Perl/wordlist.txt";
+open(WORD, '>'.$wordlist) or die "Can't create file to store wordlist.\n";
 
+print "List of words that make this document unique: \n";
+#print @characterizingwords;
+for(my $j = 0; $j < $#characterizingwords; $j++){
+	print $characterizingwords[$j]."\n";
+	print WORD $characterizingwords[$j]."\n";
+}
+system('pause');
 
-#print the stop words w/ count of how many words
+print "File storing the unique words is now available at $wordlist \n";
 
-#get back to this later...
+close WORD;
 
-print "Your stop words are ... [#][stop word -new line-]";
+my $splitstorage = "C:/Perl/splitfile.txt";
+open(SSTORE, '>'.$splitstorage) or die "Can't create file to store the subsections.\n";
+print "File $splitstorage created to prepare for spliting the file's subsections.\n";
 
+print "Beginning to split file's subsections.\n";
+open(SPLIT, $check) or die "Unable to split the file's subsections.\n";
+while(<SPLIT>){
+	tr/A-Z/a-z/;
+	tr/.,:;!&?"'(){}\-\$\+\=\{\}\@\/\*\>\<//d;
+	my @subsections = split(/^(\d|\w){1,10}\n/, $_);
+	print SSTORE "$_\n" for @subsections;
+}
 
-#we need to map the list of content words into a vector of v map to dimension-(# of content words)
-#solution for very slow loop is PDL
+close SSTORE;
 
-#my $num_words = "last count of stop word";
+#the removal would just be removal of text between selected subsection
+#and next subsection
 
-#default number I will use is 10;
+#feature to add a 0.20 summary of the subsection before removal would
+#be important
 
-my $num_words = 10;
+#nextly, in order to remove sensitive material, I think that it would make
+#more sense to reduce the overall space I have to search so 
+#Text::Summarize::En would work best in this part
 
-my $vec = zeroes $num_words;
+my $modify = "C:/Perl/removal.txt";
+print "Beginning to remove uniquely identifying material in text.\n";
+print "Output will be located in $modify \n";
+print "This process can take a lot of time and memory... please be patient.\n";
 
-print $vec;
+my $datatomod = $textfile;
+$datatomod =~ s/restricted/ /ig;
+$datatomod =~ s/confidential/ /ig;
+$datatomod =~ s/top secret/ /ig;
+$datatomod =~ s/secret/ /ig;
+$datatomod =~ s/unclassified/ /ig;
+for(my $k = 0; $k < $#characterizingwords; $k++){
+	my $wordtomod = $characterizingwords[$k];
+	$datatomod =~ s/\s$wordtomod\s/ /ig;
+}
 
+print "Removal completed...\n";
+print "Printing to $modify...\n";
+open(MODIFY, '>'.$modify) or die "Can't open $modify.\n";
 
-my $value = 3;
+print "Searching document for generic time indicators.\n";
+my @months = qw/january february march april may june july august september october november december/;
+my @week = qw/monday tuesday wednesday thursday friday saturday sunday/;
+for(my $l = 0; $l < $#months; $l++){
+	my $monthtime = $months[$l];
+	$datatomod =~ s/[0-9]{1,2}(\s)?$monthtime/ /ig;
+	$datatomod =~ s/$monthtime(\s)?[0-9]{1,2}(\s|\,)?/ /ig;
+	$datatomod =~ s/[0-9]{2}\// /g;
+}
+for(my $m = 0; $m < $#week; $m++){
+	my $weektime = $week[$m];
+	$datatomod =~ s/$weektime\s/ /ig;
+}
+print "Task completed.\n";
+system('pause');
 
-my $offset = 4;
+print "\nMonth, days, and weekdays are removed. Would you like the year to be removed?\t";
+my $timeyearyesno = <STDIN>;
+chomp $timeyearyesno;
+if($timeyearyesno =~ /[Yy][Ee][Ss]/){
+	$datatomod =~ s/[0-9]{4}/ /g;
+	print "Task completed.\n";
+}
+else{
+	system('pause');
+}
 
-index(	$vec,	$offset	) .= $value;
-
-print $vec; 
-
-
-#a little different than the example given on http://search.cpan.org/~mceglows/Search-VectorSpace-0.02/VectorSpace.pm
-
-
-my $engine = Search::VectorSpace -> new(	docs =>	\@docs	);
-
-$engine->build_index();
-
-$engine->set_threshold(	0.8	);
-
-while(	my $query = <>	){
-
-	my %results = $engine->search(	$query	);
-
-	foreach my $result(	sort	{	$result{$b}	<=>	$result{$a}	}	
-				keys	%results	)	{
-
-		print "Relevance: ", $results{$result}, "\n";
-
-		print $result, "\n";
-
+my @suffixhourcounter = qw/first second third fourth fifth sixth seventh eigth ninth tenth eleventh twelfth/;
+print "\nWould you like to remove specific times such as 24:00?\t";
+my $timeclockyesno = <STDIN>;
+chomp $timeclockyesno;
+if($timeclockyesno =~ /[Yy][Ee][Ss]/){
+	$datatomod =~ s/\s[0-9]{1,2}:[0-9]{2}\s/ /g;
+	$datatomod =~ s/\s[0-9]{1,2}\so\'clock/ /ig;
+	for(my $n = 0; $n < $#suffixhourcounter; $n++){
+		my $timehour = $suffixhourcounter[$n];
+		$datatomod =~ s/$timehour\shour/ /ig;
 	}
-	
-
-
+	print "Task completed.\n";
+}
+else{
+	system('pause');
 }
 
-
-#Plucene, a perl version of Lucene, a query based search engine
-#haven't figured out how to build the query yet, I think I'm going to take the subroutine get_words and use that for my query
-
-my $doc = Plucene::Document->new;
-$doc->add(	Plucene::Document::Field->Text(	content => $content	)	);
-$doc->add(	Plucene::Document::Field->Text(	author => "Your Name"	)	);
-
-
-my $analyzer = Plucene::Analysis::SimpleAnalyzer->new();
-my $writer = Plucene::Index::Writer->new(	"my_index",	$analyzer,	1	);
-$writer->add_document(	$doc	);
-undef $writer;
-
-my $parser = Plucene::QueryParser->new(	{
-	
-	analyzer => Plucene::Analysis::SimpleAnalyzer->new(),
-	
-	#need to figure out a general default for all documents, will probably use a named entity comparison between all modules to figure out common themes
-
-	default => "default query material" 		
-
-}	);
-
-
-my $searcher = Plucene::Search::IndexSearcher->new(	"my_index"	);
-
-
-my $hc = Plucene::Search::HitCollector->new(	collect	=> sub	{
-	my	(	$self,	$doc,	$score	)	= @_;
-	push	@docs,	$searcher->doc(	$doc	);
-}	);
-
-$searcher->search_hc($query	=>	$hc);
-
-
-#close INPUT;
-#close OUTPUT;
-#close OUTPUT2;
-#close OUTPUT3;
-#close OUTPUT4;
-
-
-for(	my $i = 0; $i < $#docs; $i++){
-
-	my $text_for_analysis = new Lingua::EN::Fathom;
-
-	$text_for_analysis -> analyse_file(	$doc[$i]	);
-	
-	print "Preparing statistics on generated paragraphs: \n\n\n";
-	
-	print $text_for_analysis -> report;
-}
-
-my $text = read_file(	$doc[0]	);
-
-my $text2 = read_file(	$doc[1]	);
-
-print comparisontest (
-	$text,
-	$text2,	
-);
-
-
-
-#the reason for Plucene is that it is customizable vs Search::VectorSpace which is more automatic
-#I haven't decided which one is better of the two to go towards
-
-
-#example get_words, takes too long and not accurate, includes all words that are unnecessary
-
-#original idea was to use Lingua::EN::NamedEntity
-#only works in linux b/c windows version broken, the new sub get_words uses stop words to help identify key words
-
-#subroutine is used to extract words from each text document the user specifies
-#splits text on whitespace, transliterates to lowercase, and takes out - and '
-
-
-=pod
-
-sub get_words	{
-
-	my(	$text	) = @_;
-
-	return	map	{	lc $_ => 1	}
-
-		map	{	/([a-z\-']+)/i	}
-
-		split	/\s+/s,	$text; 
-
-
+my @timeindicators = ("Abruptly", "After", "After a few days", "After a long time", "After a short time", "After a while", "After that", "Afterward", "All at once", "All of the time", "All the while", "Always", "As long as", "As soon as", "At first", "At last", "At length", "At present", "At that time", "At the beginning", "At the end", "At that onset", "At the same time", "At this moment", "At times", "Before", "Begin", "By now", "Commence", "Commencing", "Concurrently", "Consequently", "Continually", "Currently", "Cyclically", "Directly", "During", "Earlier", "Embark", "Eventually", "Every time", "Final", "Finally", "First", "Following", "Following that", "Former", "Formerly", "Frequently", "From this point", "Generally", "Gradual", "Henceforth", "Hereafter", "Heretofore", "Immediately", "In an instant", "In awhile", "In conclusion", "In the end", "In the first place", "In the future", "In the last place", "In the meantime", "In the past", "In the second place", "In turn", "In frequently", "Initial", "Instantly", "Instantaneously", "Intermittent", "Just then", "Last", "Last of all", "Lastly", "Later", "Later on", "Later that day", "Little by little", "Meanwhile", "Momentarily", "Never", "Next", "Not at all", "Not long after", "Not long ago", "Now", "Occasionally", "Of late", "Often", "Often time", "On the next occasion", "Once", "Once upon a time", "Past", "Periodically", "Preceding", "Present", "Presently", "Previously", "Prior to", "Promptly", "Quick", "Rarely", "Recently", "Repeatedly", "Right after", "Right away", "Second", "Seldom", "Sequentially", "Shorty", "Simultaneously", "Slow", "So far", "Some of the time", "Some time", "Soon", "Soon after", "Soon afterward", "Sporadically", "Starting with", "Subsequently", "Suddenly", "Temporary", "The latter", "The next", "The final", "Then", "Thereafter", "This instant", "Third", "To begin with", "To conclude", "To finish", "Today", "Tomorrow", "Twice", "Uncommon", "Ultimately", "Until", "Until now", "Usually", "When", "While", "Yesterday", "Yet");
+print "\nWould you like to be more thorough and remove more specific time indicatiors?\t";
+my $timeindiyesno = <STDIN>;
+chomp $timeindiyesno;
+if($timeindiyesno =~ /[Yy][Ee][Ss]/){
+	for(my $o = 0; $o < $#timeindicators; $o++){
+		my $indicator = $timeindicators[$o];
+		$datatomod =~ s/$indicator\s/ /ig;
 	}
-
-=cut
-
-
-#sub get_words use this one:
-
-
-sub get_words	{
-
-
-	my(	$text	) = @_;
-
-
-	return	map	{	stem($_) => 1	}
-		
-		grep	{	!(exists $stop_hash{$_})	}
-		
-		map lc,
-
-
-		map	{	/([a-z\-']+)/i	}
-
-		split /\s+/s,	$text;
-		
-	}
-
-
-
-
-# http://www.perl.com/pub/2003/02/19/engine.html subroutine to modify Lingua::Stem syntax
-
-# wraps into sub get_words by stem($_) => 1;
-
-
-
-sub stem	{
-
-	my(	$word	) = @_;
-
-	my $stemref = Lingua::Stem::stem(	$word	);
-
-	return $stemref -> [0];
-
-
+	print "Task completed.\n";
+}
+else{
+	system('pause');
 }
 
+print "\nNow searching for country names...\n";
+my @countrynames = all_country_names();
+my @morecountries = qw/Bolivia Bonaire Saba Antigua Barbuda Bosnia Herzegovina Carribean Indian Atlantic Pacific Brunei Keeling Cocos Falkland Malvinas Faroe Iran Korea Macedonia Micronesia Moldova Palestine Russia Kitts Nevis Miquelon Taiwan Tanzania Turks Caicos Venezuela/;
+push @countrynames, @morecountries;
+for(my $p = 0; $p < $#countrynames; $p++){
+	my $countryparse = $countrynames[$p];
+	$datatomod =~ s/$countryparse/ /ig;
+}
+my @countrylanguage = all_language_names();
+for(my $q = 0; $q < $#countrylanguage; $q++){
+	my $countrylang = $countrylanguage[$q];
+	$datatomod =~ s/$countrylang/ /ig;
+}
+print "Task completed.\n";
+system('pause');
 
-sub make_vector	{
+print "\nPreparing organizational redaction...\n";
+$datatomod =~ s/([A-Z](\.)?){2,}/ /g;
+$datatomod =~ s/\((\s)?([A-Z](\.)?){2,}(\s)?\)/ /ig;
+print "Task completed.\n";
+system('pause');
 
-	my(	$doc	) = @_;
+#need to use a transliterated list or Regexp::Common to identify quotes and parenthesis
 
-	my %words = get_words(	$doc	);
+#$Authorship = $x*$organization + $y*$classification + $z*$topic + error;
 
-	my $vector = zeroes $word_count;
+#my @listcontainingorgname;
+#my $organizationabbv =~ /[A-Z]{2,5}/;
+#my $orgpattern =~ /(\w{1,}\s){2,5}$organizationabbv/ig;
 
-	foreach my $w (	keys	%words	){
+print "\nPreparing for second stage analysis\n";
 
-		my $value = $words{$w};
-
-		my $offset = $index{$w};
-
-		index(	$vector,	$offset	) .= $value;		
-
-	}
-
-	return vector;	
-
+my %languages = langof($datatomod);
+dump %languages = langof($datatomod);
+#print %languages;
+print "\nThe probability of this text being English is:\t$languages{'en'}\n\n...\n";
+if($languages{'en'} > 0.357){
+	print "\nPassed second stage analysis.\n";
+	print "\nLanguage analysis completed.\n";
+	system('pause');
+} else {
+	print "\nSecond stage test have determined redaction is incomplete.\n";
 }
 
+#use this instead if CLD ever installs properly
+#my $cld = Lingua::Identify::CLD->new();
+#my @langanalysis = $cld->identify($datatomod);
+#for(my $r = 0; $r < $#langanalysis; $r++){
+#	print $langanalysis[$r]."\n";
+#}
+#print "\nLanguage analysis completed. Please review the data before continuing.\n";
+#system('pause');
 
-
-#cosine measure subroutine
-#cosine measure is used to use closeness of angle of a vector to test for similarities 
-
-
-# cos  = ( V1 * V2 ) / ||V1|| x ||V2||
-
-
-sub cosine	{
-	
-	my(	$vec1,	$vec2	) = @_;
-
-	my $n1 = norm $vec1;
-
-	my $n2 = norm $vec2;
-
-	my $cos = inner(	$n1,	$n2	);
-
-	#needs this line to convert PDL back into Perl scalar or else, calculations will be off
-
-	return $cos->sclr();
-	
-
+my @tagsplitstore;
+for(my $s = 0; $s < $#tags; $s++){
+	my $tagsub = $tags[$s];
+	$tagsub =~ tr/.,:;!&?"'(){}\-\$\+\=\{\}\@\/\*\>\<//d;
+	$tagsub =~ s/\sand\s/ /ig;
+	$tagsub =~ s/\sthe\s/ /ig;
+	$tagsub =~ s/\s{2,}/ /g;
+	my @tagadd = split(/\s/, $_);
+	push @tagsplitstore, @tagadd;
 }
+push @tagsplitstore, @tags;
+for(my $t = 0; $t < $#tagsplitstore; $t++){
+	my $tagtorem = $tagsplitstore[$t];
+	$datatosub =~ s/\s$tagtorem\s/ /ig;
+}
+system('pause');
 
-sub get_cosines	{
+print MODIFY $datatomod."\n============================\n";
 
-	my(	$query_vec	) = @_;
+#I've been of the opinion recently that summarization is a test rather than a method to
+#cut the size of the document. I realized that it's a great way to combine the entire 
+#document and see if people can still derive meaning and information from the information
+#redacted. I want to be able to apply the summarization meaning back to my analysis
+#on the level of secrecy afforded to this document because that should help determine how 
+#much should be properly removed. In essence, you can argue that this is a semantics test
+#of how well I have redacted the argument.
 
-	my %cosines;
+if($num_words > 500){
+	print "Preparing to summarize the document...\n";
 
-	while (	my	(	$id,	$vec	) = each	%document_vectors	)	{
+	print "Summarization in progress...\n";
 
-		my $cosine = cosine(	$vec,	$query_vec	);
-
-		next unless $cosine > $threshold;
-
-		$cosines{$id} = $cosine;
-
-
+	my $summarizerEn = Text::Summarize::En->new();
+	my $summary = $summarizerEn->getSummaryUsingSumbasic(listOfText => [$datatomod]);
+	dump $summarizerEn->getSummaryUsingSumbasic(listOfText => [$datatomod]);
+	print $summarizerEn;
+	my $buffer = "";
+	my $size = length($textfile)*.45;
+	my @sentence_list = map {$_->[0]} @{$summary->{idScore}};
+	my @sentence_content;
+	foreach my $tagged_sentence(@{$summary->{listOfStemmedTaggedSentences}}){
+		my @t;
+		foreach my $element (@{$tagged_sentence}){
+			my $text = @$element[1];
+			# remove tabs and single new lines
+			$text =~ s/\t/ /;
+			$text =~ s/\n/ /;
+			push @t, $text;
+		}
+		push @sentence_content, (join "", map { s/ +/ /gr } @t);
 	}
 
-	return %cosines;
+	while(length($buffer) < $size){
+		$buffer .= join "\n", $sentence_content[(shift @sentence_list)];
+	}
 
+	print "Preparing file for generation...\n";
+	print "$modify generated.\n";
 
-
+	print MODIFY $buffer;
+}
+else{
+	print "File too small, map reduction is unnecessary.\n";
 }
 
-
-
-sub search	{
-
-	my(	$query	) = @_;
-
-	my $query_vec = make_vector(	$query	);
-
-	my %results = get_cosines(	$query_vec	);
-
-	return %results;
-
-
-}
+#print MODIFY $datatomod;
 
 
 
-
-sub sentence2hash	{
-
-	my $words	= words(lc(shift));
-
-	my $stemmed	=   Lingua::Stem::En::stem({
-
-		-words	=> [	grep	{	!$StopWords{$_}	} @$words	]
-	
-	});
-
-	return	{	map	{$_ => 1}	grep $_, @$stemmed	};
-
-}
+close MODIFY;
 
 
 
+#in order to make sure that reduction works without removing the
+#subsections, I'll just split and summarize the text according to the
+#subsections and have it as a finite loop
 
-sub comparisontest	{
-	my	(	$h1, $h2	) = map {	sentence2hash($_) } @_;
-        
-	my %composite = %$h1;
-        
-	$composite{	$_	}++ for keys %$h2;
-        
-	return 100*(sum	(	values %composite	)/keys %composite)/2;
-    }
+#the reduction size should probably be 0.45 - 0.75
+#this could be a feature available to the user
+#simple method of adding <STDIN> and taking the user's input for a valid
+#value.
+
+#instead of the wordnet or query, I think I have found a more efficient 
+#method. firstly, would be to give the user a document search as a feature
+#then generate the amount of related words found. how to find related words
+#is to first use the soundex algorithm and then use the levishtein 
+#algorithm. this should generate enough positives and false positives.
+
+#then, the user should be able to go through each of the words and the
+#20 words before and after it should appear as a string to the user.
+#the user would then be able to choose to alter the string 20-word-20
+#or block a portion of that word. to chose to block the portion, I think
+#would require the subroutine to only grep and read the string set in 
+#question. 
+
+#this would repeat until the user is done going through the entire document
+
+#since we are going for a way to make sure that the user has modified the
+#document successfully, the application of a tagger is necessary as well
+#to find the named entities in the document
+
+#I have been unable to get the Stanford NER to work with Perl and the
+#perl once to work on windows so I'm going to use Lingua::EN::Tagger
+#and use regex of tags in order to aim for named entities
+
+#I have put this to the test but it seems difficult to remove the tags
+#afterwards and get the text back to what it was. but this should be 
+#useful to find time and noun patterns. this should allow me to detect
+#certain words that even NER can't identify that might be a part of 
+#the document to remove so having that is good. 
+
+#I think the time patterns can be manually written as regex
+
+#Regarding named entities, the person is going to have to change the 
+#sting set involving the named entities so that meaning can be preserved.
+
+#Grammar rules I think can be defined through Parse::RecDescent so that
+#might help in the automatic detection. combine this with the tagger and
+#we might have a strong system.
+
+#overall, I want this to be more of a automatic process than user 
+#influenced so I will automate any process that I can.
+
+#Lingua::EN::Fathom can be used to identify the readability of the work
+#generated by the automatic declassification
+
+#I can also use Lingua::Identify to search for "non-English" words which
+#might hint at important information to remove before declassification 
+
+exit;
+
+
