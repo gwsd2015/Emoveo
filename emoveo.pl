@@ -1,6 +1,13 @@
 #################################################################
 #Newest info
 
+#making the keyword algorithm more reliable
+
+#Next step is to create the file split for file > 7000 words to increase the speed of reduction
+
+#################################################################
+#Previous notes in chronological order
+
 #increased reliability of redaction. sometimes, names that occur the most don't
 #get redacted so I need to find a way to just identify that reaccuring name
 #and substitute it with the first letter or something.
@@ -16,11 +23,6 @@
 #more of a security issue than anything, will figure some stuff out after I finalize more of the
 #algorithm
 #I need my sentences to achieve randomness so you can't use patterns in attempts to unredact
-
-#Next step is to create the file split for file > 7000 words to increase the speed of reduction
-
-#################################################################
-#Previous notes in chronological order
 
 #fixed the ngram regex's to be more reliable in removal
 #Some regex result in removal of inital vowels from words that start a sentence
@@ -469,10 +471,14 @@ my @search_for_sentence;
 my @sentence_split_store;
 my @key_sentences;
 my $infocentricfile = "C:/Perl/liners.txt";
-open(INFO, ">:utf8", $infocentricfile) or die;
+open(INFO, $infocentricfile) or die;
 while(<INFO>){
 	@search_for_sentence = split(/\n/, $_);
 }
+system('pause');
+print "$_" for @search_for_sentence;
+print "\n";
+system('pause');
 my $datatomodstore = $datatomod;
 @sentence_split_store = split(/\./, $datatomodstore);
 for(my $eji = 0; $eji < $#sentence_split_store; $eji++){
