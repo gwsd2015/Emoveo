@@ -1,6 +1,14 @@
 #################################################################
 #Newest info
 
+#just kidding, 5 keywords isn't too reliable but works for initial pruning.
+#built in a proper concordance and works for substitution of lines.
+
+#Next step is to create the file split for file > 7000 words to increase the speed of reduction
+
+#################################################################
+#Previous notes in chronological order
+
 #was able to confirm that the 5 keyword is reliable. Not sure how to do search.
 #Text::Context::Porter search does stem search as well but it seems that the results
 #of the search are kind of meh. It doesn't produce a reliable search. 
@@ -13,11 +21,6 @@
 #doesn't produce better results. 
 
 #making the keyword algorithm more reliable
-
-#Next step is to create the file split for file > 7000 words to increase the speed of reduction
-
-#################################################################
-#Previous notes in chronological order
 
 #increased reliability of redaction. sometimes, names that occur the most don't
 #get redacted so I need to find a way to just identify that reaccuring name
@@ -227,7 +230,7 @@ close TSUB;
 print "Please check $substitutioncheck to see if topic list was created successfully.\n";
 system('pause');
 my @topicfromweblist = split(/\n/, $topicdata);
-print @topicfromweblist;
+#print @topicfromweblist;
 system('pause');
 my @topicthreebelow;
 my @topicfourtofive;
@@ -260,6 +263,7 @@ chomp $title;
 my $textfile = read_file($inputfile);
 print "$textfile\n\n";
 my $analysistextfile = $textfile;
+my $datatomod = ($textfile);
 
 #create regex in order to search subsections of that text
 #I think I want to define subsections as /\w{1,50}\n/ or similar pattern
@@ -272,30 +276,6 @@ open(CHK, ">:utf8",$check) or die "Can't generate $check\n";
 print "File $check generated.\n";
 print CHK "$textfile";
 close CHK;
-
-#My API key is not working or reading for some reason. I go onto the website
-#with my API key and it seems to be able to process and generate the text for
-#me just fine.
-#maybe I just have to curl it
-#curl -H "X-API-TOKEN: <API-TOKEN>" 'http://interest-graph.getprismatic.com/url/topic' --data 'url=http%3A%2F%2Fen.wikipedia.org%2Fwiki%2FMachine_learning'
-
-#WebService::Prismatic::InterestGraph has a limit to 20 calls per hour so I'm implementing my own
-#version of tagging above. What I'm doing is just pulling the tags directly from their website and
-#performing my own analysis of it instead of relying on them to give me the tags. Most of the time,
-#my algorithms end up removing the tagged subject anyway.
-
-#print "\n\nNow generating potential tags for the following document...\n";
-my $key = "MTQyNDQ0MjY1NzU5MA.cHJvZA.anduaW5nbGlAZ3d1LmVkdQ.Yv0MSCbxZK1l3k-6J-vlkTQsywA";
-my $ig = WebService::Prismatic::InterestGraph->new(api_token => $key);
-my @tags = $ig->tag_text($textfile, $title);
-for(my $a = 0; $a < $#tags; $a++){
-	print $tags[$a]."\n";
-}
-foreach my $tag(@tags){
-	print "\n", $tag->topic, "\t", $tag->score;
-}
-print "\n\n";
-system('pause');
 
 print "Preparing to do initial analysis of the readability of the text file...\n\n\n";
 my $analysisfile = "C:/Perl/analysis.txt";
@@ -353,6 +333,81 @@ system('pause');
 
 close ASYS;
 
+print "Preparing to get top 5 keywords from the document...\n";
+
+my $texttext = $analysistextfile;
+
+my @keywords = keywords($texttext);
+my @keywords_of_choice;
+system('pause');
+for(my $iijk = 0; $iijk < $#keywords; $iijk++){
+	my $texter = $keywords[$iijk];
+	print $texter."\n";
+	print "Is this a keyword you wish to use?\t";
+	my $keyyesno = <STDIN>;
+	chomp $keyyesno;
+	if($keyyesno =~ /yes/i){
+		print "Performing analysis on phrases that suggest the keyword...\n";
+		push @keywords_of_choice, $texter;
+		my $stemmer = Lingua::Stem::Snowball->new(lang=>'en');
+		$stemmer->stem_in_place(\@keywords_of_choice);
+		my $concordance = Lingua::Concordance->new;
+		$concordance->text($datatomod);
+		$concordance->query($keywords_of_choice[$iijk]);
+		foreach($concordance->lines){
+			print "$_\n";
+			print "Would you like to keep this line?\t"
+			my $keepline = <STDIN>;
+			chomp $keepline;
+			if($keepline =~ /yes/i){
+				$datatomod =~ s/$_//ig;
+			}
+			else{
+				system('pause');
+			}
+		}
+	}
+}
+system('pause');
+
+my $keycontextfile = "C:/Perl/keywordscontext.html";
+open(KEYCTXT, ">:utf8", $keycontextfile) or die; 
+
+my $snippet = Text::Context::Porter->new($analysistextfile, @keywords);
+$snippet->keywords(@keywords);
+print KEYCTXT $snippet->as_html;
+print $snippet->as_text;
+
+close KEYCTXT;
+
+system('pause');
+
+#My API key is not working or reading for some reason. I go onto the website
+#with my API key and it seems to be able to process and generate the text for
+#me just fine.
+#maybe I just have to curl it
+#curl -H "X-API-TOKEN: <API-TOKEN>" 'http://interest-graph.getprismatic.com/url/topic' --data 'url=http%3A%2F%2Fen.wikipedia.org%2Fwiki%2FMachine_learning'
+
+#WebService::Prismatic::InterestGraph has a limit to 20 calls per hour so I'm implementing my own
+#version of tagging above. What I'm doing is just pulling the tags directly from their website and
+#performing my own analysis of it instead of relying on them to give me the tags. Most of the time,
+#my algorithms end up removing the tagged subject anyway.
+
+#print "\n\nNow generating potential tags for the following document...\n";
+if($num_chars < 5000){
+	my $key = "MTQyNDQ0MjY1NzU5MA.cHJvZA.anduaW5nbGlAZ3d1LmVkdQ.Yv0MSCbxZK1l3k-6J-vlkTQsywA";
+	my $ig = WebService::Prismatic::InterestGraph->new(api_token => $key);
+	my @tags = $ig->tag_text($textfile, $title);
+	for(my $a = 0; $a < $#tags; $a++){
+		print $tags[$a]."\n";
+	}
+	foreach my $tag(@tags){
+		print "\n", $tag->topic, "\t", $tag->score;
+	}
+	print "\n\n";
+	system('pause');
+}
+
 #my $translatedfile = "C:/Perl/translatedfile.txt;
 #open(TRANSLATE, ">:utf8", $translatedfile) or die "Can't create $translatedfile\n";
 #my $float = rand();
@@ -380,7 +435,6 @@ print "File storing the unique words is now available at $wordlist \n";
 
 close WORD;
 
-my $datatomod = ($textfile);
 #my $datatomod =~ s/(\.|\?|!)/ ./g;
 
 my $taggedtextout = 'C:\Perl\taggedtxt.txt';
@@ -467,28 +521,6 @@ close NNPEX;
 #}
 
 #quick and dirty method to find possible keywords, not very good
-
-my $texttext = $analysistextfile;
-
-my @keywords = keywords($texttext);
-system('pause');
-for(my $iijk = 0; $iijk < $#keywords; $iijk++){
-	my $texter = $keywords[$iijk];
-	print $texter."\n";
-}
-system('pause');
-
-#my $keycontextfile = "C:/Perl/keywordscontext.html";
-#open(KEYCTXT, ">:utf8", $keycontextfile) or die; 
-
-my $snippet = Text::Context::Porter->new($analysistextfile, @keywords);
-$snippet->keywords(@keywords);
-print $snippet->as_html;
-print $snippet->as_text;
-
-#close KEYCTXT;
-
-system('pause');
 
 #currently not working
 #my method of finding keywords;
