@@ -135,7 +135,7 @@
 #desktops, fax machines, Xerox, printer, verbal communication etc.) needs to be
 #suitably and appropriately protected from unauthorized access, modification,
 #disclosure, and destruction. All information will not be accorded with the same
-#####importance. Consequently, classification of information into categories is necessary
+#importance. Consequently, classification of information into categories is necessary
 #to help identify a framework for evaluating the information's relative value and the
 #appropriate controls required to preserve its value to the organization.
 #To achieve this purpose, upon creation of the information (whether in a computer
@@ -175,7 +175,8 @@ use HTML::TreeBuilder;
 use HTML::FormatText;
 use Locale::Country;
 use Locale::Language;
-use Lingua::NegEx;
+#hmmm not as useful as I thought...
+#use Lingua::NegEx;
 use Text::Identify::BoilerPlate;
 use Text::IdMor;
 use Text::Roman;
@@ -186,6 +187,7 @@ use WebService::Prismatic::InterestGraph;
 use Lingua::EN::NameParse;
 use Lingua::EN::Titlecase;
 use Lingua::Norms::SUBTLEX;
+#need to get this to work
 #use Lingua::EN::Grammarian ':all';
 use Lingua::Concordance;
 use Lingua::EN::Ngram;
@@ -534,6 +536,8 @@ close NNPEX;
 
 #quick and dirty method to find possible keywords, not very good
 
+
+#working now
 #currently not working
 #my method of finding keywords;
 
@@ -543,7 +547,7 @@ my @key_sentences;
 my $infocentricfile = "C:/Perl/liners.txt";
 open(INFO, $infocentricfile) or die;
 while(<INFO>){
-	@search_for_sentence = split(/\n/, $_);
+	@search_for_sentence = split(/\^/, $_);
 }
 system('pause');
 print "$_" for @search_for_sentence;
@@ -582,7 +586,6 @@ for(my $is = 0; $is < $#keywords2; $is++){
 }
 system('pause');
 
-
 #error resolved
 #error ends program with unmatched regex
 
@@ -610,7 +613,7 @@ system('pause');
 for( my $y = 0; $y < $#sevenset; $y++ ){
 	print $sevenset[$y]."\n";
 	my $seventosub = $sevenset[$y];
-	$seventosub =~ s/\s\././g;
+	$seventosub =~ s/\s\.//g;
 	$seventosub =~ s/\s,/,/g;
 	$seventosub =~ s/\s?\(\s?/(/g;
 	$seventosub =~ s/\s?\)\s?/)/g;
