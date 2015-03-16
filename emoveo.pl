@@ -1,13 +1,16 @@
 #################################################################
 #Newest info
 
-#just kidding, 5 keywords isn't too reliable but works for initial pruning.
-#built in a proper concordance and works for substitution of lines.
+#fix loop and refresh global var
+#loop keywords at least 3 times for successful and different kw search.
 
 #Next step is to create the file split for file > 7000 words to increase the speed of reduction
 
 #################################################################
 #Previous notes in chronological order
+
+#just kidding, 5 keywords isn't too reliable but works for initial pruning.
+#built in a proper concordance and works for substitution of lines.
 
 #was able to confirm that the 5 keyword is reliable. Not sure how to do search.
 #Text::Context::Porter search does stem search as well but it seems that the results
@@ -338,37 +341,6 @@ print "Preparing to get top 5 keywords from the document...\n";
 my $texttext = $analysistextfile;
 
 my @keywords = keywords($texttext);
-my @keywords_of_choice;
-system('pause');
-for(my $iijk = 0; $iijk < $#keywords; $iijk++){
-	my $texter = $keywords[$iijk];
-	print $texter."\n";
-	print "Is this a keyword you wish to use?\t";
-	my $keyyesno = <STDIN>;
-	chomp $keyyesno;
-	if($keyyesno =~ /yes/i){
-		print "Performing analysis on phrases that suggest the keyword...\n";
-		push @keywords_of_choice, $texter;
-		my $stemmer = Lingua::Stem::Snowball->new(lang=>'en');
-		$stemmer->stem_in_place(\@keywords_of_choice);
-		my $concordance = Lingua::Concordance->new;
-		$concordance->text($datatomod);
-		$concordance->query($keywords_of_choice[$iijk]);
-		foreach($concordance->lines){
-			print "$_\n";
-			print "Would you like to keep this line?\t"
-			my $keepline = <STDIN>;
-			chomp $keepline;
-			if($keepline =~ /yes/i){
-				$datatomod =~ s/$_//ig;
-			}
-			else{
-				system('pause');
-			}
-		}
-	}
-}
-system('pause');
 
 my $keycontextfile = "C:/Perl/keywordscontext.html";
 open(KEYCTXT, ">:utf8", $keycontextfile) or die; 
@@ -377,10 +349,50 @@ my $snippet = Text::Context::Porter->new($analysistextfile, @keywords);
 $snippet->keywords(@keywords);
 print KEYCTXT $snippet->as_html;
 print $snippet->as_text;
-
+$datatomod =~ s/$snippet->as_text//ig;
 close KEYCTXT;
 
 system('pause');
+
+my @keywords_of_choice;
+system('pause');
+for(my $iijk = 0; $iijk < $#keywords; $iijk++){
+	my $texter = $keywords[$iijk];
+	print $texter."\n";
+	while($iijk < 5){
+		print "Is this a keyword you wish to use?\t";
+		my $keyyesno = <STDIN>;
+		chomp $keyyesno;
+		if($keyyesno =~ /yes/i){
+			print "Performing analysis on phrases that suggest the keyword...\n";
+			push @keywords_of_choice, $texter;
+			my $stemmer = Lingua::Stem::Snowball->new(lang=>'en');
+			$stemmer->stem_in_place(\@keywords_of_choice);
+			my $concordance = Lingua::Concordance->new;
+			$concordance->text($datatomod);
+			$concordance->query($texter);
+			foreach($concordance->lines){
+				print "$_\n";
+				print "Would you like to remove this line?\t";
+				my $keepline = <STDIN>;
+				chomp $keepline;
+				if($keepline =~ /yes/i){
+					if($datatomod =~ m/$_/g){
+						$datatomod =~ s/$_//ig;
+					}
+				}
+				else{
+					system('pause');
+				}
+			}
+		}
+		$keyyesno = "Yes";
+		last;
+	}
+}
+system('pause');
+
+
 
 #My API key is not working or reading for some reason. I go onto the website
 #with my API key and it seems to be able to process and generate the text for
