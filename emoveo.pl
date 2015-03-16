@@ -1,6 +1,17 @@
 #################################################################
 #Newest info
 
+#was able to confirm that the 5 keyword is reliable. Not sure how to do search.
+#Text::Context::Porter search does stem search as well but it seems that the results
+#of the search are kind of meh. It doesn't produce a reliable search. 
+#Attempting to solve this by stemming the keywords and then forcing them into the concordance
+#for a mandated search and then prints the sentences or word + 100 chars behind and in front
+#problem is, I realized that I do way too much substitution before I even run it through
+#so I mandated a different variable to store the first read for better analysis.
+
+#re-applied the WebService::Prismatic::w/e to compare with the keyword generator.
+#doesn't produce better results. 
+
 #making the keyword algorithm more reliable
 
 #Next step is to create the file split for file > 7000 words to increase the speed of reduction
@@ -165,7 +176,7 @@ use Text::Roman;
 use Lingua::EN::Tagger;
 use Symbol::Name;
 use String::Multibyte;
-#use WebService::Prismatic::InterestGraph;
+use WebService::Prismatic::InterestGraph;
 use Lingua::EN::NameParse;
 use Lingua::EN::Titlecase;
 use Lingua::Norms::SUBTLEX;
@@ -179,7 +190,7 @@ use Encode qw(decode encode);
 use WWW::Translate::Apertium;
 use Math::Random::Secure qw(rand);
 use Lingua::EN::Keywords qw(keywords);
-use Text::Context;
+use Text::Context::Porter;
 
 #take topics from website and use it to clear document
 #topics of interest are common and searched for in a document
@@ -208,6 +219,7 @@ $topicdata =~ s/\btopic\b//ig;
 $topicdata =~ s/[0-9]{1,6}\n//ig;
 $topicdata =~ s/(\s|\t|\n){2,}}//g;
 $topicdata =~ s/(\(|\)|\,)//g;
+$topicdata =~ s/&//g;
 my $substitutioncheck = "C:/Perl/topicsfilesub.txt";
 open(TSUB, ">:utf8", $substitutioncheck) or die "Can't create $substitutioncheck.\n";
 print TSUB $topicdata;
@@ -242,11 +254,12 @@ print "Enter txt file location:\t";
 my $inputfile = <STDIN>;
 chomp $inputfile;
 print "Input file, $inputfile, read.\n";
-#print "Enter a title for the txt file:\t";
-#my $title = <STDIN>;
-#chomp $title;
+print "Enter a title for the txt file:\t";
+my $title = <STDIN>;
+chomp $title;
 my $textfile = read_file($inputfile);
 print "$textfile\n\n";
+my $analysistextfile = $textfile;
 
 #create regex in order to search subsections of that text
 #I think I want to define subsections as /\w{1,50}\n/ or similar pattern
@@ -272,17 +285,17 @@ close CHK;
 #my algorithms end up removing the tagged subject anyway.
 
 #print "\n\nNow generating potential tags for the following document...\n";
-#my $key = "MTQyNDQ0MjY1NzU5MA.cHJvZA.anduaW5nbGlAZ3d1LmVkdQ.Yv0MSCbxZK1l3k-6J-vlkTQsywA";
-#my $ig = WebService::Prismatic::InterestGraph->new(api_token => $key);
-#my @tags = $ig->tag_text($textfile, $title);
-#for(my $a = 0; $a < $#tags; $a++){
-#	print $tags[$a]."\n";
-#}
-#foreach my $tag(@tags){
-#	print "\n", $tag->topic, "\t", $tag->score;
-#}
-#print "\n\n";
-#system('pause');
+my $key = "MTQyNDQ0MjY1NzU5MA.cHJvZA.anduaW5nbGlAZ3d1LmVkdQ.Yv0MSCbxZK1l3k-6J-vlkTQsywA";
+my $ig = WebService::Prismatic::InterestGraph->new(api_token => $key);
+my @tags = $ig->tag_text($textfile, $title);
+for(my $a = 0; $a < $#tags; $a++){
+	print $tags[$a]."\n";
+}
+foreach my $tag(@tags){
+	print "\n", $tag->topic, "\t", $tag->score;
+}
+print "\n\n";
+system('pause');
 
 print "Preparing to do initial analysis of the readability of the text file...\n\n\n";
 my $analysisfile = "C:/Perl/analysis.txt";
@@ -455,7 +468,7 @@ close NNPEX;
 
 #quick and dirty method to find possible keywords, not very good
 
-my $texttext = $textfile;
+my $texttext = $analysistextfile;
 
 my @keywords = keywords($texttext);
 system('pause');
@@ -465,6 +478,19 @@ for(my $iijk = 0; $iijk < $#keywords; $iijk++){
 }
 system('pause');
 
+#my $keycontextfile = "C:/Perl/keywordscontext.html";
+#open(KEYCTXT, ">:utf8", $keycontextfile) or die; 
+
+my $snippet = Text::Context::Porter->new($analysistextfile, @keywords);
+$snippet->keywords(@keywords);
+print $snippet->as_html;
+print $snippet->as_text;
+
+#close KEYCTXT;
+
+system('pause');
+
+#currently not working
 #my method of finding keywords;
 
 my @search_for_sentence;
