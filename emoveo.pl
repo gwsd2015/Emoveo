@@ -1,6 +1,8 @@
 #################################################################
 #Newest info
 
+#will need to collect CSV log to maintain data on redaction performed
+
 #fix loop and refresh global var for concordance search
 
 #removed a bunch of code. working on removing my one word analysis
@@ -219,27 +221,35 @@ use Locale::Country;
 use Locale::Language;
 #hmmm not as useful as I thought...
 #use Lingua::NegEx;
-use Text::Identify::BoilerPlate;
-use Text::IdMor;
-use Text::Roman;
+#use Text::Identify::BoilerPlate;
+#only works on an individual word basis, not useful
+#use Text::IdMor;
+#use Text::Roman;
 use Lingua::EN::Tagger;
-use Symbol::Name;
+#use Symbol::Name;
 use String::Multibyte;
 use WebService::Prismatic::InterestGraph;
-use Lingua::EN::NameParse;
-use Lingua::EN::Titlecase;
+#use Lingua::EN::NameParse;
+#use Lingua::EN::Titlecase;
 use Lingua::Norms::SUBTLEX;
 #need to get this to work
+#doesn't work for windows properly. ignoring and using files to build own.
 #use Lingua::EN::Grammarian ':all';
 use Lingua::Concordance;
+#this to be phased out for Text::TermExtract
 use Lingua::EN::Ngram;
 use Lingua::Orthon;
 use Date::Extract;
 use Date::Extract::Surprise;
 use Encode qw(decode encode);
+#only useful for obscure but can be achieved by heavy redaction
+#I still want heavy redaction to be possible but I want to work with all levels of
+#redaction
 #use WWW::Translate::Apertium;
 #use Math::Random::Secure qw(rand);
+#to be phased out for Text::TermExtract
 use Lingua::EN::Keywords qw(keywords);
+#to be phased out for Text::TermExtract
 use Text::Context::Porter;
 
 #take topics from website and use it to clear document
