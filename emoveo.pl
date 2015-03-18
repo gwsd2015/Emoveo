@@ -1,6 +1,21 @@
 #################################################################
 #Newest info
 
+#See if any of the following is useful
+
+#Text-TermExtract
+#Text-NSP
+#Text-LanguageGuess
+
+#might be better to use String::Escape
+#Text-EscapeDelimiter
+
+#requires me to build my own dictionary... might not be worth the effort 
+#to implement 
+##Text-Scan
+
+#Text-Fragment
+
 #will need to collect CSV log to maintain data on redaction performed
 
 #fix loop and refresh global var for concordance search
