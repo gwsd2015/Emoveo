@@ -12,23 +12,6 @@
 #implementing Text::TermExtract to do better search and allow user to
 #decide the amount of keywords they want extracted from the text
 #this reduces the loop necessary for the 5 keyword search.
-#Text::TermExtract uses collocation for better analysis of the text.
-
-#from http://en.wikipedia.org/wiki/Collocation
-#In corpus linguistics, a collocation is a sequence of words or terms that 
-#co-occur more often than would be expected by chance. In phraseology, 
-#collocation is a sub-type of phraseme. An example of a phraseological collocation, 
-#as propounded by Michael Halliday,[1] is the expression strong tea. 
-#While the same meaning could be conveyed by the roughly equivalent 
-#*powerful tea, this expression is considered incorrect by English speakers. 
-#Conversely, the corresponding expression for computer, powerful computers is 
-#preferred over *strong computers. Phraseological collocations should not be 
-#confused with idioms, where meaning is derived, whereas collocations are mostly compositional.
-#There are about six main types of collocations: adjective+noun, 
-#noun+noun (such as collective nouns), verb+noun, adverb+adjective, 
-#verbs+prepositional phrase (phrasal verbs), and verb+adverb.
-#Collocation extraction is a task that extracts collocations 
-#automatically from a corpus, using computational linguistics.
 
 #Applying keyword search with wikipedia to build keyword trees to potentially build
 #a closed space search rather than just a concordance. The concordance at this point
@@ -48,6 +31,26 @@
 
 #################################################################
 #Previous notes in chronological order
+
+#NSP too difficult to use with complicated background.
+#Given time constraint, not worth it to implement.
+#Text::NSP uses collocation for better analysis of the text.
+
+#from http://en.wikipedia.org/wiki/Collocation
+#In corpus linguistics, a collocation is a sequence of words or terms that 
+#co-occur more often than would be expected by chance. In phraseology, 
+#collocation is a sub-type of phraseme. An example of a phraseological collocation, 
+#as propounded by Michael Halliday,[1] is the expression strong tea. 
+#While the same meaning could be conveyed by the roughly equivalent 
+#*powerful tea, this expression is considered incorrect by English speakers. 
+#Conversely, the corresponding expression for computer, powerful computers is 
+#preferred over *strong computers. Phraseological collocations should not be 
+#confused with idioms, where meaning is derived, whereas collocations are mostly compositional.
+#There are about six main types of collocations: adjective+noun, 
+#noun+noun (such as collective nouns), verb+noun, adverb+adjective, 
+#verbs+prepositional phrase (phrasal verbs), and verb+adverb.
+#Collocation extraction is a task that extracts collocations 
+#automatically from a corpus, using computational linguistics.
 
 #loop keywords at least 3 times for successful and different kw search.
 
@@ -228,15 +231,14 @@ use Locale::Language;
 use Lingua::EN::Tagger;
 #use Symbol::Name;
 use String::Multibyte;
-use WebService::Prismatic::InterestGraph;
+#use WebService::Prismatic::InterestGraph;
 #use Lingua::EN::NameParse;
 #use Lingua::EN::Titlecase;
-use Lingua::Norms::SUBTLEX;
+#use Lingua::Norms::SUBTLEX;
 #need to get this to work
 #doesn't work for windows properly. ignoring and using files to build own.
 #use Lingua::EN::Grammarian ':all';
 use Lingua::Concordance;
-#this to be phased out for Text::TermExtract
 use Lingua::EN::Ngram;
 use Lingua::Orthon;
 use Date::Extract;
@@ -251,6 +253,8 @@ use Encode qw(decode encode);
 use Lingua::EN::Keywords qw(keywords);
 #to be phased out for Text::TermExtract
 use Text::Context::Porter;
+use Text::TermExtract;
+use RTF::Writer;
 
 #take topics from website and use it to clear document
 #topics of interest are common and searched for in a document
@@ -315,8 +319,8 @@ print "Enter txt file location:\t";
 my $inputfile = <STDIN>;
 chomp $inputfile;
 print "Input file, $inputfile, read.\n";
-print "Enter a title for the txt file:\t";
-my $title = <STDIN>;
+#print "Enter a title for the txt file:\t";
+#my $title = <STDIN>;
 chomp $title;
 my $textfile = read_file($inputfile);
 print "$textfile\n\n";
@@ -461,19 +465,19 @@ system('pause');
 #my algorithms end up removing the tagged subject anyway.
 
 #print "\n\nNow generating potential tags for the following document...\n";
-if($num_chars < 5000){
-	my $key = "MTQyNDQ0MjY1NzU5MA.cHJvZA.anduaW5nbGlAZ3d1LmVkdQ.Yv0MSCbxZK1l3k-6J-vlkTQsywA";
-	my $ig = WebService::Prismatic::InterestGraph->new(api_token => $key);
-	my @tags = $ig->tag_text($textfile, $title);
-	for(my $a = 0; $a < $#tags; $a++){
-		print $tags[$a]."\n";
-	}
-	foreach my $tag(@tags){
-		print "\n", $tag->topic, "\t", $tag->score;
-	}
-	print "\n\n";
-	system('pause');
-}
+#if($num_chars < 5000){
+#	my $key = "MTQyNDQ0MjY1NzU5MA.cHJvZA.anduaW5nbGlAZ3d1LmVkdQ.Yv0MSCbxZK1l3k-6J-vlkTQsywA";
+##	my $ig = WebService::Prismatic::InterestGraph->new(api_token => $key);
+#	my @tags = $ig->tag_text($textfile, $title);
+#	for(my $a = 0; $a < $#tags; $a++){
+#		print $tags[$a]."\n";
+#	}
+#	foreach my $tag(@tags){
+#		print "\n", $tag->topic, "\t", $tag->score;
+#	}
+#	print "\n\n";
+#	system('pause');
+#}
 
 #my $translatedfile = "C:/Perl/translatedfile.txt;
 #open(TRANSLATE, ">:utf8", $translatedfile) or die "Can't create $translatedfile\n";
