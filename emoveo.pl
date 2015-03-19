@@ -412,7 +412,7 @@ system('pause');
 
 #close ASYS;
 
-print "Preparing to get top 5 keywords from the document...\n";
+print "Preparing to get up to 20 keywords from the document...\n";
 
 #my $texttext = $analysistextfile;
 
