@@ -1,24 +1,14 @@
 #################################################################
 #Newest info
 
-#See if any of the following is useful
-
-#Text-TermExtract
-#Text-NSP
-#Text-LanguageGuess
-
-#might be better to use String::Escape
-#Text-EscapeDelimiter
-
-#requires me to build my own dictionary... might not be worth the effort 
-#to implement 
-##Text-Scan
-
-#Text-Fragment
+#program breaks at line 500s "Can't call method "text" on undefined value
 
 #will need to collect CSV log to maintain data on redaction performed
 
 #fix loop and refresh global var for concordance search
+
+#################################################################
+#Previous notes in chronological order
 
 #removed a bunch of code. working on removing my one word analysis
 #for common words and stuff to prevent redaction infringing on the
@@ -44,8 +34,21 @@
 
 #adding options to prevent brute force just cutting out as much as possible.
 
-#################################################################
-#Previous notes in chronological order
+#See if any of the following is useful
+
+#Text-TermExtract
+#Text-NSP
+#Text-LanguageGuess
+
+#might be better to use String::Escape
+#Text-EscapeDelimiter
+
+#requires me to build my own dictionary... might not be worth the effort 
+#to implement 
+##Text-Scan
+
+#Text-Fragment
+
 
 #NSP too difficult to use with complicated background.
 #Given time constraint, not worth it to implement.
@@ -509,6 +512,7 @@ for(my $counters = 0; $counters < $#initial_keys; $counters++){
 	open(WIKI, ">:utf8", $filewiki) or die;
 	if ($result->text()){ 
 	      print WIKI $result->text();
+	      print $result->text();
 	}
 	close WIKI;
 	if(-s $filewiki != 0){
