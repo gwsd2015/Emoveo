@@ -1,0 +1,797 @@
+# Roy-Moss_ITftw
+
+#################################################################
+#Newest info
+
+#resolved program break. collection of keywords linked with associated
+#words can now be generated.
+
+#will need to collect CSV log to maintain data on redaction performed
+
+#fix loop and refresh global var for concordance search
+
+#################################################################
+#Previous notes in chronological order
+
+#program breaks at line 500s "Can't call method "text" on undefined value
+
+#removed a bunch of code. working on removing my one word analysis
+#for common words and stuff to prevent redaction infringing on the
+#read-ability of the text.
+
+#implementing Text::TermExtract to do better search and allow user to
+#decide the amount of keywords they want extracted from the text
+#this reduces the loop necessary for the 5 keyword search.
+
+#Applying keyword search with wikipedia to build keyword trees to potentially build
+#a closed space search rather than just a concordance. The concordance at this point
+#in time is really just a replication of grep.
+
+#Grammar rules to be applied are located at the bottom of the document to help fix the 
+#text or pinpoint sentences affected by redaction to alert user if they desire to modify
+#the sentence.
+#This was taken from the Grammarian module which doesn't work for windows and instead,
+#what I build will force the checks rather than have user and coder specify what to check for.
+#I'm using it as an idea to create more of an alert system rather than use it for grammar check.
+
+#Modifying the printing document to RTF format so I can use |||||||||| for my substitutions
+# and bold them to reflect the lines in an actual redacted document.
+
+#adding options to prevent brute force just cutting out as much as possible.
+
+#See if any of the following is useful
+
+#Text-TermExtract
+#Text-NSP
+#Text-LanguageGuess
+
+#might be better to use String::Escape
+#Text-EscapeDelimiter
+
+#requires me to build my own dictionary... might not be worth the effort 
+#to implement 
+##Text-Scan
+
+#Text-Fragment
+
+
+#NSP too difficult to use with complicated background.
+#Given time constraint, not worth it to implement.
+#Text::NSP uses collocation for better analysis of the text.
+
+#from http://en.wikipedia.org/wiki/Collocation
+#In corpus linguistics, a collocation is a sequence of words or terms that 
+#co-occur more often than would be expected by chance. In phraseology, 
+#collocation is a sub-type of phraseme. An example of a phraseological collocation, 
+#as propounded by Michael Halliday,[1] is the expression strong tea. 
+#While the same meaning could be conveyed by the roughly equivalent 
+#*powerful tea, this expression is considered incorrect by English speakers. 
+#Conversely, the corresponding expression for computer, powerful computers is 
+#preferred over *strong computers. Phraseological collocations should not be 
+#confused with idioms, where meaning is derived, whereas collocations are mostly compositional.
+#There are about six main types of collocations: adjective+noun, 
+#noun+noun (such as collective nouns), verb+noun, adverb+adjective, 
+#verbs+prepositional phrase (phrasal verbs), and verb+adverb.
+#Collocation extraction is a task that extracts collocations 
+#automatically from a corpus, using computational linguistics.
+
+#loop keywords at least 3 times for successful and different kw search.
+
+#Next step is to create the file split for file > 7000 words to increase the speed of reduction
+
+#just kidding, 5 keywords isn't too reliable but works for initial pruning.
+#built in a proper concordance and works for substitution of lines.
+
+#was able to confirm that the 5 keyword is reliable. Not sure how to do search.
+#Text::Context::Porter search does stem search as well but it seems that the results
+#of the search are kind of meh. It doesn't produce a reliable search. 
+#Attempting to solve this by stemming the keywords and then forcing them into the concordance
+#for a mandated search and then prints the sentences or word + 100 chars behind and in front
+#problem is, I realized that I do way too much substitution before I even run it through
+#so I mandated a different variable to store the first read for better analysis.
+
+#re-applied the WebService::Prismatic::w/e to compare with the keyword generator.
+#doesn't produce better results. 
+
+#making the keyword algorithm more reliable
+
+#increased reliability of redaction. sometimes, names that occur the most don't
+#get redacted so I need to find a way to just identify that reaccuring name
+#and substitute it with the first letter or something.
+#Mr. Rogers -> Mr. R
+
+#concordance isn't looping properly, going to double check on that
+
+#need a switch case loop to resolve this... I don't even remember how to do it...
+#created concordance key word search for the program. going to test if it works.
+
+#New reduction is able to force 3168 KB file (450k+ words) to 1536 KB (about 50% reduction)
+
+#more of a security issue than anything, will figure some stuff out after I finalize more of the
+#algorithm
+#I need my sentences to achieve randomness so you can't use patterns in attempts to unredact
+
+#fixed the ngram regex's to be more reliable in removal
+#Some regex result in removal of inital vowels from words that start a sentence
+
+#non-issue using encoding now... not sure if even necessary
+#read the files as utf 8 encoding to remove the funny characters
+
+#not sure if I should use this anymore. Causes errors in substitution from ({$a} <=> {$b}) which results in
+#the last element of the array invalid. This can be inferred from "uninit value" from the cmd line.
+#solution found: use \Q to remove all meta characters that force the program to quit
+#use Lingua::EN::Ngram;
+
+#These translation modules below aren't working as I intend or aren't working as I want them to.
+#Translating things using babelfish seem to not be working 
+#don't know if obscuring is necessary, will save for a later day to work on.
+#use WWW::Babelfish;
+#use WWW::Translate::Apertium;
+#use Speech::Google::TTS;
+#use the random secure to generate between 0..1 to random select a language to translate back and forth
+#use Math::Random::Secure qw(rand);
+#module below did not install properly
+#update: I believe it is only installable on Linux
+#use Lingua::Identify::CLD;
+
+#create regex in order to search subsections of that text
+#I think I want to define subsections as /\w{1,50}\n/ or similar pattern
+#in order to get that to work I might have to add the roman numerals
+#and the numbered system.
+
+########################further notes below can be found in Thinking... file
+
+#I haven't subroutined my stuff yet, trying to write everything out and figure how things
+#are cutting depending on the size of the program.
+
+#in order to make sure that reduction works without removing the
+#subsections, I'll just split and summarize the text according to the
+#subsections and have it as a finite loop
+
+#the reduction size should probably be 0.45 - 0.75
+#this could be a feature available to the user
+#simple method of adding <STDIN> and taking the user's input for a valid
+#value.
+
+#instead of the wordnet or query, I think I have found a more efficient 
+#method. firstly, would be to give the user a document search as a feature
+#then generate the amount of related words found. how to find related words
+#is to first use the soundex algorithm and then use the levishtein 
+#algorithm. this should generate enough positives and false positives.
+
+#then, the user should be able to go through each of the words and the
+#20 words before and after it should appear as a string to the user.
+#the user would then be able to choose to alter the string 20-word-20
+#or block a portion of that word. to chose to block the portion, I think
+#would require the subroutine to only grep and read the string set in 
+#question. 
+
+#this would repeat until the user is done going through the entire document
+
+#since we are going for a way to make sure that the user has modified the
+#document successfully, the application of a tagger is necessary as well
+#to find the named entities in the document
+
+#I have been unable to get the Stanford NER to work with Perl and the
+#perl once to work on windows so I'm going to use Lingua::EN::Tagger
+#and use regex of tags in order to aim for named entities
+
+#I have put this to the test but it seems difficult to remove the tags
+#afterwards and get the text back to what it was. but this should be 
+#useful to find time and noun patterns. this should allow me to detect
+#certain words that even NER can't identify that might be a part of 
+#the document to remove so having that is good. 
+
+#I think the time patterns can be manually written as regex
+
+#Regarding named entities, the person is going to have to change the 
+#sting set involving the named entities so that meaning can be preserved.
+
+#Grammar rules I think can be defined through Parse::RecDescent so that
+#might help in the automatic detection. combine this with the tagger and
+#we might have a strong system.
+
+#overall, I want this to be more of a automatic process than user 
+#influenced so I will automate any process that I can.
+
+#Lingua::EN::Fathom can be used to identify the readability of the work
+#generated by the automatic declassification
+
+#I can also use Lingua::Identify to search for "non-English" words which
+#might hint at important information to remove before declassification 
+
+#################################################################
+
+#old code
+
+#use Text::Summarize::En;
+#use Text::Levenshtein::XS qw(distance);
+#use Text::Soundex;
+#use Search::VectorSpace;
+#hmmm not as useful as I thought...
+#use Lingua::NegEx;
+#use Text::Identify::BoilerPlate;
+#only works on an individual word basis, not useful
+#use Text::IdMor;
+#use Text::Roman;
+#use Lingua::EN::Tagger;
+#use Symbol::Name;
+#use WebService::Prismatic::InterestGraph;
+#use Lingua::EN::NameParse;
+#use Lingua::EN::Titlecase;
+#use Lingua::Norms::SUBTLEX;
+#need to get this to work
+#doesn't work for windows properly. ignoring and using files to build own.
+#use Lingua::EN::Grammarian ':all';
+#only useful for obscure but can be achieved by heavy redaction
+#I still want heavy redaction to be possible but I want to work with all levels of
+#redaction
+#use WWW::Translate::Apertium;
+#use Math::Random::Secure qw(rand);
+
+#take topics from website and use it to clear document
+#topics of interest are common and searched for in a document
+#to take them out allows us to remove prediction power in later stages
+#this will be paired with the N-grams and my word frequency identifier
+#to increase the chances of taking out the right words
+
+#my $topicfile = "C:/Perl/topicsfile.txt";
+#open(TOPIC, ">:utf8", $topicfile) or die "Can't generate $topicfile from HTML::TreeBuilder and HTML::FormatText\n";
+
+#print "Checking online database...\n";
+#system('pause');
+#my $topicurl = get("http://interest-graph.getprismatic.com/topic/all/human");
+#my $Format = HTML::FormatText->new();
+#my $TreeBuilder = HTML::TreeBuilder->new();
+#$TreeBuilder->parse($topicurl);
+#my $topicstorage = $Format->format($TreeBuilder);
+#print TOPIC $topicstorage;
+#print "Data created in $topicfile. Extraction from database success.\n";
+#close TOPIC;
+#my $topicdata = read_file($topicfile);
+#$topicdata =~ s/   Complete list of topics.//ig;
+#$topicdata =~ s/   If you're looking for something specific, please use the topic search//ig;
+#$topicdata =~ s/   to increase the chances you find what you're looking for.//ig;
+#$topicdata =~ s/\bid\b//ig;
+#$topicdata =~ s/\btopic\b//ig;
+#$topicdata =~ s/[0-9]{1,6}\n//ig;
+#$topicdata =~ s/(\s|\t|\n){2,}}//g;
+#$topicdata =~ s/(\(|\)|\,)//g;
+#$topicdata =~ s/&//g;
+#my $substitutioncheck = "C:/Perl/topicsfilesub.txt";
+#open(TSUB, ">:utf8", $substitutioncheck) or die "Can't create $substitutioncheck.\n";
+#print TSUB $topicdata;
+#close TSUB;
+#print "Please check $substitutioncheck to see if topic list was created successfully.\n";
+#system('pause');
+#my @topicfromweblist = split(/\n/, $topicdata);
+#print @topicfromweblist;
+#system('pause');
+#my @topicthreebelow;
+#my @topicfourtofive;
+#my @topicsixup;
+#for(my $h = 0; $h < $#topicfromweblist; $h++){
+#	my $topicer = $topicfromweblist[$h];
+#	my $counter = $topicer =~ s/((^|\s)\S)/$1/g;
+#	if($counter <= 3){
+#		push @topicthreebelow, $topicer;
+#	}
+#	elsif($counter > 3 and $counter < 6){
+#		push @topicfourtofive, $topicer;
+#	}
+#	elsif($counter >= 6){
+#		push @topicsixup, $topicer;
+#	}
+#}
+
+#print "Preparing to do initial analysis of the readability of the text file...\n\n\n";
+#my $analysisfile = "C:/Perl/analysis.txt";
+#open (ASYS, ">:utf8",$analysisfile) or die "Can't create file to store initial analysis.\n";
+
+#this routine is used to capture words but I want to be able to capture words in large quantities such as 
+#of, which, the, to be able to remove from the text when searching for named entities
+
+#my @commonwords;
+#my @characterizingwords;
+
+#my %words = $text->unique_words;
+#foreach my $word(sort keys %words){
+#	print ASYS ("$words{$word} :$word\n");
+#	if($num_words >= 500){
+#		if ($words{$word}/$num_words > 0.002){
+#			push @commonwords, $word;
+#		}
+#		elsif ($words{$word} < 7){
+#			push @characterizingwords, $word;
+#		}
+#	}
+#	else{
+#		if ($words{$word}/$num_words > 0.06){
+#			push @commonwords, $word;
+#		}
+#		elsif ($words{$word} < 4){
+#			push @characterizingwords, $word;
+#		}
+#	}
+#}
+
+#close ASYS;
+
+#my $texttext = $analysistextfile;
+
+#my @keywords = keywords($texttext);
+
+#my $keycontextfile = "C:/Perl/keywordscontext.html";
+#open(KEYCTXT, ">:utf8", $keycontextfile) or die; 
+
+#my $snippet = Text::Context::Porter->new($analysistextfile, @keywords);
+#$snippet->keywords(@keywords);
+#print KEYCTXT $snippet->as_html;
+#print $snippet->as_text;
+#$datatomod =~ s/$snippet->as_text//ig;
+#close KEYCTXT;
+
+#system('pause');
+
+#my @keywords_of_choice;
+#system('pause');
+#for(my $iijk = 0; $iijk < $#keywords; $iijk++){
+##	my $texter = $keywords[$iijk];
+#	print $texter."\n";
+#	while($iijk < 5){
+###		print "Is this a keyword you wish to use?\t";
+###		my $keyyesno = <STDIN>;
+#		chomp $keyyesno;
+#		if($keyyesno =~ /yes/i){
+##			print "Performing analysis on phrases that suggest the keyword...\n";
+#			push @keywords_of_choice, $texter;
+#			my $stemmer = Lingua::Stem::Snowball->new(lang=>'en');
+#			$stemmer->stem_in_place(\@keywords_of_choice);
+#			my $concordance = Lingua::Concordance->new;
+#			$concordance->text($datatomod);
+#			$concordance->query($texter);
+#			foreach($concordance->lines){
+#				print "$_\n";
+#				print "Would you like to remove this line?\t";
+#				my $keepline = <STDIN>;
+##				chomp $keepline;
+#				if($keepline =~ /yes/i){
+#					if($datatomod =~ m/$_/g){
+#						$datatomod =~ s/$_//ig;
+#					}
+#				}
+#				else{
+#					system('pause');
+##				}
+#			}
+#		}
+#		$keyyesno = "Yes";
+#		last;
+#	}
+#}
+#system('pause');
+
+#for(my $xix = 0; $xix < $#initial_keys; $xix++){
+##	my $postag = new Lingua::EN::Tagger;
+#	my $init_key = $initial_keys[$xix];
+#	my $tagged = $postag->add_tags($init_key);
+#	my $readable = $postag->get_readable($init_key);
+#	print $tagged."\n";
+#	print $readable."\n";
+#	if($readable !~ /\/NN/ig){
+##		push @initial_keys_to_tag ,$init_key;
+#	}
+#}
+
+#system('pause');
+
+#print @initial_keys_to_tag;
+
+#system('pause');
+
+#My API key is not working or reading for some reason. I go onto the website
+#with my API key and it seems to be able to process and generate the text for
+#me just fine.
+#maybe I just have to curl it
+########curl -H "X-API-TOKEN: <API-TOKEN>" 'http://interest-graph.getprismatic.com/url/topic' --data 'url=http%3A%2F%2Fen.wikipedia.org%2Fwiki%2FMachine_learning'
+
+#WebService::Prismatic::InterestGraph has a limit to 20 calls per hour so I'm implementing my own
+#version of tagging above. What I'm doing is just pulling the tags directly from their website and
+#performing my own analysis of it instead of relying on them to give me the tags. Most of the time,
+#my algorithms end up removing the tagged subject anyway.
+
+#print "\n\nNow generating potential tags for the following document...\n";
+#if($num_chars < 5000){
+#	my $key = "MTQyNDQ0MjY1NzU5MA.cHJvZA.anduaW5nbGlAZ3d1LmVkdQ.Yv0MSCbxZK1l3k-6J-vlkTQsywA";
+##	my $ig = WebService::Prismatic::InterestGraph->new(api_token => $key);
+#	my @tags = $ig->tag_text($textfile, $title);
+#	for(my $a = 0; $a < $#tags; $a++){
+#		print $tags[$a]."\n";
+#	}
+#	foreach my $tag(@tags){
+#		print "\n", $tag->topic, "\t", $tag->score;
+#	}
+#	print "\n\n";
+#	system('pause');
+#}
+
+#my $translatedfile = "C:/Perl/translatedfile.txt;
+#open(TRANSLATE, ">:utf8", $translatedfile) or die "Can't create $translatedfile\n";
+#my $float = rand();
+#close TRANSLATE;
+
+#print "List of words that don't contribute to meaning: \n";
+#print @commonwords;
+#for(my $i = 0; $i < $#commonwords; $i++){
+#	print $commonwords[$i]."\n";
+#}
+#system('pause');
+
+#my $wordlist = "C:/Perl/wordlist.txt";
+#open(WORD, ">:utf8",$wordlist) or die "Can't create file to store wordlist.\n";
+
+#print "List of words that make this document unique: \n";
+#print @characterizingwords;
+#for(my $j = 0; $j < $#characterizingwords; $j++){
+#	print $characterizingwords[$j]."\n";
+#	print WORD $characterizingwords[$j]."\n";
+#}
+#system('pause');
+
+#print "File storing the unique words is now available at $wordlist \n";
+
+#close WORD;
+
+#my $datatomod =~ s/(\.|\?|!)/ ./g;
+
+#my $taggedtextout = 'C:\Perl\taggedtxt.txt';
+#open (TAGOUT, ">:utf8",$taggedtextout) or die;
+#my $nnpex = 'C:\Perl\NNPextract.txt';
+#open (NNP, ">:utf8",$nnpex) or die;
+#my $propernoun = 'C:\Perl\propernoun.txt';
+##open (PNOUN, ">:utf8",$propernoun) or die;
+#my $nnpex_bigram = 'C:\Perl\NNPphraseextract.txt';
+#open (NNPEX, ">:utf8", $nnpex_bigram);
+
+#my $parsednnp = new Lingua::EN::Tagger;
+#my $tagged_text = $parsednnp->add_tags($datatomod);
+#my %word_list = $parsednnp->get_words($datatomod);					 
+#my $readable_text = $parsednnp->get_readable($datatomod);
+#my $proper_nouns = $parsednnp->get_proper_nouns($datatomod);
+#print TAGOUT $readable_text;
+#close TAGOUT;
+#print PNOUN $proper_nouns;
+#close PNOUN;
+
+#my @taggedwordlist2;
+
+#open(TAGOUT2, $taggedtextout) or die;
+#while(<TAGOUT2>){
+##	my @taggedwordlist = split /\s/;
+#	while (my $tagword = pop @taggedwordlist){
+#		if ($tagword =~ /\w\/((NN(P|S)?S?)|(FW)|(JJ(R|S)))/ig){
+#			print NNP $tagword."\n";
+#			$tagword =~ s/\/((NN(P|S)?S?)|(FW)|(JJ(R|S)))/ /ig;
+#			$datatomod =~ s/\b$tagword\b/ /ig;
+#		} 
+#	}
+#	for(my $tagz = 0; $tagz < $#taggedwordlist; $tagz++){
+#		my $taggertwo = $taggedwordlist[$tagz]." ".$taggedwordlist[$tagz+1];		
+#		if ($taggertwo =~ /\w\/NNP\s\w\/NNP/){
+#			print NNPEX $taggertwo."\n";
+#			push @taggedwordlist2, $taggertwo;
+#		}
+#	}
+#}
+
+#print @taggedwordlist2;
+#system('pause');
+
+#open(PNOUN2, $propernoun) or die;
+#while(<PNOUN2>){
+#	my @propernounlist = split /\s/;
+#	while(my $pnoun = pop @propernounlist){
+#		if($pnoun =~ s/\w\/
+#	}
+#close PNOUN;
+
+#close TAGOUT2;
+#close NNP;
+#close NNPEX;
+
+#my $exitsign = "Time to exit!";
+#print "Traverse the file for targeted removal...\n";
+#print "If you ever want to stop the query after it has complete a search, type $exitsign\n";
+#system('pause');
+#my $concordance = Lingua::Concordance->new;
+#$concordance->text($datatomod);
+#my $querysearch = "0";
+#my $concordanceyesno;
+#while(my $querysearch != $exitsign){
+#	print "Enter word or phrase to query:\t";
+#	$querysearch = <STDIN>;
+#	chomp $querysearch;
+#	print "\n";
+#	$concordance->query($querysearch);
+#	foreach my $concordancedline ($concordance->lines){
+#		print "$concordancedline\n";
+#		print "Would you like too subsitute this line?\t";
+#		$concordanceyesno = <STDIN>;
+#		chomp $concordanceyesno;
+#		if($concordanceyesno =~ /yes/){
+#			$datatomod =~ s/$concordancedline/ /ig;
+#		}
+#		else{
+#			system('pause');
+#		}
+#	}
+#}
+
+#quick and dirty method to find possible keywords, not very good
+
+
+#working now
+#currently not working
+#my method of finding keywords;
+
+#for(my $bb = 0; $bb < $#twoset; $bb++){
+#	my $two = $twoset[$bb];
+#	if($datatomod =~ /$two/){
+#	$datatomod =~ s/\b$two\b//g;
+#	}
+#}
+#for(my $cc = 0; $cc < $#threeset; $cc++){
+#	my $three = $threeset[$cc];
+#	if($datatomod =~ /$three/){
+#	$datatomod =~ s/\b$three\b//g;
+#	}
+#}
+#for(my $dd = 0; $dd < $#fourset; $dd++){
+#	my $four = $fourset[$dd];
+#	if($datatomod =~ /$four/){
+#	$datatomod =~ s/\b$four\b//g;
+#	}
+#}
+#for(my $ee = 0; $ee < $#fiveset; $ee++){
+#	my $five = $fiveset[$ee];
+#	if($datatomod =~ /$five/){
+#	$datatomod =~ s/\b$five\b//g;
+#	}
+#}
+#for(my $ff = 0; $ff < $#sixset; $ff++){
+#	my $six = $sixset[$ff];
+#	if($datatomod =~ /$six/){
+#	$datatomod =~ s/\b$six\b//g;
+#	}
+#}
+#for(my $gg = 0; $gg < $#sevenset; $gg++){
+#	my $seven = $sevenset[$gg];
+#	if($datatomod =~ /$seven/){
+#	$datatomod =~ s/\b$seven\b//g;
+#	}
+#}
+
+#for(my $zz = 0; $zz < $#topicfromweblist; $zz++){
+#	my $searchtop = $topicfromweblist[$zz];
+#	$datatomod =~ s/$searchtop/ /ig;
+#}
+
+#no idea what I'm going to use this for yet. 
+#The splitting is terrible and I still have to fix it.
+#my $splitstorage = "C:/Perl/splitfile.txt";
+#open(SSTORE, ">:utf8",$splitstorage) or die "Can't create file to store the subsections.\n";
+#print "File $splitstorage created to prepare for spliting the file's subsections.\n";
+
+#print "Beginning to split file's subsections.\n";
+#open(SPLIT, $check) or die "Unable to split the file's subsections.\n";
+#while(<SPLIT>){
+#	tr/A-Z/a-z/;
+#	tr/.,:;!&?"'(){}\-\$\+\=\{\}\@\/\*\>\<//d;
+#	my @subsections = split(/^(\d|\w){1,10}\n/, $_);
+#	print SSTORE "$_\n" for @subsections;
+#}
+
+#close SSTORE;
+
+#	my $engine = WWW::Translate::Apertium->new();
+#	our $translated_data = $engine->translate($datatomod);
+#	our $float = rand();
+#	if($float >= 0 and $float < 0.25){
+#		$engine->from_into(en-es);
+#		$ngram = Lingua::EN::Ngram->new($translated_data);
+#		my $enginetwograms = $ngram->ngram(2);
+#		foreach my $enginetwogram(sort {$$enginetwograms{my $b} <=> $$enginetwograms{my $a}} keys %$enginetwograms){
+#			print $$enginetwograms{$enginetwogram}, "\t$enginetwogram\n";
+#			if($$enginetwograms{$enginetwogram} > 4){
+#				push @languagegramstore, $enginetwogram;
+#				for(my $enes = 0; $enes < $#languagegramstore; $enes++){
+#					my $enessub = $languagegramstore[$enes];
+#					$translated_data =~ s/$enessub/ /ig;
+#				}
+#			}
+#		}
+#		my $engine2 = WWW::Translate::Apertium->new();
+#		$engine2->from_into(es-en);
+#		$datatomod = $engine2->translate($translated_data);
+#		system('pause');
+#	}
+#	elsif($float >= 0.25 and $float < 0.5){
+#		$engine->from_into(en-gl);
+#		$ngram = Lingua::EN::Ngram->new($translated_data);
+##		my $enginetwograms = $ngram->ngram(2);	
+##		foreach my $enginetwogram(sort {$$enginetwograms{my $b} <=> $$enginetwograms{my $a}} keys %$enginetwograms){	
+##			print $$enginetwograms{$enginetwogram}, "\t$enginetwogram\n";	
+#			if($$enginetwograms{$enginetwogram} > 4){	
+#				push @languagegramstore, $enginetwogram;	
+##				for(my $engl = 0; $engl < $#languagegramstore; $engl++){	
+#					my $englsub = $languagegramstore[$engl];	
+#					$translated_data =~ s/$englsub/ /ig;	
+#				}	
+#			}	
+#		}	
+#		my $engine3 = WWW::Translate::Apertium->new();	
+#		$engine3->from_into(gl-en);	
+#		$datatomod = $engine3->translate($translated_data);	
+#		system('pause');	
+#		}	
+#	}
+#	elsif($float >= 0.5 and $float < 0.75){
+#		$engine->from_into(en-eo);
+#		$ngram = Lingua::EN::Ngram->new($translated_data);
+#		my $enginetwograms = $ngram->ngram(2);
+#		foreach my $enginetwogram(sort {$$enginetwograms{my $b} <=> $$enginetwograms{my $a}} keys %$enginetwograms){
+#			print $$enginetwograms{$enginetwogram}, "\t$enginetwogram\n";
+#			if($$enginetwograms{$enginetwogram} > 4){
+#				push @languagegramstore, $enginetwogram;
+#				for(my $eneo = 0; $eneo < $#languagegramstore; $eneo++){
+#					my $eneosub = $languagegramstore[$eneo];
+#					$translated_data =~ s/$eneosub/ /ig;
+#				}
+#			}
+#		}
+#		my $engine4 = WWW::Translate::Apertium->new();
+#		$engine4->from_into(eo-en);
+#		$datatomod = $engine4->translate($translated_data);
+#		system('pause');
+#		}
+#	}
+#	elsif($float >= 0.75 and $float <= 1){
+#		$engine->from_into(en-ca);
+#		$ngram = Lingua::EN::Ngram->new($translated_data);
+#		my $enginetwograms = $ngram->ngram(2);
+#		foreach my $enginetwogram(sort {$$enginetwograms{my $b} <=> $$enginetwograms{my $a}} keys %$enginetwograms){
+#			print $$enginetwograms{$enginetwogram}, "\t$enginetwogram\n";
+#			if($$enginetwograms{$enginetwogram} > 4){
+#				push @languagegramstore, $enginetwogram;
+#				for(my $enca = 0; $enca < $#languagegramstore; $enca++){
+#					my $encasub = $languagegramstore[$enca];
+#					$translated_data =~ s/$encasub/ /ig;
+#				}
+#			}
+#		}
+#		my $engine5 = WWW::Translate::Apertium->new();		
+#		$engine5->from_into(ca-en);		
+#		$datatomod = $engine5->translate($translated_data);		
+#		system('pause');		
+#	}				
+#	}
+
+#use this instead if CLD ever installs properly
+#my $cld = Lingua::Identify::CLD->new();
+#my @langanalysis = $cld->identify($datatomod);
+#for(my $r = 0; $r < $#langanalysis; $r++){
+#	print $langanalysis[$r]."\n";
+#}
+#print "\nLanguage analysis completed. Please review the data before continuing.\n";
+#system('pause');
+
+#The following is obsolete given that I'm taking out WebService::Prismatic::InterestGraph
+#Will implement new interation below code.
+
+
+
+#my @tagsplitstore;
+#for(my $s = 0; $s < $#tags; $s++){
+#	my $tagsub = $tags[$s];
+#	$tagsub =~ tr/.,:;!&?"'(){}\-\$\+\=\{\}\@\/\*\>\<//d;
+#	$tagsub =~ s/\sand\s/ /ig;
+#	$tagsub =~ s/\sthe\s/ /ig;
+#	$tagsub =~ s/\s{2,}/ /g;
+#	my @tagadd = split(/\s/, $_);
+#	push @tagsplitstore, @tagadd;
+#}
+#push @tagsplitstore, @tags;
+#for(my $t = 0; $t < $#tagsplitstore; $t++){
+#	my $tagtorem = $tagsplitstore[$t];
+#	$datatomod =~ s/\s$tagtorem\s/ /ig;
+#}
+#system('pause');
+
+#I've been of the opinion recently that summarization is a test rather than a method to
+#cut the size of the document. I realized that it's a great way to combine the entire 
+#document and see if people can still derive meaning and information from the information
+#redacted. I want to be able to apply the summarization meaning back to my analysis
+#on the level of secrecy afforded to this document because that should help determine how 
+#much should be properly removed. In essence, you can argue that this is a semantics test
+#of how well I have redacted the argument.
+
+
+
+#if($num_words > 500 and $num_words < 7000){
+#	print "Preparing to summarize the document...\n";
+##
+#	print "Summarization in progress...\n";
+##
+#	my $summarizerEn = Text::Summarize::En->new();
+#	my $summary = $summarizerEn->getSummaryUsingSumbasic(listOfText => [$datatomod]);
+#	dump $summarizerEn->getSummaryUsingSumbasic(listOfText => [$datatomod]);
+###	print $summarizerEn;
+#	my $buffer = "";
+#	my $size = length($textfile)*.25;
+#	my @sentence_list = map {$_->[0]} @{$summary->{idScore}};
+#	my @sentence_content;
+#	foreach my $tagged_sentence(@{$summary->{listOfStemmedTaggedSentences}}){
+#		my @t;
+#		foreach my $element (@{$tagged_sentence}){
+#			my $text = @$element[1];
+#			# remove tabs and single new lines
+#			$text =~ s/\t/ /;
+#			$text =~ s/\n/ /;
+#			push @t, $text;
+#		}
+#		push @sentence_content, (join "", map { s/ +/ /gr } @t);
+#	}
+#
+#	while(length($buffer) < $size){
+#		$buffer .= join "\n", $sentence_content[(shift @sentence_list)];
+#	}
+#
+#	print "Preparing file for generation...\n";
+#	print "$modify generated.\n";
+#
+#	print MODIFY $buffer;
+#}
+#elsif($num_words >= 7000){
+#	print "File too large, needs to be broken down before analysis.\n";
+#}
+#else{
+#	print "File too small, map reduction is unnecessary.\n";
+#}
+
+#print MODIFY $datatomod;
+
+#my @caution_objs = extract_cautions from($modify);
+#my @error_objs = extract_errors_from($modify);
+#for my $problem (@cautions_or_errors){
+#	my $actual_word_or_phrase = $problem->match;
+#	my $start_location_in_text = $problem->from;
+#	my $end_location_in_text = $problem->to;
+#	my $description_of_problem = $problem->explanations;
+#	my $suggested_correction = $problem->suggestions;
+#}
+
+#################################################################
+#purpose of the program
+
+#ISO27k Guideline on Information Asset Valuation 
+
+#Information wherever it is handled or stored (e.g., in computers, file cabinets,
+#desktops, fax machines, Xerox, printer, verbal communication etc.) needs to be
+#suitably and appropriately protected from unauthorized access, modification,
+#disclosure, and destruction. All information will not be accorded with the same
+#importance. Consequently, classification of information into categories is necessary
+#to help identify a framework for evaluating the information's relative value and the
+#appropriate controls required to preserve its value to the organization.
+#To achieve this purpose, upon creation of the information (whether in a computer
+#system, memo in a file cabinet etc.), the creator/owner of that information
+#(generally the information asset owner) is responsible for classification. Further, the
+#owner of information asset is responsible to review the classification of information at
+#least annually.
+#The analysis is to be done by Business Process Owner i.e. process / function head.
+
+#three major class of information
+# 1. Confidential
+# 2. Internal Use Only
+# 3. Public
+
+#################################################################
