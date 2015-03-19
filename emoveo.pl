@@ -1,7 +1,7 @@
 #################################################################
 #Newest info
 
-#program breaks at line 500s "Can't call method "text" on undefined value
+#program breaks at line 513 "Can't call method "text" on undefined value
 
 #will need to collect CSV log to maintain data on redaction performed
 
@@ -515,7 +515,8 @@ for(my $counters = 0; $counters < $#initial_keys; $counters++){
 	      print $result->text();
 	}
 	close WIKI;
-	if(-s $filewiki != 0){
+	my $service = read_file($filewiki);
+	if($service != "" or $service != " "){
 		my $wikifile = read_file($filewiki);
 		my $wikiext = Text::TermExtract->new();
 		for my $keyword($wikiext->terms_extract($wikifile,{max =>20})){
