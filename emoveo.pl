@@ -467,6 +467,7 @@ print "Preparing to get up to 20 keywords from the document...\n";
 #	}
 #}
 #system('pause');
+
 my @initial_keys;
 my @keys_for_0;
 my @keys_for_1;
@@ -496,6 +497,10 @@ for my $wordsensing($ext->terms_extract($datatomod,{max =>20})){
 }
 system('pause');
 
+print @initial_keys;
+system('pause');
+
+
 for(my $counters = 0; $counters < $#initial_keys; $counters++){
 	my $key_to_search = $initial_keys[$counters];
 	my $wiki = WWW::Wikipedia->new();
@@ -506,79 +511,83 @@ for(my $counters = 0; $counters < $#initial_keys; $counters++){
 	      print WIKI $result->text();
 	}
 	close WIKI;
-	my $wikifile = read_file($filewiki);
-	my $wikiext = Text::TermExtract->new();
-	for my $keyword($wikiext->terms_extract($wikifile,{max =>20})){
-		print "$keyword\n";
-		if($counters == 0){
-			push @keys_for_0, $keyword;
-		}
-		elsif($counters == 1){
-			push @keys_for_1, $keyword;
-		}
-		elsif($counters == 2){
-			push @keys_for_2, $keyword;
-		}
-		elsif($counters == 3){
-			push @keys_for_3, $keyword;
-		}
-		elsif($counters == 4){
-			push @keys_for_4, $keyword;
-		}
-		elsif($counters == 5){
-			push @keys_for_5, $keyword;
-		}
-		elsif($counters == 6){
-			push @keys_for_6, $keyword;
-		}
-		elsif($counters == 7){
-			push @keys_for_7, $keyword;
-		}
-		elsif($counters == 8){
-			push @keys_for_8, $keyword;
-		}
-		elsif($counters == 9){
-			push @keys_for_9, $keyword;
-		}
-		elsif($counters == 10){
-			push @keys_for_10, $keyword;
-		}
-		elsif($counters == 11){
-			push @keys_for_11, $keyword;
-		}
-		elsif($counters == 12){
-			push @keys_for_12, $keyword;
-		}
-		elsif($counters == 13){
-			push @keys_for_13, $keyword;
-		}
-		elsif($counters == 14){
-			push @keys_for_14, $keyword;
-		}
-		elsif($counters == 15){
-			push @keys_for_15, $keyword;
-		}
-		elsif($counters == 16){
-			push @keys_for_16, $keyword;
-		}
-		elsif($counters == 17){
-			push @keys_for_17, $keyword;
-		}
-		elsif($counters == 18){
-			push @keys_for_18, $keyword;
-		}
-		elsif($counters == 19){
-			push @keys_for_19, $keyword;
+	if(-s $filewiki != 0){
+		my $wikifile = read_file($filewiki);
+		my $wikiext = Text::TermExtract->new();
+		for my $keyword($wikiext->terms_extract($wikifile,{max =>20})){
+			print $keyword."\n";
+			if($counters == 0){
+				push @keys_for_0, $keyword;
+			}
+			elsif($counters == 1){
+				push @keys_for_1, $keyword;
+			}
+			elsif($counters == 2){
+				push @keys_for_2, $keyword;
+			}
+			elsif($counters == 3){
+				push @keys_for_3, $keyword;
+			}
+			elsif($counters == 4){
+				push @keys_for_4, $keyword;
+			}
+			elsif($counters == 5){
+				push @keys_for_5, $keyword;
+			}
+			elsif($counters == 6){
+				push @keys_for_6, $keyword;
+			}
+			elsif($counters == 7){
+				push @keys_for_7, $keyword;
+			}
+			elsif($counters == 8){
+				push @keys_for_8, $keyword;
+			}
+			elsif($counters == 9){
+				push @keys_for_9, $keyword;
+			}
+			elsif($counters == 10){
+				push @keys_for_10, $keyword;
+			}
+			elsif($counters == 11){
+				push @keys_for_11, $keyword;
+			}
+			elsif($counters == 12){
+				push @keys_for_12, $keyword;
+			}
+			elsif($counters == 13){
+				push @keys_for_13, $keyword;
+			}
+			elsif($counters == 14){
+				push @keys_for_14, $keyword;
+			}
+			elsif($counters == 15){
+				push @keys_for_15, $keyword;
+			}
+			elsif($counters == 16){
+				push @keys_for_16, $keyword;
+			}
+			elsif($counters == 17){
+				push @keys_for_17, $keyword;
+			}
+			elsif($counters == 18){
+				push @keys_for_18, $keyword;
+			}
+			elsif($counters == 19){
+				push @keys_for_19, $keyword;
+			}
 		}
 	}
 }
+
+system('pause');
 
 
 #My API key is not working or reading for some reason. I go onto the website
 #with my API key and it seems to be able to process and generate the text for
 #me just fine.
 #maybe I just have to curl it
-#curl -H "X-API-TOKEN: <API-TOKEN>" 'http://interest-graph.getprismatic.com/url/topic' --data 'url=http%3A%2F%2Fen.wikipedia.org%2Fwiki%2FMachine_learning'
+########curl -H "X-API-TOKEN: <API-TOKEN>" 'http://interest-graph.getprismatic.com/url/topic' --data 'url=http%3A%2F%2Fen.wikipedia.org%2Fwiki%2FMachine_learning'
 
 #WebService::Prismatic::InterestGraph has a limit to 20 calls per hour so I'm implementing my own
 #version of tagging above. What I'm doing is just pulling the tags directly from their website and
