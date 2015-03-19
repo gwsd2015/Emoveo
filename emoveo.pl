@@ -243,7 +243,7 @@ use Locale::Language;
 #only works on an individual word basis, not useful
 #use Text::IdMor;
 #use Text::Roman;
-use Lingua::EN::Tagger;
+#use Lingua::EN::Tagger;
 #use Symbol::Name;
 use String::Multibyte;
 #use WebService::Prismatic::InterestGraph;
@@ -270,6 +270,7 @@ use Lingua::EN::Keywords qw(keywords);
 use Text::Context::Porter;
 use Text::TermExtract;
 use RTF::Writer;
+use WWW::Wikipedia;
 
 #take topics from website and use it to clear document
 #topics of interest are common and searched for in a document
@@ -336,10 +337,10 @@ chomp $inputfile;
 print "Input file, $inputfile, read.\n";
 #print "Enter a title for the txt file:\t";
 #my $title = <STDIN>;
-chomp $title;
+#chomp $title;
 my $textfile = read_file($inputfile);
 print "$textfile\n\n";
-my $analysistextfile = $textfile;
+#my $analysistextfile = $textfile;
 my $datatomod = ($textfile);
 
 #create regex in order to search subsections of that text
@@ -348,15 +349,16 @@ my $datatomod = ($textfile);
 #and the numbered system.
 
 #building some of these file to check that I properly completed steps.
+#necessary to keep in order to hvae file to chain the n-gram removal tool.
 my $check = "C:/Perl/checkfile.txt";
 open(CHK, ">:utf8",$check) or die "Can't generate $check\n";
 print "File $check generated.\n";
 print CHK "$textfile";
 close CHK;
 
-print "Preparing to do initial analysis of the readability of the text file...\n\n\n";
-my $analysisfile = "C:/Perl/analysis.txt";
-open (ASYS, ">:utf8",$analysisfile) or die "Can't create file to store initial analysis.\n";
+#print "Preparing to do initial analysis of the readability of the text file...\n\n\n";
+#my $analysisfile = "C:/Perl/analysis.txt";
+#open (ASYS, ">:utf8",$analysisfile) or die "Can't create file to store initial analysis.\n";
 
 my $text = new Lingua::EN::Fathom;
 $text->analyse_file($inputfile);
@@ -376,29 +378,29 @@ my $words_per_sentence = $text->words_per_sentence;
 #this routine is used to capture words but I want to be able to capture words in large quantities such as 
 #of, which, the, to be able to remove from the text when searching for named entities
 
-my @commonwords;
-my @characterizingwords;
+#my @commonwords;
+#my @characterizingwords;
 
-my %words = $text->unique_words;
-foreach my $word(sort keys %words){
-	print ASYS ("$words{$word} :$word\n");
-	if($num_words >= 500){
-		if ($words{$word}/$num_words > 0.002){
-			push @commonwords, $word;
-		}
-		elsif ($words{$word} < 7){
-			push @characterizingwords, $word;
-		}
-	}
-	else{
-		if ($words{$word}/$num_words > 0.06){
-			push @commonwords, $word;
-		}
-		elsif ($words{$word} < 4){
-			push @characterizingwords, $word;
-		}
-	}
-}
+#my %words = $text->unique_words;
+#foreach my $word(sort keys %words){
+#	print ASYS ("$words{$word} :$word\n");
+#	if($num_words >= 500){
+#		if ($words{$word}/$num_words > 0.002){
+#			push @commonwords, $word;
+#		}
+#		elsif ($words{$word} < 7){
+#			push @characterizingwords, $word;
+#		}
+#	}
+#	else{
+#		if ($words{$word}/$num_words > 0.06){
+#			push @commonwords, $word;
+#		}
+#		elsif ($words{$word} < 4){
+#			push @characterizingwords, $word;
+#		}
+#	}
+#}
 
 my $fog     = $text->fog;
 my $flesch  = $text->flesch;
@@ -408,64 +410,168 @@ print($text->report);
 print "\n\n";
 system('pause');
 
-close ASYS;
+#close ASYS;
 
 print "Preparing to get top 5 keywords from the document...\n";
 
-my $texttext = $analysistextfile;
+#my $texttext = $analysistextfile;
 
-my @keywords = keywords($texttext);
+#my @keywords = keywords($texttext);
 
-my $keycontextfile = "C:/Perl/keywordscontext.html";
-open(KEYCTXT, ">:utf8", $keycontextfile) or die; 
+#my $keycontextfile = "C:/Perl/keywordscontext.html";
+#open(KEYCTXT, ">:utf8", $keycontextfile) or die; 
 
-my $snippet = Text::Context::Porter->new($analysistextfile, @keywords);
-$snippet->keywords(@keywords);
-print KEYCTXT $snippet->as_html;
-print $snippet->as_text;
-$datatomod =~ s/$snippet->as_text//ig;
-close KEYCTXT;
+#my $snippet = Text::Context::Porter->new($analysistextfile, @keywords);
+#$snippet->keywords(@keywords);
+#print KEYCTXT $snippet->as_html;
+#print $snippet->as_text;
+#$datatomod =~ s/$snippet->as_text//ig;
+#close KEYCTXT;
 
-system('pause');
+#system('pause');
 
-my @keywords_of_choice;
-system('pause');
-for(my $iijk = 0; $iijk < $#keywords; $iijk++){
-	my $texter = $keywords[$iijk];
-	print $texter."\n";
-	while($iijk < 5){
-		print "Is this a keyword you wish to use?\t";
-		my $keyyesno = <STDIN>;
-		chomp $keyyesno;
-		if($keyyesno =~ /yes/i){
-			print "Performing analysis on phrases that suggest the keyword...\n";
-			push @keywords_of_choice, $texter;
-			my $stemmer = Lingua::Stem::Snowball->new(lang=>'en');
-			$stemmer->stem_in_place(\@keywords_of_choice);
-			my $concordance = Lingua::Concordance->new;
-			$concordance->text($datatomod);
-			$concordance->query($texter);
-			foreach($concordance->lines){
-				print "$_\n";
-				print "Would you like to remove this line?\t";
-				my $keepline = <STDIN>;
-				chomp $keepline;
-				if($keepline =~ /yes/i){
-					if($datatomod =~ m/$_/g){
-						$datatomod =~ s/$_//ig;
-					}
-				}
-				else{
-					system('pause');
-				}
-			}
-		}
-		$keyyesno = "Yes";
-		last;
-	}
+#my @keywords_of_choice;
+#system('pause');
+#for(my $iijk = 0; $iijk < $#keywords; $iijk++){
+##	my $texter = $keywords[$iijk];
+#	print $texter."\n";
+#	while($iijk < 5){
+###		print "Is this a keyword you wish to use?\t";
+###		my $keyyesno = <STDIN>;
+#		chomp $keyyesno;
+#		if($keyyesno =~ /yes/i){
+##			print "Performing analysis on phrases that suggest the keyword...\n";
+#			push @keywords_of_choice, $texter;
+#			my $stemmer = Lingua::Stem::Snowball->new(lang=>'en');
+#			$stemmer->stem_in_place(\@keywords_of_choice);
+#			my $concordance = Lingua::Concordance->new;
+#			$concordance->text($datatomod);
+#			$concordance->query($texter);
+#			foreach($concordance->lines){
+#				print "$_\n";
+#				print "Would you like to remove this line?\t";
+#				my $keepline = <STDIN>;
+##				chomp $keepline;
+#				if($keepline =~ /yes/i){
+#					if($datatomod =~ m/$_/g){
+#						$datatomod =~ s/$_//ig;
+#					}
+#				}
+#				else{
+#					system('pause');
+##				}
+#			}
+#		}
+#		$keyyesno = "Yes";
+#		last;
+#	}
+#}
+#system('pause');
+my @initial_keys;
+my @keys_for_0;
+my @keys_for_1;
+my @keys_for_2;
+my @keys_for_3;
+my @keys_for_4;
+my @keys_for_5;
+my @keys_for_6;
+my @keys_for_7;
+my @keys_for_8;
+my @keys_for_9;
+my @keys_for_10;
+my @keys_for_11;
+my @keys_for_12;
+my @keys_for_13;
+my @keys_for_14;
+my @keys_for_15;
+my @keys_for_16;
+my @keys_for_17;
+my @keys_for_18;
+my @keys_for_19;
+
+my $ext = Text::TermExtract->new();
+for my $wordsensing($ext->terms_extract($datatomod,{max =>20})){
+	print "$wordsensing\n";
+	push @initial_keys, $wordsensing;
 }
 system('pause');
 
+for(my $counters = 0; $counters < $#initial_keys; $counters++){
+	my $key_to_search = $initial_keys[$counters];
+	my $wiki = WWW::Wikipedia->new();
+	my $result = $wiki->search($key_to_search);
+	my $filewiki = "C:/Perl/wikistore.txt";
+	open(WIKI, ">:utf8", $filewiki) or die;
+	if ($result->text()){ 
+	      print WIKI $result->text();
+	}
+	close WIKI;
+	my $wikifile = read_file($filewiki);
+	my $wikiext = Text::TermExtract->new();
+	for my $keyword($wikiext->terms_extract($wikifile,{max =>20})){
+		print "$keyword\n";
+		if($counters == 0){
+			push @keys_for_0, $keyword;
+		}
+		elsif($counters == 1){
+			push @keys_for_1, $keyword;
+		}
+		elsif($counters == 2){
+			push @keys_for_2, $keyword;
+		}
+		elsif($counters == 3){
+			push @keys_for_3, $keyword;
+		}
+		elsif($counters == 4){
+			push @keys_for_4, $keyword;
+		}
+		elsif($counters == 5){
+			push @keys_for_5, $keyword;
+		}
+		elsif($counters == 6){
+			push @keys_for_6, $keyword;
+		}
+		elsif($counters == 7){
+			push @keys_for_7, $keyword;
+		}
+		elsif($counters == 8){
+			push @keys_for_8, $keyword;
+		}
+		elsif($counters == 9){
+			push @keys_for_9, $keyword;
+		}
+		elsif($counters == 10){
+			push @keys_for_10, $keyword;
+		}
+		elsif($counters == 11){
+			push @keys_for_11, $keyword;
+		}
+		elsif($counters == 12){
+			push @keys_for_12, $keyword;
+		}
+		elsif($counters == 13){
+			push @keys_for_13, $keyword;
+		}
+		elsif($counters == 14){
+			push @keys_for_14, $keyword;
+		}
+		elsif($counters == 15){
+			push @keys_for_15, $keyword;
+		}
+		elsif($counters == 16){
+			push @keys_for_16, $keyword;
+		}
+		elsif($counters == 17){
+			push @keys_for_17, $keyword;
+		}
+		elsif($counters == 18){
+			push @keys_for_18, $keyword;
+		}
+		elsif($counters == 19){
+			push @keys_for_19, $keyword;
+		}
+	}
+}
 
 
 #My API key is not working or reading for some reason. I go onto the website
@@ -499,61 +605,61 @@ system('pause');
 #my $float = rand();
 #close TRANSLATE;
 
-print "List of words that don't contribute to meaning: \n";
+#print "List of words that don't contribute to meaning: \n";
 #print @commonwords;
-for(my $i = 0; $i < $#commonwords; $i++){
-	print $commonwords[$i]."\n";
-}
-system('pause');
+#for(my $i = 0; $i < $#commonwords; $i++){
+#	print $commonwords[$i]."\n";
+#}
+#system('pause');
 
-my $wordlist = "C:/Perl/wordlist.txt";
-open(WORD, ">:utf8",$wordlist) or die "Can't create file to store wordlist.\n";
+#my $wordlist = "C:/Perl/wordlist.txt";
+#open(WORD, ">:utf8",$wordlist) or die "Can't create file to store wordlist.\n";
 
-print "List of words that make this document unique: \n";
+#print "List of words that make this document unique: \n";
 #print @characterizingwords;
-for(my $j = 0; $j < $#characterizingwords; $j++){
-	print $characterizingwords[$j]."\n";
-	print WORD $characterizingwords[$j]."\n";
-}
-system('pause');
+#for(my $j = 0; $j < $#characterizingwords; $j++){
+#	print $characterizingwords[$j]."\n";
+#	print WORD $characterizingwords[$j]."\n";
+#}
+#system('pause');
 
-print "File storing the unique words is now available at $wordlist \n";
+#print "File storing the unique words is now available at $wordlist \n";
 
-close WORD;
+#close WORD;
 
 #my $datatomod =~ s/(\.|\?|!)/ ./g;
 
-my $taggedtextout = 'C:\Perl\taggedtxt.txt';
-open (TAGOUT, ">:utf8",$taggedtextout) or die;
-my $nnpex = 'C:\Perl\NNPextract.txt';
-open (NNP, ">:utf8",$nnpex) or die;
-my $propernoun = 'C:\Perl\propernoun.txt';
-open (PNOUN, ">:utf8",$propernoun) or die;
-my $nnpex_bigram = 'C:\Perl\NNPphraseextract.txt';
-open (NNPEX, ">:utf8", $nnpex_bigram);
+#my $taggedtextout = 'C:\Perl\taggedtxt.txt';
+#open (TAGOUT, ">:utf8",$taggedtextout) or die;
+#my $nnpex = 'C:\Perl\NNPextract.txt';
+#open (NNP, ">:utf8",$nnpex) or die;
+#my $propernoun = 'C:\Perl\propernoun.txt';
+##open (PNOUN, ">:utf8",$propernoun) or die;
+#my $nnpex_bigram = 'C:\Perl\NNPphraseextract.txt';
+#open (NNPEX, ">:utf8", $nnpex_bigram);
 
-my $parsednnp = new Lingua::EN::Tagger;
-my $tagged_text = $parsednnp->add_tags($datatomod);
-my %word_list = $parsednnp->get_words($datatomod);					 
-my $readable_text = $parsednnp->get_readable($datatomod);
-my $proper_nouns = $parsednnp->get_proper_nouns($datatomod);
-print TAGOUT $readable_text;
-close TAGOUT;
-print PNOUN $proper_nouns;
-close PNOUN;
+#my $parsednnp = new Lingua::EN::Tagger;
+#my $tagged_text = $parsednnp->add_tags($datatomod);
+#my %word_list = $parsednnp->get_words($datatomod);					 
+#my $readable_text = $parsednnp->get_readable($datatomod);
+#my $proper_nouns = $parsednnp->get_proper_nouns($datatomod);
+#print TAGOUT $readable_text;
+#close TAGOUT;
+#print PNOUN $proper_nouns;
+#close PNOUN;
 
-my @taggedwordlist2;
+#my @taggedwordlist2;
 
-open(TAGOUT2, $taggedtextout) or die;
-while(<TAGOUT2>){
-	my @taggedwordlist = split /\s/;
-	while (my $tagword = pop @taggedwordlist){
-		if ($tagword =~ /\w\/((NN(P|S)?S?)|(FW)|(JJ(R|S)))/ig){
-			print NNP $tagword."\n";
-			$tagword =~ s/\/((NN(P|S)?S?)|(FW)|(JJ(R|S)))/ /ig;
-			$datatomod =~ s/\b$tagword\b/ /ig;
-		} 
-	}
+#open(TAGOUT2, $taggedtextout) or die;
+#while(<TAGOUT2>){
+##	my @taggedwordlist = split /\s/;
+#	while (my $tagword = pop @taggedwordlist){
+#		if ($tagword =~ /\w\/((NN(P|S)?S?)|(FW)|(JJ(R|S)))/ig){
+#			print NNP $tagword."\n";
+#			$tagword =~ s/\/((NN(P|S)?S?)|(FW)|(JJ(R|S)))/ /ig;
+#			$datatomod =~ s/\b$tagword\b/ /ig;
+#		} 
+#	}
 #	for(my $tagz = 0; $tagz < $#taggedwordlist; $tagz++){
 #		my $taggertwo = $taggedwordlist[$tagz]." ".$taggedwordlist[$tagz+1];		
 #		if ($taggertwo =~ /\w\/NNP\s\w\/NNP/){
@@ -561,10 +667,10 @@ while(<TAGOUT2>){
 #			push @taggedwordlist2, $taggertwo;
 #		}
 #	}
-}
+#}
 
-print @taggedwordlist2;
-system('pause');
+#print @taggedwordlist2;
+#system('pause');
 
 #open(PNOUN2, $propernoun) or die;
 #while(<PNOUN2>){
@@ -574,9 +680,9 @@ system('pause');
 #	}
 #close PNOUN;
 
-close TAGOUT2;
-close NNP;
-close NNPEX;
+#close TAGOUT2;
+#close NNP;
+#close NNPEX;
 
 #my $exitsign = "Time to exit!";
 #print "Traverse the file for targeted removal...\n";
@@ -961,10 +1067,11 @@ $datatomod =~ s/confidential/ /ig;
 $datatomod =~ s/top secret/ /ig;
 $datatomod =~ s/secret/ /ig;
 $datatomod =~ s/unclassified/ /ig;
-for(my $k = 0; $k < $#characterizingwords; $k++){
-	my $wordtomod = $characterizingwords[$k];
-	$datatomod =~ s/\s$wordtomod\s/ /ig;
-}
+
+#for(my $k = 0; $k < $#characterizingwords; $k++){
+#	my $wordtomod = $characterizingwords[$k];
+#	$datatomod =~ s/\s$wordtomod\s/ /ig;
+#}
 
 print "Removal completed...\n";
 print "Printing to $modify...\n";
