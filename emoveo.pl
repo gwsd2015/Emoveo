@@ -57,7 +57,7 @@ use Text::Context::Porter;
 use Text::TermExtract;
 use RTF::Writer;
 use WWW::Wikipedia;
-
+use Lingua::EN::Tagger;
 
 #take the input file from the user
 #file slurp and extract the text
@@ -142,6 +142,8 @@ system('pause');
 print @initial_keys;
 system('pause');
 
+print "\nPreparing to build keyword trees...\n\n";
+
 for(my $counters = 0; $counters < $#initial_keys; $counters++){
 	my $key_to_search = $initial_keys[$counters];
 	my $wiki = WWW::Wikipedia->new();
@@ -224,6 +226,52 @@ for(my $counters = 0; $counters < $#initial_keys; $counters++){
 }
 
 system('pause');
+
+
+my $par = new Lingua::EN::Tagger;
+my $tagged_text = $par->add_tags($datatomod);
+my %nounphrase = $par->get_noun_phrases($tagged_text);
+print %nounphrase;
+my @nountable;
+foreach my $nounkeys(keys %nounphrase){
+	if($nounkeys !~ /(\(|\)|\{|\}|\[|\]|\^|\$|\.|\||\*|\+|\?|\\)/){
+		push @nountable, $nounkeys;
+	}
+}
+system('pause');
+print @nountable;
+system('pause');
+
+my $datatomod_np = $datatomod;
+
+for(my $ix = 0; $ix < $#nountable; $ix++){
+	my $nounphrase = $nountable[$ix];
+	my $nounphrase2 = $nounphrase =~ s/(\s+|\t+|\n+)/_/ig;
+	print $nounphrase."\n";
+	print $nounphrase2."\n";
+	if($datatomod_np =~ m/$nounphrase/i){
+		$datatomod_np =~ s/\b$nounphrase\b/$nounphrase2/ige;
+	}
+}
+
+print $datatomod_np;
+
+print "\n";
+
+print "Created noun phrases. Creating new keyword extraction using noun phrased document...";
+print "\n";
+
+my @second_keys;
+my $phraseext = Text::TermExtract->new();
+for my $np($phraseext->terms_extract($datatomod_np,{max => 20})){
+	push @second_keys, $np;	
+	print $np."\n";
+}
+
+print @second_keys;
+
+system('pause');
+
 
 my @search_for_sentence;
 my @sentence_split_store;
