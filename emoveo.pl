@@ -79,7 +79,7 @@ my $datatomod = ($textfile);
 #building some of these file to check that I properly completed steps.
 #necessary to keep in order to hvae file to chain the n-gram removal tool.
 my $check = "C:/Perl/checkfile.txt";
-open(CHK, ">:utf8",$check) or die "Can't generate $check\n";
+open(CHK, ">", $check) or die "Can't generate $check\n";
 print "File $check generated.\n";
 print CHK "$textfile";
 close CHK;
@@ -150,7 +150,7 @@ for(my $counters = 0; $counters < $#initial_keys; $counters++){
 	my $wiki = WWW::Wikipedia->new();
 	my $result = $wiki->search($key_to_search);
 	my $filewiki = "C:/Perl/wikistore.txt";
-	open(WIKI, ">:utf8", $filewiki) or die;
+	open(WIKI, ">",  $filewiki) or die;
 	if($result !~ /^$/){
 		if ($result->text()){ 
 			print WIKI $result->text();
@@ -231,236 +231,509 @@ system('pause');
 my $form = Tkx::widget->new('.');
 $form->g_wm_title('test object GUI');
 $form->m_configure(-background => "red");
-$form->g_wm_minsize(800, 480);
+$form->g_wm_minsize(600, 400);
 
 my $button0;
 
 $button0 = $form->new_button(
-	-text => $initial_keys[0]
+	-text => "$initial_keys[0], $initial_keys[1], $initial_keys[2], $initial_keys[3], $initial_keys[4]"
 );
 
 $button0->g_pack(
-	-padx => 0,
-	-pady => 0,
+	-padx => 100,
+	-pady => 20,
 );
 
 my $button1;
 
 $button1 = $form->new_button(
-	-text => $initial_keys[1]
+	-text => "$initial_keys[5], $initial_keys[6], $initial_keys[7], $initial_keys[8], $initial_keys[9]"
 );
 
 $button1->g_pack(
-	-padx => 0,
-	-pady => 150,
+	-padx => 100,
+	-pady => 22,
 );
 
 my $button2;
 
 $button2 = $form->new_button(
-	-text => $initial_keys[2]
+	-text => "$initial_keys[10], $initial_keys[11], $initial_keys[12], $initial_keys[13], $initial_keys[14]"
 );
 
 $button2->g_pack(
-	-padx => 0,
-	-pady => 300,
+	-padx => 100,
+	-pady => 24,
 );
 
 my $button3;
 
 $button3 = $form->new_button(
-	-text => $initial_keys[3]
+	-text => "$initial_keys[15], $initial_keys[16], $initial_keys[17], $initial_keys[18], $initial_keys[19]"
 );
 
 $button3->g_pack(
-	-padx => 0,
-	-pady => 450,
-);
-
-my $button4;
-
-$button4 = $form->new_button(
-	-text => $initial_keys[4]
-);
-
-$button4->g_pack(
-	-padx => 0,
-	-pady => 600,
-);
-
-my $button5;
-
-$button5 = $form->new_button(
-	-text => $initial_keys[5]
-);
-
-$button5->g_pack(
-	-padx => 150,
-	-pady => 0,
-);
-
-my $button6;
-
-$button6 = $form->new_button(
-	-text => $initial_keys[6]
-);
-
-$button6->g_pack(
-	-padx => 150,
-	-pady => 150,
-);
-
-my $button7;
-
-$button7 = $form->new_button(
-	-text => $initial_keys[7]
-);
-
-$button7->g_pack(
-	-padx => 150,
-	-pady => 300,
-);
-
-my $button8;
-
-$button8 = $form->new_button(
-	-text => $initial_keys[8]
-);
-
-$button8->g_pack(
-	-padx => 150,
-	-pady => 450,
-);
-
-my $button9;
-
-$button9 = $form->new_button(
-	-text => $initial_keys[9]
-);
-
-$button9->g_pack(
-	-padx => 150,
-	-pady => 600,
-);
-
-my $button10;
-
-$button10 = $form->new_button(
-	-text => $initial_keys[10]
-);
-
-$button10->g_pack(
-	-padx => 300,
-	-pady => 0,
-);
-
-my $button11;
-
-$button11 = $form->new_button(
-	-text => $initial_keys[11]
-);
-
-$button11->g_pack(
-	-padx => 300,
-	-pady => 150,
-);
-
-my $button12;
-
-$button12 = $form->new_button(
-	-text => $initial_keys[12]
-);
-
-$button12->g_pack(
-	-padx => 300,
-	-pady => 300,
-);
-
-my $button13;
-
-$button13 = $form->new_button(
-	-text => $initial_keys[13]
-);
-
-$button13->g_pack(
-	-padx => 300,
-	-pady => 450,
-);
-
-my $button14;
-
-$button14 = $form->new_button(
-	-text => $initial_keys[14]
-);
-
-$button14->g_pack(
-	-padx => 300,
-	-pady => 600,
-);
-
-my $button15;
-
-$button15 = $form->new_button(
-	-text => $initial_keys[15]
-);
-
-$button15->g_pack(
-	-padx => 600,
-	-pady => 0,
-);
-
-my $button16;
-
-$button16 = $form->new_button(
-	-text => $initial_keys[16]
-);
-
-$button16->g_pack(
-	-padx => 600,
-	-pady => 150,
-);
-
-my $button17;
-
-$button17 = $form->new_button(
-	-text => $initial_keys[17]
-);
-
-$button17->g_pack(
-	-padx => 600,
-	-pady => 300,
-);
-
-my $button18;
-
-$button18 = $form->new_button(
-	-text => $initial_keys[18]
-);
-
-$button18->g_pack(
-	-padx => 600,
-	-pady => 450,
-);
-
-my $button19;
-
-$button19 = $form->new_button(
-	-text => $initial_keys[19]
-);
-
-$button19->g_pack(
-	-padx => 600,
-	-pady => 600,
-);
-
-Tkx::tk___messageBox(
-	-parent => $form,
-	-icon => "info",
-	-title => "Word List",
-	-message => "This is a wordlist for your reference",
+	-padx => 100,
+	-pady => 26,
 );
 
 Tkx::MainLoop();
+
+our $loopreplacefile = "C:/Perl/looper.txt";
+open(LOOP, ">",  $loopreplacefile);
+print LOOP $datatomod;
+close LOOP;
+
+while(1){
+	print "Enter the keyword that you would like to search for (enter 0 to escape): ";
+	my $finder = <STDIN>;
+	chomp $finder;
+	if($finder =~ /$initial_keys[0]/){
+		my $concordance0 = Lingua::Concordance->new;
+		my $reader0 = read_file($loopreplacefile);
+		$concordance0->text($reader0);
+		$concordance0->query($initial_keys[0], $keys_for_0[0], $keys_for_0[1], $keys_for_0[2], $keys_for_0[3], $keys_for_0[4], $keys_for_0[5], $keys_for_0[6], $keys_for_0[7], $keys_for_0[8], $keys_for_0[9], $keys_for_0[10], $keys_for_0[11], $keys_for_0[12], $keys_for_0[13], $keys_for_0[14], $keys_for_0[15], $keys_for_0[16], $keys_for_0[17], $keys_for_0[18], $keys_for_0[19]);
+		foreach($concordance0->lines){
+			print "$_\n";
+			print "Would you like to keep this line?\t";
+			my $userinput = <STDIN>;
+			chomp $userinput;
+			if($userinput =~ /no/i){
+				my $looper = read_file($loopreplacefile);
+				$looper =~ s/$_/||||||||||/;
+				open(LOOPER, ">",  $loopreplacefile);
+				print LOOPER $looper;
+				close LOOPER;
+			}
+			else{
+				system('pause');
+			}
+		}
+	}
+	elsif($finder =~ /$initial_keys[1]/){
+				my $concordance1 = Lingua::Concordance->new;
+				my $reader1 = read_file($loopreplacefile);
+				$concordance1->text($reader1);
+				$concordance1->query($initial_keys[1], $keys_for_1[0], $keys_for_1[1], $keys_for_1[2], $keys_for_1[3], $keys_for_1[4], $keys_for_1[5], $keys_for_1[6], $keys_for_1[7], $keys_for_1[8], $keys_for_1[9], $keys_for_1[10], $keys_for_1[11], $keys_for_1[12], $keys_for_1[13], $keys_for_1[14], $keys_for_1[15], $keys_for_1[16], $keys_for_1[17], $keys_for_1[18], $keys_for_1[19]);
+				foreach($concordance1->lines){
+					print "$_\n";
+					print "Would you like to keep this line?\t";
+					my $userinput = <STDIN>;
+					chomp $userinput;
+					if($userinput =~ /no/i){
+						my $looper = read_file($loopreplacefile);
+						$looper =~ s/$_/||||||||||/;
+						open(LOOPER, ">",  $loopreplacefile);
+						print LOOPER $looper;
+						close LOOPER;
+					}
+					else{
+						system('pause');
+					}
+		}
+	}
+	elsif($finder =~ /$initial_keys[2]/){
+				my $concordance2 = Lingua::Concordance->new;
+				my $reader2 = read_file($loopreplacefile);
+				$concordance2->text($reader2);
+				$concordance2->query($initial_keys[2], $keys_for_2[0], $keys_for_2[1], $keys_for_2[2], $keys_for_2[3], $keys_for_2[4], $keys_for_2[5], $keys_for_2[6], $keys_for_2[7], $keys_for_2[8], $keys_for_2[9], $keys_for_2[10], $keys_for_2[11], $keys_for_2[12], $keys_for_2[13], $keys_for_2[14], $keys_for_2[15], $keys_for_2[16], $keys_for_2[17], $keys_for_2[18], $keys_for_2[19]);
+				foreach($concordance2->lines){
+					print "$_\n";
+					print "Would you like to keep this line?\t";
+					my $userinput = <STDIN>;
+					chomp $userinput;
+					if($userinput =~ /no/i){
+						my $looper = read_file($loopreplacefile);
+						$looper =~ s/$_/||||||||||/;
+						open(LOOPER, ">",  $loopreplacefile);
+						print LOOPER $looper;
+						close LOOPER;
+					}
+					else{
+						system('pause');
+					}
+		}
+	}
+	elsif($finder =~ /$initial_keys[3]/){
+				my $concordance3 = Lingua::Concordance->new;
+				my $reader3 = read_file($loopreplacefile);
+				$concordance3->text($reader3);
+				$concordance3->query($initial_keys[3], $keys_for_3[0], $keys_for_3[1], $keys_for_3[2], $keys_for_3[3], $keys_for_3[4], $keys_for_3[5], $keys_for_3[6], $keys_for_3[7], $keys_for_3[8], $keys_for_3[9], $keys_for_3[10], $keys_for_3[11], $keys_for_3[12], $keys_for_3[13], $keys_for_3[14], $keys_for_3[15], $keys_for_3[16], $keys_for_3[17], $keys_for_3[18], $keys_for_3[19]);
+				foreach($concordance3->lines){
+					print "$_\n";
+					print "Would you like to keep this line?\t";
+					my $userinput = <STDIN>;
+					chomp $userinput;
+					if($userinput =~ /no/i){
+						my $looper = read_file($loopreplacefile);
+						$looper =~ s/$_/||||||||||/;
+						open(LOOPER, ">",  $loopreplacefile);
+						print LOOPER $looper;
+						close LOOPER;
+					}
+					else{
+						system('pause');
+					}
+		}
+	}
+	elsif($finder =~ /$initial_keys[4]/){
+				my $concordance4 = Lingua::Concordance->new;
+				my $reader4 = read_file($loopreplacefile);
+				$concordance4->text($reader4);
+				$concordance4->query($initial_keys[4], $keys_for_4[0], $keys_for_4[1], $keys_for_4[2], $keys_for_4[3], $keys_for_4[4], $keys_for_4[5], $keys_for_4[6], $keys_for_4[7], $keys_for_4[8], $keys_for_4[9], $keys_for_4[10], $keys_for_4[11], $keys_for_4[12], $keys_for_4[13], $keys_for_4[14], $keys_for_4[15], $keys_for_4[16], $keys_for_4[17], $keys_for_4[18], $keys_for_4[19]);
+				foreach($concordance4->lines){
+					print "$_\n";
+					print "Would you like to keep this line?\t";
+					my $userinput = <STDIN>;
+					chomp $userinput;
+					if($userinput =~ /no/i){
+						my $looper = read_file($loopreplacefile);
+						$looper =~ s/$_/||||||||||/;
+						open(LOOPER, ">",  $loopreplacefile);
+						print LOOPER $looper;
+						close LOOPER;
+					}
+					else{
+						system('pause');
+					}
+		}
+	}
+	elsif($finder =~ /$initial_keys[5]/){
+			my $concordance5 = Lingua::Concordance->new;
+			my $reader5 = read_file($loopreplacefile);
+			$concordance5->text($reader5);
+			$concordance5->query($initial_keys[5], $keys_for_5[0], $keys_for_5[1], $keys_for_5[2], $keys_for_5[3], $keys_for_5[4], $keys_for_5[5], $keys_for_5[6], $keys_for_5[7], $keys_for_5[8], $keys_for_5[9], $keys_for_5[10], $keys_for_5[11], $keys_for_5[12], $keys_for_5[13], $keys_for_5[14], $keys_for_5[15], $keys_for_5[16], $keys_for_5[17], $keys_for_5[18], $keys_for_5[19]);
+			foreach($concordance5->lines){
+				print "$_\n";
+				print "Would you like to keep this line?\t";
+				my $userinput = <STDIN>;
+				chomp $userinput;
+				if($userinput =~ /no/i){
+						my $looper = read_file($loopreplacefile);
+						$looper =~ s/$_/||||||||||/;
+						open(LOOPER, ">",  $loopreplacefile);
+						print LOOPER $looper;
+						close LOOPER;
+				}
+				else{
+					system('pause');
+				}
+		}
+	}
+	elsif($finder =~ /$initial_keys[6]/){
+		my $concordance6 = Lingua::Concordance->new;
+				my $reader6 = read_file($loopreplacefile);
+				$concordance6->text($reader6);
+				$concordance6->query($initial_keys[6], $keys_for_6[0], $keys_for_6[1], $keys_for_6[2], $keys_for_6[3], $keys_for_6[4], $keys_for_6[5], $keys_for_6[6], $keys_for_6[7], $keys_for_6[8], $keys_for_6[9], $keys_for_6[10], $keys_for_6[11], $keys_for_6[12], $keys_for_6[13], $keys_for_6[14], $keys_for_6[15], $keys_for_6[16], $keys_for_6[17], $keys_for_6[18], $keys_for_6[19]);
+				foreach($concordance6->lines){
+					print "$_\n";
+					print "Would you like to keep this line?\t";
+					my $userinput = <STDIN>;
+					chomp $userinput;
+					if($userinput =~ /no/i){
+						my $looper = read_file($loopreplacefile);
+						$looper =~ s/$_/||||||||||/;
+						open(LOOPER, ">",  $loopreplacefile);
+						print LOOPER $looper;
+						close LOOPER;
+					}
+					else{
+						system('pause');
+					}
+		}
+	}
+	elsif($finder =~ /$initial_keys[7]/){
+		my $concordance7 = Lingua::Concordance->new;
+				my $reader7 = read_file($loopreplacefile);
+				$concordance7->text($reader7);
+				$concordance7->query($initial_keys[0], $keys_for_7[0], $keys_for_7[1], $keys_for_7[2], $keys_for_7[3], $keys_for_7[4], $keys_for_7[5], $keys_for_7[6], $keys_for_7[7], $keys_for_7[8], $keys_for_7[9], $keys_for_7[10], $keys_for_7[11], $keys_for_7[12], $keys_for_7[13], $keys_for_7[14], $keys_for_7[15], $keys_for_7[16], $keys_for_7[17], $keys_for_7[18], $keys_for_7[19]);
+				foreach($concordance7->lines){
+					print "$_\n";
+					print "Would you like to keep this line?\t";
+					my $userinput = <STDIN>;
+					chomp $userinput;
+					if($userinput =~ /no/i){
+						my $looper = read_file($loopreplacefile);
+						$looper =~ s/$_/||||||||||/;
+						open(LOOPER, ">",  $loopreplacefile);
+						print LOOPER $looper;
+						close LOOPER;
+					}
+					else{
+						system('pause');
+					}
+		}		
+	}
+	elsif($finder =~ /$initial_keys[8]/){
+		my $concordance8 = Lingua::Concordance->new;
+				my $reader8 = read_file($loopreplacefile);
+				$concordance8->text($reader8);
+				$concordance8->query($initial_keys[8], $keys_for_8[0], $keys_for_8[1], $keys_for_8[2], $keys_for_8[3], $keys_for_8[4], $keys_for_8[5], $keys_for_8[6], $keys_for_8[7], $keys_for_8[8], $keys_for_8[9], $keys_for_8[10], $keys_for_8[11], $keys_for_8[12], $keys_for_8[13], $keys_for_8[14], $keys_for_8[15], $keys_for_8[16], $keys_for_8[17], $keys_for_8[18], $keys_for_8[19]);
+				foreach($concordance8->lines){
+					print "$_\n";
+					print "Would you like to keep this line?\t";
+					my $userinput = <STDIN>;
+					chomp $userinput;
+					if($userinput =~ /no/i){
+						my $looper = read_file($loopreplacefile);
+						$looper =~ s/$_/||||||||||/;
+						open(LOOPER, ">",  $loopreplacefile);
+						print LOOPER $looper;
+						close LOOPER;
+					}
+					else{
+						system('pause');
+					}
+		}
+	}
+	elsif($finder =~ /$initial_keys[9]/){
+		my $concordance9 = Lingua::Concordance->new;
+				my $reader9 = read_file($loopreplacefile);
+				$concordance9->text($reader9);
+				$concordance9->query($initial_keys[9], $keys_for_9[0], $keys_for_9[1], $keys_for_9[2], $keys_for_9[3], $keys_for_9[4], $keys_for_9[5], $keys_for_9[6], $keys_for_9[7], $keys_for_9[8], $keys_for_9[9], $keys_for_9[10], $keys_for_9[11], $keys_for_9[12], $keys_for_9[13], $keys_for_9[14], $keys_for_9[15], $keys_for_9[16], $keys_for_9[17], $keys_for_9[18], $keys_for_9[19]);
+				foreach($concordance9->lines){
+					print "$_\n";
+					print "Would you like to keep this line?\t";
+					my $userinput = <STDIN>;
+					chomp $userinput;
+					if($userinput =~ /no/i){
+						my $looper = read_file($loopreplacefile);
+						$looper =~ s/$_/||||||||||/;
+						open(LOOPER, ">",  $loopreplacefile);
+						print LOOPER $looper;
+						close LOOPER;
+					}
+					else{
+						system('pause');
+					}
+		}
+	}
+	elsif($finder =~ /$initial_keys[10]/){
+		my $concordance10 = Lingua::Concordance->new;
+				my $reader10 = read_file($loopreplacefile);
+				$concordance10->text($reader10);
+				$concordance10->query($initial_keys[10], $keys_for_10[0], $keys_for_10[1], $keys_for_10[2], $keys_for_10[3], $keys_for_10[4], $keys_for_10[5], $keys_for_10[6], $keys_for_10[7], $keys_for_10[8], $keys_for_10[9], $keys_for_10[10], $keys_for_10[11], $keys_for_10[12], $keys_for_10[13], $keys_for_10[14], $keys_for_10[15], $keys_for_10[16], $keys_for_10[17], $keys_for_10[18], $keys_for_10[19]);
+				foreach($concordance10->lines){
+					print "$_\n";
+					print "Would you like to keep this line?\t";
+					my $userinput = <STDIN>;
+					chomp $userinput;
+					if($userinput =~ /no/i){
+						my $looper = read_file($loopreplacefile);
+						$looper =~ s/$_/||||||||||/;
+						open(LOOPER, ">",  $loopreplacefile);
+						print LOOPER $looper;
+						close LOOPER;
+					}
+					else{
+						system('pause');
+					}
+		}
+	}
+	elsif($finder =~ /$initial_keys[11]/){
+		my $concordance11 = Lingua::Concordance->new;
+				my $reader11 = read_file($loopreplacefile);
+				$concordance11->text($reader11);
+				$concordance11->query($initial_keys[11], $keys_for_11[0], $keys_for_11[1], $keys_for_11[2], $keys_for_11[3], $keys_for_11[4], $keys_for_11[5], $keys_for_11[6], $keys_for_11[7], $keys_for_11[8], $keys_for_11[9], $keys_for_11[10], $keys_for_11[11], $keys_for_11[12], $keys_for_11[13], $keys_for_11[14], $keys_for_11[15], $keys_for_11[16], $keys_for_11[17], $keys_for_11[18], $keys_for_11[19]);
+				foreach($concordance11->lines){
+					print "$_\n";
+					print "Would you like to keep this line?\t";
+					my $userinput = <STDIN>;
+					chomp $userinput;
+					if($userinput =~ /no/i){
+						my $looper = read_file($loopreplacefile);
+						$looper =~ s/$_/||||||||||/;
+						open(LOOPER, ">",  $loopreplacefile);
+						print LOOPER $looper;
+						close LOOPER;
+					}
+					else{
+						system('pause');
+					}
+		}
+	}
+	elsif($finder =~ /$initial_keys[12]/){
+		my $concordance12 = Lingua::Concordance->new;
+				my $reader12 = read_file($loopreplacefile);
+				$concordance12->text($reader12);
+				$concordance12->query($initial_keys[12], $keys_for_12[0], $keys_for_12[1], $keys_for_12[2], $keys_for_12[3], $keys_for_12[4], $keys_for_12[5], $keys_for_12[6], $keys_for_12[7], $keys_for_12[8], $keys_for_12[9], $keys_for_12[10], $keys_for_12[11], $keys_for_12[12], $keys_for_12[13], $keys_for_12[14], $keys_for_12[15], $keys_for_12[16], $keys_for_12[17], $keys_for_12[18], $keys_for_12[19]);
+				foreach($concordance12->lines){
+					print "$_\n";
+					print "Would you like to keep this line?\t";
+					my $userinput = <STDIN>;
+					chomp $userinput;
+					if($userinput =~ /no/i){
+						my $looper = read_file($loopreplacefile);
+						$looper =~ s/$_/||||||||||/;
+						open(LOOPER, ">",  $loopreplacefile);
+						print LOOPER $looper;
+						close LOOPER;
+					}
+					else{
+						system('pause');
+					}
+		}
+	}
+	elsif($finder =~ /$initial_keys[13]/){
+		my $concordance13 = Lingua::Concordance->new;
+				my $reader13 = read_file($loopreplacefile);
+				$concordance13->text($reader13);
+				$concordance13->query($initial_keys[13], $keys_for_13[0], $keys_for_13[1], $keys_for_13[2], $keys_for_13[3], $keys_for_13[4], $keys_for_13[5], $keys_for_13[6], $keys_for_13[7], $keys_for_13[8], $keys_for_13[9], $keys_for_13[10], $keys_for_13[11], $keys_for_13[12], $keys_for_13[13], $keys_for_13[14], $keys_for_13[15], $keys_for_13[16], $keys_for_13[17], $keys_for_13[18], $keys_for_13[19]);
+				foreach($concordance13->lines){
+					print "$_\n";
+					print "Would you like to keep this line?\t";
+					my $userinput = <STDIN>;
+					chomp $userinput;
+					if($userinput =~ /no/i){
+						my $looper = read_file($loopreplacefile);
+						$looper =~ s/$_/||||||||||/;
+						open(LOOPER, ">",  $loopreplacefile);
+						print LOOPER $looper;
+						close LOOPER;
+					}
+					else{
+						system('pause');
+					}
+		}
+	}
+	elsif($finder =~ /$initial_keys[14]/){
+		my $concordance14 = Lingua::Concordance->new;
+				my $reader14 = read_file($loopreplacefile);
+				$concordance14->text($reader14);
+				$concordance14->query($initial_keys[14], $keys_for_14[0], $keys_for_14[1], $keys_for_14[2], $keys_for_14[3], $keys_for_14[4], $keys_for_14[5], $keys_for_14[6], $keys_for_14[7], $keys_for_14[8], $keys_for_14[9], $keys_for_14[10], $keys_for_14[11], $keys_for_14[12], $keys_for_14[13], $keys_for_14[14], $keys_for_14[15], $keys_for_14[16], $keys_for_14[17], $keys_for_14[18], $keys_for_14[19]);
+				foreach($concordance14->lines){
+					print "$_\n";
+					print "Would you like to keep this line?\t";
+					my $userinput = <STDIN>;
+					chomp $userinput;
+					if($userinput =~ /no/i){
+						my $looper = read_file($loopreplacefile);
+						$looper =~ s/$_/||||||||||/;
+						open(LOOPER, ">",  $loopreplacefile);
+						print LOOPER $looper;
+						close LOOPER;
+					}
+					else{
+						system('pause');
+					}
+		}
+	}
+	elsif($finder =~ /$initial_keys[15]/){
+		my $concordance15 = Lingua::Concordance->new;
+				my $reader15 = read_file($loopreplacefile);
+				$concordance15->text($reader15);
+				$concordance15->query($initial_keys[15], $keys_for_15[0], $keys_for_15[1], $keys_for_15[2], $keys_for_15[3], $keys_for_15[4], $keys_for_15[5], $keys_for_15[6], $keys_for_15[7], $keys_for_15[8], $keys_for_15[9], $keys_for_15[10], $keys_for_15[11], $keys_for_15[12], $keys_for_15[13], $keys_for_15[14], $keys_for_15[15], $keys_for_15[16], $keys_for_15[17], $keys_for_15[18], $keys_for_15[19]);
+				foreach($concordance15->lines){
+					print "$_\n";
+					print "Would you like to keep this line?\t";
+					my $userinput = <STDIN>;
+					chomp $userinput;
+					if($userinput =~ /no/i){
+						my $looper = read_file($loopreplacefile);
+						$looper =~ s/$_/||||||||||/;
+						open(LOOPER, ">",  $loopreplacefile);
+						print LOOPER $looper;
+						close LOOPER;
+					}
+					else{
+						system('pause');
+					}
+		}
+	}
+	elsif($finder =~ /$initial_keys[16]/){
+		my $concordance16 = Lingua::Concordance->new;
+				my $reader16 = read_file($loopreplacefile);
+				$concordance16->text($reader16);
+				$concordance16->query($initial_keys[16], $keys_for_16[0], $keys_for_16[1], $keys_for_16[2], $keys_for_16[3], $keys_for_16[4], $keys_for_16[5], $keys_for_16[6], $keys_for_16[7], $keys_for_16[8], $keys_for_16[9], $keys_for_16[10], $keys_for_16[11], $keys_for_16[12], $keys_for_16[13], $keys_for_16[14], $keys_for_16[15], $keys_for_16[16], $keys_for_16[17], $keys_for_16[18], $keys_for_16[19]);
+				foreach($concordance16->lines){
+					print "$_\n";
+					print "Would you like to keep this line?\t";
+					my $userinput = <STDIN>;
+					chomp $userinput;
+					if($userinput =~ /no/i){
+						my $looper = read_file($loopreplacefile);
+						$looper =~ s/$_/||||||||||/;
+						open(LOOPER, ">",  $loopreplacefile);
+						print LOOPER $looper;
+						close LOOPER;
+					}
+					else{
+						system('pause');
+					}
+		}
+	}
+	elsif($finder =~ /$initial_keys[17]/){
+		my $concordance17 = Lingua::Concordance->new;
+				my $reader17 = read_file($loopreplacefile);
+				$concordance17->text($reader17);
+				$concordance17->query($initial_keys[17], $keys_for_17[0], $keys_for_17[1], $keys_for_17[2], $keys_for_17[3], $keys_for_17[4], $keys_for_17[5], $keys_for_17[6], $keys_for_17[7], $keys_for_17[8], $keys_for_17[9], $keys_for_17[10], $keys_for_17[11], $keys_for_17[12], $keys_for_17[13], $keys_for_17[14], $keys_for_17[15], $keys_for_17[16], $keys_for_17[17], $keys_for_17[18], $keys_for_17[19]);
+				foreach($concordance17->lines){
+					print "$_\n";
+					print "Would you like to keep this line?\t";
+					my $userinput = <STDIN>;
+					chomp $userinput;
+					if($userinput =~ /no/i){
+						my $looper = read_file($loopreplacefile);
+						$looper =~ s/$_/||||||||||/;
+						open(LOOPER, ">",  $loopreplacefile);
+						print LOOPER $looper;
+						close LOOPER;
+					}
+					else{
+						system('pause');
+					}
+		}
+	}
+	elsif($finder =~ /$initial_keys[18]/){
+		my $concordance18 = Lingua::Concordance->new;
+				my $reader18 = read_file($loopreplacefile);
+				$concordance18->text($reader18);
+				$concordance18->query($initial_keys[18], $keys_for_18[0], $keys_for_18[1], $keys_for_18[2], $keys_for_18[3], $keys_for_18[4], $keys_for_18[5], $keys_for_18[6], $keys_for_18[7], $keys_for_18[8], $keys_for_18[9], $keys_for_18[10], $keys_for_18[11], $keys_for_18[12], $keys_for_18[13], $keys_for_18[14], $keys_for_18[15], $keys_for_18[16], $keys_for_18[17], $keys_for_18[18], $keys_for_18[19]);
+				foreach($concordance18->lines){
+					print "$_\n";
+					print "Would you like to keep this line?\t";
+					my $userinput = <STDIN>;
+					chomp $userinput;
+					if($userinput =~ /no/i){
+						my $looper = read_file($loopreplacefile);
+						$looper =~ s/$_/||||||||||/;
+						open(LOOPER, ">",  $loopreplacefile);
+						print LOOPER $looper;
+						close LOOPER;
+					}
+					else{
+						system('pause');
+					}
+		}
+	}
+	elsif($finder =~ /$initial_keys[19]/){
+		my $concordance19 = Lingua::Concordance->new;
+				my $reader19 = read_file($loopreplacefile);
+				$concordance19->text($reader19);
+				$concordance19->query($initial_keys[19], $keys_for_19[0], $keys_for_19[1], $keys_for_19[2], $keys_for_19[3], $keys_for_19[4], $keys_for_19[5], $keys_for_19[6], $keys_for_19[7], $keys_for_19[8], $keys_for_19[9], $keys_for_19[10], $keys_for_19[11], $keys_for_19[12], $keys_for_19[13], $keys_for_19[14], $keys_for_19[15], $keys_for_19[16], $keys_for_19[17], $keys_for_19[18], $keys_for_19[19]);
+				foreach($concordance19->lines){
+					print "$_\n";
+					print "Would you like to keep this line?\t";
+					my $userinput = <STDIN>;
+					chomp $userinput;
+					if($userinput =~ /no/i){
+						my $looper = read_file($loopreplacefile);
+						$looper =~ s/$_/||||||||||/;
+						open(LOOPER, ">",  $loopreplacefile);
+						print LOOPER $looper;
+						close LOOPER;
+					}
+					else{
+						system('pause');
+					}
+		}
+	}
+	elsif($finder =~ /0/){
+		last;
+	}
+}
+
+$datatomod = read_file($loopreplacefile);
 
 my $par = new Lingua::EN::Tagger;
 my $tagged_text = $par->add_tags($datatomod);
@@ -493,39 +766,39 @@ print "Beginning to remove uniquely identifying material in text.\n";
 print "Output will be located in $modify \n";
 print "This process can take a lot of time and memory... please be patient.\n";
 
-$datatomod =~ s/restricted/ /ig;
-$datatomod =~ s/confidential/ /ig;
-$datatomod =~ s/top secret/ /ig;
-$datatomod =~ s/secret/ /ig;
-$datatomod =~ s/unclassified/ /ig;
+$datatomod =~ s/restricted/||||||||||/ig;
+$datatomod =~ s/confidential/||||||||||/ig;
+$datatomod =~ s/top secret/||||||||||/ig;
+$datatomod =~ s/secret/||||||||||/ig;
+$datatomod =~ s/unclassified/||||||||||/ig;
 
 #for(my $k = 0; $k < $#characterizingwords; $k++){
 #	my $wordtomod = $characterizingwords[$k];
-#	$datatomod =~ s/\s$wordtomod\s/ /ig;
+#	$datatomod =~ s/\s$wordtomod\s/||||||||||/ig;
 #}
 
 print "Removal completed...\n";
 print "Printing to $modify...\n";
-open(MODIFY, ">:utf8",$modify) or die "Can't open $modify.\n";
+open(MODIFY, ">", $modify) or die "Can't open $modify.\n";
 
 print "Searching document for generic time indicators.\n";
 my @months = qw/january february march april may june july august september october november december/;
 my @week = qw/monday tuesday wednesday thursday friday saturday sunday/;
 for(my $l = 0; $l < $#months; $l++){
 	my $monthtime = $months[$l];
-	$datatomod =~ s/[0-9]{1,2}(\s)?$monthtime/ /ig;
-	$datatomod =~ s/$monthtime(\s)?[0-9]{1,2}(\s|\,)?/ /ig;
+	$datatomod =~ s/[0-9]{1,2}(\s)?$monthtime/||||||||||/ig;
+	$datatomod =~ s/$monthtime(\s)?[0-9]{1,2}(\s|\,)?/||||||||||/ig;
 	if($monthtime =~ /may/){
-		$datatomod =~ s/\b$monthtime\b/ /ig;
+		$datatomod =~ s/\b$monthtime\b/||||||||||/ig;
 	}
 	else{
-		$datatomod =~ s/$monthtime/ /ig;
+		$datatomod =~ s/$monthtime/||||||||||/ig;
 	}
-	$datatomod =~ s/[0-9]{2}\// /g;
+	$datatomod =~ s/[0-9]{2}\//||||||||||/g;
 }
 for(my $m = 0; $m < $#week; $m++){
 	my $weektime = $week[$m];
-	$datatomod =~ s/$weektime\s/ /ig;
+	$datatomod =~ s/$weektime\s/||||||||||/ig;
 }
 print "Task completed.\n";
 system('pause');
@@ -534,7 +807,7 @@ print "\nMonth, days, and weekdays are removed. Would you like the year to be re
 my $timeyearyesno = <STDIN>;
 chomp $timeyearyesno;
 if($timeyearyesno =~ /[Yy][Ee][Ss]/){
-	$datatomod =~ s/[0-9]{4}/ /g;
+	$datatomod =~ s/[0-9]{4}/||||||||||/g;
 	print "Task completed.\n";
 }
 else{
@@ -546,11 +819,11 @@ print "\nWould you like to remove specific times such as 24:00?\t";
 my $timeclockyesno = <STDIN>;
 chomp $timeclockyesno;
 if($timeclockyesno =~ /[Yy][Ee][Ss]/){
-	$datatomod =~ s/\s[0-9]{1,2}:[0-9]{2}\s/ /g;
-	$datatomod =~ s/\s[0-9]{1,2}\so\'clock/ /ig;
+	$datatomod =~ s/\s[0-9]{1,2}:[0-9]{2}\s/||||||||||/g;
+	$datatomod =~ s/\s[0-9]{1,2}\so\'clock/||||||||||/ig;
 	for(my $n = 0; $n < $#suffixhourcounter; $n++){
 		my $timehour = $suffixhourcounter[$n];
-		$datatomod =~ s/$timehour\shour/ /ig;
+		$datatomod =~ s/$timehour\shour/||||||||||/ig;
 	}
 	print "Task completed.\n";
 }
@@ -565,7 +838,7 @@ chomp $timeindiyesno;
 if($timeindiyesno =~ /[Yy][Ee][Ss]/){
 	for(my $o = 0; $o < $#timeindicators; $o++){
 		my $indicator = $timeindicators[$o];
-		$datatomod =~ s/$indicator\s/ /ig;
+		$datatomod =~ s/$indicator\s/||||||||||/ig;
 	}
 	print "Task completed.\n";
 }
@@ -579,20 +852,20 @@ my @morecountries = qw/Bolivia Bonaire Saba Antigua Barbuda Bosnia Herzegovina C
 push @countrynames, @morecountries;
 for(my $p = 0; $p < $#countrynames; $p++){
 	my $countryparse = $countrynames[$p];
-	$datatomod =~ s/$countryparse([A-Z]+)?/ /ig;
+	$datatomod =~ s/$countryparse([A-Z]+)?/||||||||||/ig;
 }
 my @countrylanguage = all_language_names();
 for(my $q = 0; $q < $#countrylanguage; $q++){
 	my $countrylang = $countrylanguage[$q];
-	$datatomod =~ s/$countrylang/ /ig;
+	$datatomod =~ s/$countrylang/||||||||||/ig;
 }
 print "Task completed.\n";
 system('pause');
 
 print "\nPreparing organizational redaction...\n";
-$datatomod =~ s/([A-Z](\.)?){2,}/ /g;
-$datatomod =~ s/\((\s)?([A-Z](\.)?){2,}(\s)?\)/ /ig;
-$datatomod =~ s/[0-9]+(\.)?([0-9]+)?%/ /g;
+$datatomod =~ s/([A-Z](\.)?){2,}/||||||||||/g;
+$datatomod =~ s/\((\s)?([A-Z](\.)?){2,}(\s)?\)/||||||||||/ig;
+$datatomod =~ s/[0-9]+(\.)?([0-9]+)?%/||||||||||/g;
 print "Task completed.\n";
 system('pause');
 
@@ -603,26 +876,6 @@ system('pause');
 #my @listcontainingorgname;
 #my $organizationabbv =~ /[A-Z]{2,5}/;
 #my $orgpattern =~ /(\w{1,}\s){2,5}$organizationabbv/ig;
-
-
-print "\nPreparing for second stage analysis\n";
-
-my @languagegramstore;
-
-my %languages = langof($datatomod);
-dump %languages = langof($datatomod);
-#print %languages;
-print "\nThe probability of this text being English is:\t$languages{'en'}\n\n...\n";
-
-if($languages{'en'} > 0.357){
-	print "\nLanguage analysis completed.\n";	
-	print "\nSecond stage test have determined redaction is incomplete.\n";
-	system('pause');
-}
-else {
-	print "\nLanguage analysis completed.\n";
-	print "\nPassed second stage analysis.\n";
-}
 
 print MODIFY $datatomod."\n============================\n";
 
