@@ -58,6 +58,7 @@ use Text::TermExtract;
 use RTF::Writer;
 use WWW::Wikipedia;
 use Lingua::EN::Tagger;
+use Tkx;
 
 #take the input file from the user
 #file slurp and extract the text
@@ -108,28 +109,28 @@ system('pause');
 
 print "Preparing to get up to 20 keywords from the document...\n";
 
-my @initial_keys;
-my @initial_keys_to_tag;
-my @keys_for_0;
-my @keys_for_1;
-my @keys_for_2;
-my @keys_for_3;
-my @keys_for_4;
-my @keys_for_5;
-my @keys_for_6;
-my @keys_for_7;
-my @keys_for_8;
-my @keys_for_9;
-my @keys_for_10;
-my @keys_for_11;
-my @keys_for_12;
-my @keys_for_13;
-my @keys_for_14;
-my @keys_for_15;
-my @keys_for_16;
-my @keys_for_17;
-my @keys_for_18;
-my @keys_for_19;
+our @initial_keys;
+our @initial_keys_to_tag;
+our @keys_for_0;
+our @keys_for_1;
+our @keys_for_2;
+our @keys_for_3;
+our @keys_for_4;
+our @keys_for_5;
+our @keys_for_6;
+our @keys_for_7;
+our @keys_for_8;
+our @keys_for_9;
+our @keys_for_10;
+our @keys_for_11;
+our @keys_for_12;
+our @keys_for_13;
+our @keys_for_14;
+our @keys_for_15;
+our @keys_for_16;
+our @keys_for_17;
+our @keys_for_18;
+our @keys_for_19;
 
 my $ext = Text::TermExtract->new();
 for my $wordsensing($ext->terms_extract($datatomod,{max =>20})){
@@ -227,6 +228,239 @@ for(my $counters = 0; $counters < $#initial_keys; $counters++){
 
 system('pause');
 
+my $form = Tkx::widget->new('.');
+$form->g_wm_title('test object GUI');
+$form->m_configure(-background => "red");
+$form->g_wm_minsize(800, 480);
+
+my $button0;
+
+$button0 = $form->new_button(
+	-text => $initial_keys[0]
+);
+
+$button0->g_pack(
+	-padx => 0,
+	-pady => 0,
+);
+
+my $button1;
+
+$button1 = $form->new_button(
+	-text => $initial_keys[1]
+);
+
+$button1->g_pack(
+	-padx => 0,
+	-pady => 150,
+);
+
+my $button2;
+
+$button2 = $form->new_button(
+	-text => $initial_keys[2]
+);
+
+$button2->g_pack(
+	-padx => 0,
+	-pady => 300,
+);
+
+my $button3;
+
+$button3 = $form->new_button(
+	-text => $initial_keys[3]
+);
+
+$button3->g_pack(
+	-padx => 0,
+	-pady => 450,
+);
+
+my $button4;
+
+$button4 = $form->new_button(
+	-text => $initial_keys[4]
+);
+
+$button4->g_pack(
+	-padx => 0,
+	-pady => 600,
+);
+
+my $button5;
+
+$button5 = $form->new_button(
+	-text => $initial_keys[5]
+);
+
+$button5->g_pack(
+	-padx => 150,
+	-pady => 0,
+);
+
+my $button6;
+
+$button6 = $form->new_button(
+	-text => $initial_keys[6]
+);
+
+$button6->g_pack(
+	-padx => 150,
+	-pady => 150,
+);
+
+my $button7;
+
+$button7 = $form->new_button(
+	-text => $initial_keys[7]
+);
+
+$button7->g_pack(
+	-padx => 150,
+	-pady => 300,
+);
+
+my $button8;
+
+$button8 = $form->new_button(
+	-text => $initial_keys[8]
+);
+
+$button8->g_pack(
+	-padx => 150,
+	-pady => 450,
+);
+
+my $button9;
+
+$button9 = $form->new_button(
+	-text => $initial_keys[9]
+);
+
+$button9->g_pack(
+	-padx => 150,
+	-pady => 600,
+);
+
+my $button10;
+
+$button10 = $form->new_button(
+	-text => $initial_keys[10]
+);
+
+$button10->g_pack(
+	-padx => 300,
+	-pady => 0,
+);
+
+my $button11;
+
+$button11 = $form->new_button(
+	-text => $initial_keys[11]
+);
+
+$button11->g_pack(
+	-padx => 300,
+	-pady => 150,
+);
+
+my $button12;
+
+$button12 = $form->new_button(
+	-text => $initial_keys[12]
+);
+
+$button12->g_pack(
+	-padx => 300,
+	-pady => 300,
+);
+
+my $button13;
+
+$button13 = $form->new_button(
+	-text => $initial_keys[13]
+);
+
+$button13->g_pack(
+	-padx => 300,
+	-pady => 450,
+);
+
+my $button14;
+
+$button14 = $form->new_button(
+	-text => $initial_keys[14]
+);
+
+$button14->g_pack(
+	-padx => 300,
+	-pady => 600,
+);
+
+my $button15;
+
+$button15 = $form->new_button(
+	-text => $initial_keys[15]
+);
+
+$button15->g_pack(
+	-padx => 600,
+	-pady => 0,
+);
+
+my $button16;
+
+$button16 = $form->new_button(
+	-text => $initial_keys[16]
+);
+
+$button16->g_pack(
+	-padx => 600,
+	-pady => 150,
+);
+
+my $button17;
+
+$button17 = $form->new_button(
+	-text => $initial_keys[17]
+);
+
+$button17->g_pack(
+	-padx => 600,
+	-pady => 300,
+);
+
+my $button18;
+
+$button18 = $form->new_button(
+	-text => $initial_keys[18]
+);
+
+$button18->g_pack(
+	-padx => 600,
+	-pady => 450,
+);
+
+my $button19;
+
+$button19 = $form->new_button(
+	-text => $initial_keys[19]
+);
+
+$button19->g_pack(
+	-padx => 600,
+	-pady => 600,
+);
+
+Tkx::tk___messageBox(
+	-parent => $form,
+	-icon => "info",
+	-title => "Word List",
+	-message => "This is a wordlist for your reference",
+);
+
+Tkx::MainLoop();
 
 my $par = new Lingua::EN::Tagger;
 my $tagged_text = $par->add_tags($datatomod);
@@ -240,304 +474,6 @@ foreach my $nounkeys(keys %nounphrase){
 }
 system('pause');
 print @nountable;
-system('pause');
-
-my $datatomod_np = $datatomod;
-
-for(my $ix = 0; $ix < $#nountable; $ix++){
-	my $nounphrase = $nountable[$ix];
-	my $nounphrase2 = $nounphrase =~ s/(\s+|\t+|\n+)/_/ig;
-	print $nounphrase."\n";
-	print $nounphrase2."\n";
-	if($datatomod_np =~ m/$nounphrase/i){
-		$datatomod_np =~ s/\b$nounphrase\b/$nounphrase2/ige;
-	}
-}
-
-print $datatomod_np;
-
-print "\n";
-
-print "Created noun phrases. Creating new keyword extraction using noun phrased document...";
-print "\n";
-
-my @second_keys;
-my $phraseext = Text::TermExtract->new();
-for my $np($phraseext->terms_extract($datatomod_np,{max => 20})){
-	push @second_keys, $np;	
-	print $np."\n";
-}
-
-print @second_keys;
-
-system('pause');
-
-
-my @search_for_sentence;
-my @sentence_split_store;
-my @key_sentences;
-my $infocentricfile = "C:/Perl/liners.txt";
-open(INFO, $infocentricfile) or die;
-while(<INFO>){
-	@search_for_sentence = split(/\^/, $_);
-}
-system('pause');
-print "$_" for @search_for_sentence;
-print "\n";
-system('pause');
-my $datatomodstore = $datatomod;
-@sentence_split_store = split(/\./, $datatomodstore);
-for(my $eji = 0; $eji < $#sentence_split_store; $eji++){
-	my $sentence_now = $sentence_split_store[$eji];
-	for(my $ejik = 0; $ejik < $#search_for_sentence; $ejik++){
-		my $indicator = $search_for_sentence[$ejik];
-		if($sentence_now =~ /$indicator/g){
-			push @key_sentences, $sentence_now;
-			$ejik = $#search_for_sentence;
-		}
-	}
-}
-close INFO;
-
-my $keysentencefile = "C:/Perl/keysentences.txt";
-open(KEYSEN, ">:utf8", $keysentencefile);
-for(my $ejikl = 0; $ejikl < $#key_sentences; $ejikl++){
-	my $sentence_to_print = $key_sentences[$ejikl];
-	print KEYSEN $sentence_to_print."\n";
-}
-close KEYSEN;
-
-#currently problem with file reading but... will figure out how to fix it
-
-my $keyfileimport = read_file($keysentencefile);
-my @keywords2 = keywords($keyfileimport);
-system('pause');
-for(my $is = 0; $is < $#keywords2; $is++){
-	my $primer = $keywords2[$is];
-	print $primer."\n";
-}
-system('pause');
-
-#error resolved
-#error ends program with unmatched regex
-
-my @twoset;
-my @threeset;
-my @fourset;
-my @fiveset;
-my @sixset;
-my @sevenset;
-
-my $ngram = Lingua::EN::Ngram->new(file => $check);
-
-my $sevengramfile = "C:/Perl/7gram.txt";
-open(SEVENGRAM, ">:utf8",$sevengramfile) or die "Can't create file to store 7grams.\n";
-my $sevengrams = $ngram->ngram(7);
-foreach my $sevengram(sort {$$sevengrams{my $b} <=> $$sevengrams{my $a}} keys %$sevengrams){
-	print SEVENGRAM $$sevengrams{$sevengram}, "\t$sevengram\n";
-	if($$sevengrams{$sevengram} > 1){
-		push @sevenset, $sevengram;
-	}
-}
-print "Sevengrams created...\n";
-close SEVENGRAM;
-system('pause');
-for( my $y = 0; $y < $#sevenset; $y++ ){
-	print $sevenset[$y]."\n";
-	my $seventosub = $sevenset[$y];
-	$seventosub =~ s/\s\.//g;
-	$seventosub =~ s/\s,/,/g;
-	$seventosub =~ s/\s?\(\s?/(/g;
-	$seventosub =~ s/\s?\)\s?/)/g;
-	$seventosub =~ s/\s:/:/g;
-	$seventosub =~ s/\s?-\s?/-/g;
-	#$seventosub =~ s/\s?\\\s?/\/g;
-	#$seventosub =~ s/\s?\/\s?///g;
-	$seventosub =~ s/\b[a-z]\b/[thisisnothingtosubandwontmatchtoanything]/ig;
-	$datatomod =~ s/\Q$seventosub/ /ig;
-	
-}
-my $seventohold = "C:/Perl/7gramhold.txt";
-open(SEVENHOLD, ">:utf8",$seventohold) or die "Can't make $seventohold\n";
-print SEVENHOLD $datatomod;
-close SEVENHOLD;
-system('pause');
-
-$ngram = Lingua::EN::Ngram->new(file => $seventohold);
-
-my $sixgramfile = "C:/Perl/6gram.txt";
-open(SIXGRAM, ">:utf8",$sixgramfile) or die "Can't create file to store 6grams.\n";
-my $sixgrams = $ngram->ngram(6);
-foreach my $sixgram(sort {$$sixgrams{my $b} <=> $$sixgrams{my $a}} keys %$sixgrams){
-	print SIXGRAM $$sixgrams{$sixgram}, "\t$sixgram\n";
-	if($$sixgrams{$sixgram} > 1){
-		push @sixset, $sixgram;
-	}
-}
-print "Sixgrams created...\n";
-close SIXGRAM;
-system('pause');
-for( my $x = 0; $x < $#sixset; $x++ ){
-	print $sixset[$x]."\n";
-	my $sixtosub = $sixset[$x];
-	$sixtosub =~ s/\s\././g;
-	$sixtosub =~ s/\s,/,/g;
-	$sixtosub =~ s/\s?\(\s?/(/g;
-	$sixtosub =~ s/\s?\)\s?/)/g;
-	$sixtosub =~ s/\s:/:/g;
-	$sixtosub =~ s/\s?-\s?/-/g;
-	#$sixtosub =~ s/\s?\\\s?/\/g;
-	#$sixtosub =~ s/\s?\/\s?///g;
-	$sixtosub =~ s/\b[a-z]\b/[thisisnothingtosubandwontmatchtoanything]/ig;
-	$datatomod =~ s/\Q$sixtosub/ /ig;
-	
-}
-my $sixtohold = "C:/Perl/6gramhold.txt";
-open(SIXHOLD, ">:utf8",$sixtohold) or die "Can't make $sixtohold\n";
-print SIXHOLD $datatomod;
-close SIXHOLD;
-system('pause');
-
-$ngram = Lingua::EN::Ngram->new(file => $sixtohold);
-
-my $fivegramfile = "C:/Perl/5gram.txt";
-open(FIVEGRAM, ">:utf8",$fivegramfile) or die "Can't create file to store 5grams.\n";
-my $fivegrams = $ngram->ngram(5);
-foreach my $fivegram(sort {$$fivegrams{my $b} <=> $$fivegrams{my $a}} keys %$fivegrams){
-	print FIVEGRAM $$fivegrams{$fivegram}, "\t$fivegram\n";
-	if($$fivegrams{$fivegram} > 1){
-		push @fiveset, $fivegram;
-	}
-}
-print "Fivegrams created...\n";
-close FIVEGRAM;
-system('pause');
-for( my $v = 0; $v < $#fiveset; $v++ ){
-	print $fiveset[$v]."\n";
-	my $fivetosub = $fiveset[$v];
-	$fivetosub =~ s/\s\././g;
-	$fivetosub =~ s/\s,/,/g;
-	$fivetosub =~ s/\s?\(\s?/(/g;
-	$fivetosub =~ s/\s?\)\s?/)/g;
-	$fivetosub =~ s/\s:/:/g;
-	$fivetosub =~ s/\s?-\s?/-/g;
-	#$fivetosub =~ s/\s?\\\s?/\/g;
-	#$fivetosub =~ s/\s?\/\s?///g;
-	$fivetosub =~ s/\b[a-z]\b/[thisisnothingtosubandwontmatchtoanything]/ig;
-	$datatomod =~ s/\Q$fivetosub/ /ig;
-	
-}
-my $fivetohold = "C:/Perl/5gramhold.txt";
-open(FIVEHOLD, ">:utf8",$fivetohold) or die "Can't make $fivetohold\n";
-print FIVEHOLD $datatomod;
-close FIVEHOLD;
-system('pause');
-
-$ngram = Lingua::EN::Ngram->new(file => $fivetohold);
-
-my $fourgramfile = "C:/Perl/4gram.txt";
-open(FOURGRAM, ">:utf8",$fourgramfile) or die "Can't create file to store 4grams.\n";
-my $fourgrams = $ngram->ngram(4);
-foreach my $fourgram(sort {$$fourgrams{my $b} <=> $$fourgrams{my $a}} keys %$fourgrams){
-	print FOURGRAM $$fourgrams{$fourgram}, "\t$fourgram\n";
-	if($$fourgrams{$fourgram} > 1){
-		push @fourset, $fourgram;
-	}
-}
-print "Fourgrams created...\n";
-close FOURGRAM;
-system('pause');
-for( my $w = 0; $w < $#fourset; $w++ ){
-	print $fourset[$w]."\n";
-	my $fourtosub = $fourset[$w];
-	$fourtosub =~ s/\s\././g;
-	$fourtosub =~ s/\s,/,/g;
-	$fourtosub =~ s/\s?\(\s?/(/g;
-	$fourtosub =~ s/\s?\)\s?/)/g;
-	$fourtosub =~ s/\s:/:/g;
-	$fourtosub =~ s/\s?-\s?/-/g;
-	#$fourtosub =~ s/\s?\\\s?/\/g;
-	#$fourtosub =~ s/\s?\/\s?///g;
-	$fourtosub =~ s/\b[a-z]\b/[thisisnothingtosubandwontmatchtoanything]/ig;
-	$datatomod =~ s/\Q$fourtosub/ /ig;
-	
-}
-my $fourtohold = "C:/Perl/4gramhold.txt";
-open(FOURHOLD, ">:utf8",$fourtohold) or die "Can't make $fourtohold\n";
-print FOURHOLD $datatomod;
-close FOURHOLD;
-system('pause');
-
-$ngram = Lingua::EN::Ngram->new(file => $fourtohold);
-
-my $threegramfile = "C:/Perl/3gram.txt";
-open(THREEGRAM, ">:utf8",$threegramfile) or die "Can't create file to store 3grams.\n";
-my $trigrams = $ngram->ngram(3);
-foreach my $trigram(sort {$$trigrams{my $b} <=> $$trigrams{my $a}} keys %$trigrams){
-	print THREEGRAM $$trigrams{$trigram}, "\t$trigram\n";
-	if($$trigrams{$trigram} > 5){
-		push @threeset, $trigram;
-	}
-}
-print "Trigrams created...\n";
-close THREEGRAM;
-system('pause');
-for( my $abcd = 0; $abcd < $#threeset; $abcd++ ){
-	print $threeset[$abcd]."\n";
-	my $threetosub = $threeset[$abcd];
-	$threetosub =~ s/\s\././g;
-	$threetosub =~ s/\s,/,/g;
-	$threetosub =~ s/\s?\(\s?/(/g;
-	$threetosub =~ s/\s?\)\s?/)/g;
-	$threetosub =~ s/\s:/:/g;
-	$threetosub =~ s/\s?-\s?/-/g;
-	#$threetosub =~ s/\s?\\\s?/\/g;
-	#$threetosub =~ s/\s?\/\s?///g;
-	$threetosub =~ s/\b[a-z]\b/[thisisnothingtosubandwontmatchtoanything]/ig;
-	$datatomod =~ s/\Q$threetosub/ /ig;
-	
-}
-my $threetohold = "C:/Perl/3gramhold.txt";
-open(THREEHOLD, ">:utf8",$threetohold) or die "Can't make $threetohold\n";
-print THREEHOLD $datatomod;
-close THREEHOLD;
-system('pause');
-
-$ngram = Lingua::EN::Ngram->new(file => $threetohold);
-
-my $twogramfile = "C:/Perl/2gram.txt";
-open(TWOGRAM, ">:utf8",$twogramfile) or die "Can't create file to store 2grams.\n";
-#bigrams to sevengrams to sort
-
-my $bigrams = $ngram->ngram(2);
-foreach my $bigram(sort {$$bigrams{my $b} <=> $$bigrams{my $a}} keys %$bigrams){
-	print TWOGRAM $$bigrams{$bigram}, "\t$bigram\n";
-	if(($$bigrams{$bigram}) > 5){
-		push @twoset, $bigram;
-	}
-}
-print "Bigrams created...\n";
-close TWOGRAM;
-system('pause');
-for( my $defg = 0; $defg < $#twoset; $defg++ ){
-	print $twoset[$defg]."\n";
-	my $twotosub = $twoset[$defg];
-	$twotosub =~ s/\s\././g;
-	$twotosub =~ s/\s,/,/g;
-	$twotosub =~ s/\s?\(\s?/(/g;
-	$twotosub =~ s/\s?\)\s?/)/g;
-	$twotosub =~ s/\s:/:/g;
-	$twotosub =~ s/\s?-\s?/-/g;
-	#$twotosub =~ s/\s?\\\s?/\/g;
-	#$twotosub =~ s/\s?\/\s?///g;
-	$twotosub =~ s/\b[a-z]\b/[thisisnothingtosubandwontmatchtoanything]/ig;
-	$datatomod =~ s/\Q$twotosub/ /ig;
-	
-}
-my $twotohold = "C:/Perl/2gramhold.txt";
-open(TWOHOLD, ">:utf8",$twotohold) or die "Can't make $twotohold\n";
-print TWOHOLD $datatomod;
-close TWOHOLD;
 system('pause');
 
 #the removal would just be removal of text between selected subsection
@@ -668,12 +604,6 @@ system('pause');
 #my $organizationabbv =~ /[A-Z]{2,5}/;
 #my $orgpattern =~ /(\w{1,}\s){2,5}$organizationabbv/ig;
 
-my @impossiblebigram = qw(bk bq bx cb cf cg cj cp cv cw cx dx fk fq fv fx fz gq gv gx hk hv hx hz iy jb jc jd jf jg jh jk jl jm jn jp jq jr js jt jv jw jx jy jz kq kv kx kz lq lx mg mj mq mx mz pq pv px qa qb qc qd qe qf qg qh qj qk ql qm qn qo qp qr qs qt qv qw qx qy qz sx sz tq tx vb vc vd vf vg vh vj vk vm vn vp vq vt vw vx vz wq wv wx wz xb xg xj xk xv xz yq yv yz zb zc zg zh zj zn zq zr zs zx);
-
-for(my $ggh = 0; $ggh < $#impossiblebigram; $ggh++){
-	my $impbigramword = $impossiblebigram[$ggh];
-	$datatomod =~ s/\b([a-z]+)?$impbigramword([a-z]+)?\b//ig;
-}
 
 print "\nPreparing for second stage analysis\n";
 
@@ -698,5 +628,5 @@ print MODIFY $datatomod."\n============================\n";
 
 close MODIFY;
 
-
 exit;
+
