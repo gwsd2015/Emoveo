@@ -300,7 +300,10 @@ while(1){
 			chomp $userinput;
 			if($userinput =~ /no/i){
 				my $looper = read_file($loopreplacefile);
-				$looper =~ s/$_/||||||||||/;
+				
+				
+				
+				$looper =~ s/\Q$_/||||||||||/i;
 				open(LOOPER, ">",  $loopreplacefile);
 				print LOOPER $looper;
 				close LOOPER;
@@ -322,7 +325,10 @@ while(1){
 					chomp $userinput;
 					if($userinput =~ /no/i){
 						my $looper = read_file($loopreplacefile);
-						$looper =~ s/$_/||||||||||/;
+						$looper =~ s/\Q$_/||||||||||/i;
+						
+						
+						
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
 						close LOOPER;
@@ -344,7 +350,10 @@ while(1){
 					chomp $userinput;
 					if($userinput =~ /no/i){
 						my $looper = read_file($loopreplacefile);
-						$looper =~ s/$_/||||||||||/;
+						
+						
+						
+						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
 						close LOOPER;
@@ -366,7 +375,10 @@ while(1){
 					chomp $userinput;
 					if($userinput =~ /no/i){
 						my $looper = read_file($loopreplacefile);
-						$looper =~ s/$_/||||||||||/;
+						
+						
+						
+						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
 						close LOOPER;
@@ -388,7 +400,10 @@ while(1){
 					chomp $userinput;
 					if($userinput =~ /no/i){
 						my $looper = read_file($loopreplacefile);
-						$looper =~ s/$_/||||||||||/;
+						
+						
+						
+						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
 						close LOOPER;
@@ -410,7 +425,10 @@ while(1){
 				chomp $userinput;
 				if($userinput =~ /no/i){
 						my $looper = read_file($loopreplacefile);
-						$looper =~ s/$_/||||||||||/;
+						
+						
+						
+						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
 						close LOOPER;
@@ -432,7 +450,10 @@ while(1){
 					chomp $userinput;
 					if($userinput =~ /no/i){
 						my $looper = read_file($loopreplacefile);
-						$looper =~ s/$_/||||||||||/;
+						
+						
+						
+						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
 						close LOOPER;
@@ -454,7 +475,10 @@ while(1){
 					chomp $userinput;
 					if($userinput =~ /no/i){
 						my $looper = read_file($loopreplacefile);
-						$looper =~ s/$_/||||||||||/;
+						
+						
+						
+						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
 						close LOOPER;
@@ -476,7 +500,10 @@ while(1){
 					chomp $userinput;
 					if($userinput =~ /no/i){
 						my $looper = read_file($loopreplacefile);
-						$looper =~ s/$_/||||||||||/;
+						
+						
+						
+						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
 						close LOOPER;
@@ -498,7 +525,10 @@ while(1){
 					chomp $userinput;
 					if($userinput =~ /no/i){
 						my $looper = read_file($loopreplacefile);
-						$looper =~ s/$_/||||||||||/;
+						
+						
+						
+						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
 						close LOOPER;
@@ -520,7 +550,10 @@ while(1){
 					chomp $userinput;
 					if($userinput =~ /no/i){
 						my $looper = read_file($loopreplacefile);
-						$looper =~ s/$_/||||||||||/;
+						
+						
+						
+						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
 						close LOOPER;
@@ -542,7 +575,10 @@ while(1){
 					chomp $userinput;
 					if($userinput =~ /no/i){
 						my $looper = read_file($loopreplacefile);
-						$looper =~ s/$_/||||||||||/;
+						
+						
+						
+						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
 						close LOOPER;
@@ -564,7 +600,10 @@ while(1){
 					chomp $userinput;
 					if($userinput =~ /no/i){
 						my $looper = read_file($loopreplacefile);
-						$looper =~ s/$_/||||||||||/;
+						
+						
+						
+						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
 						close LOOPER;
@@ -586,7 +625,10 @@ while(1){
 					chomp $userinput;
 					if($userinput =~ /no/i){
 						my $looper = read_file($loopreplacefile);
-						$looper =~ s/$_/||||||||||/;
+						
+						
+						
+						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
 						close LOOPER;
@@ -608,7 +650,10 @@ while(1){
 					chomp $userinput;
 					if($userinput =~ /no/i){
 						my $looper = read_file($loopreplacefile);
-						$looper =~ s/$_/||||||||||/;
+						
+						
+						
+						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
 						close LOOPER;
@@ -630,7 +675,10 @@ while(1){
 					chomp $userinput;
 					if($userinput =~ /no/i){
 						my $looper = read_file($loopreplacefile);
-						$looper =~ s/$_/||||||||||/;
+						
+						
+						
+						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
 						close LOOPER;
@@ -652,7 +700,10 @@ while(1){
 					chomp $userinput;
 					if($userinput =~ /no/i){
 						my $looper = read_file($loopreplacefile);
-						$looper =~ s/$_/||||||||||/;
+						
+						
+						
+						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
 						close LOOPER;
@@ -674,7 +725,10 @@ while(1){
 					chomp $userinput;
 					if($userinput =~ /no/i){
 						my $looper = read_file($loopreplacefile);
-						$looper =~ s/$_/||||||||||/;
+						
+						
+						
+						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
 						close LOOPER;
@@ -696,7 +750,10 @@ while(1){
 					chomp $userinput;
 					if($userinput =~ /no/i){
 						my $looper = read_file($loopreplacefile);
-						$looper =~ s/$_/||||||||||/;
+						
+						
+						
+						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
 						close LOOPER;
@@ -718,7 +775,10 @@ while(1){
 					chomp $userinput;
 					if($userinput =~ /no/i){
 						my $looper = read_file($loopreplacefile);
-						$looper =~ s/$_/||||||||||/;
+						
+						
+						
+						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
 						close LOOPER;
@@ -734,6 +794,7 @@ while(1){
 }
 
 $datatomod = read_file($loopreplacefile);
+
 
 my $par = new Lingua::EN::Tagger;
 my $tagged_text = $par->add_tags($datatomod);
@@ -780,6 +841,8 @@ $datatomod =~ s/unclassified/||||||||||/ig;
 print "Removal completed...\n";
 print "Printing to $modify...\n";
 open(MODIFY, ">", $modify) or die "Can't open $modify.\n";
+
+
 
 print "Searching document for generic time indicators.\n";
 my @months = qw/january february march april may june july august september october november december/;
@@ -877,9 +940,22 @@ system('pause');
 #my $organizationabbv =~ /[A-Z]{2,5}/;
 #my $orgpattern =~ /(\w{1,}\s){2,5}$organizationabbv/ig;
 
+
+
+$datatomod !~ s/[^[:ascii:]]//g;
+
 print MODIFY $datatomod."\n============================\n";
 
 close MODIFY;
+
+my $rtf = RTF::Writer->new_to_file("C:/Perl/redact.rtf");
+$rtf->prolog( 'title' => "Insert Title" );
+$rtf->number_pages;
+$rtf->print(
+	\'\fs40\b\i',  # 20pt, bold, italic
+	$datatomod
+);
+$rtf->close;
 
 exit;
 
