@@ -202,6 +202,274 @@
 
 #old code
 
+
+my @search_for_sentence;
+my @sentence_split_store;
+my @key_sentences;
+my $infocentricfile = "C:/Perl/liners.txt";
+open(INFO, $infocentricfile) or die;
+while(<INFO>){
+	@search_for_sentence = split(/\^/, $_);
+}
+system('pause');
+print "$_" for @search_for_sentence;
+print "\n";
+system('pause');
+my $datatomodstore = $datatomod;
+@sentence_split_store = split(/\./, $datatomodstore);
+for(my $eji = 0; $eji < $#sentence_split_store; $eji++){
+	my $sentence_now = $sentence_split_store[$eji];
+	for(my $ejik = 0; $ejik < $#search_for_sentence; $ejik++){
+		my $indicator = $search_for_sentence[$ejik];
+		if($sentence_now =~ /$indicator/g){
+			push @key_sentences, $sentence_now;
+			$ejik = $#search_for_sentence;
+		}
+	}
+}
+close INFO;
+
+my $keysentencefile = "C:/Perl/keysentences.txt";
+open(KEYSEN, ">:utf8", $keysentencefile);
+for(my $ejikl = 0; $ejikl < $#key_sentences; $ejikl++){
+	my $sentence_to_print = $key_sentences[$ejikl];
+	print KEYSEN $sentence_to_print."\n";
+}
+close KEYSEN;
+
+#currently problem with file reading but... will figure out how to fix it
+
+my $keyfileimport = read_file($keysentencefile);
+my @keywords2 = keywords($keyfileimport);
+system('pause');
+for(my $is = 0; $is < $#keywords2; $is++){
+	my $primer = $keywords2[$is];
+	print $primer."\n";
+}
+system('pause');
+
+#error resolved
+#error ends program with unmatched regex
+
+my @twoset;
+my @threeset;
+my @fourset;
+my @fiveset;
+my @sixset;
+my @sevenset;
+
+my $ngram = Lingua::EN::Ngram->new(file => $check);
+
+my $sevengramfile = "C:/Perl/7gram.txt";
+open(SEVENGRAM, ">:utf8",$sevengramfile) or die "Can't create file to store 7grams.\n";
+my $sevengrams = $ngram->ngram(7);
+foreach my $sevengram(sort {$$sevengrams{my $b} <=> $$sevengrams{my $a}} keys %$sevengrams){
+	print SEVENGRAM $$sevengrams{$sevengram}, "\t$sevengram\n";
+	if($$sevengrams{$sevengram} > 1){
+		push @sevenset, $sevengram;
+	}
+}
+print "Sevengrams created...\n";
+close SEVENGRAM;
+system('pause');
+for( my $y = 0; $y < $#sevenset; $y++ ){
+	print $sevenset[$y]."\n";
+	my $seventosub = $sevenset[$y];
+	$seventosub =~ s/\s\.//g;
+	$seventosub =~ s/\s,/,/g;
+	$seventosub =~ s/\s?\(\s?/(/g;
+	$seventosub =~ s/\s?\)\s?/)/g;
+	$seventosub =~ s/\s:/:/g;
+	$seventosub =~ s/\s?-\s?/-/g;
+	#$seventosub =~ s/\s?\\\s?/\/g;
+	#$seventosub =~ s/\s?\/\s?///g;
+	$seventosub =~ s/\b[a-z]\b/[thisisnothingtosubandwontmatchtoanything]/ig;
+	$datatomod =~ s/\Q$seventosub/ /ig;
+	
+}
+my $seventohold = "C:/Perl/7gramhold.txt";
+open(SEVENHOLD, ">:utf8",$seventohold) or die "Can't make $seventohold\n";
+print SEVENHOLD $datatomod;
+close SEVENHOLD;
+system('pause');
+
+$ngram = Lingua::EN::Ngram->new(file => $seventohold);
+
+my $sixgramfile = "C:/Perl/6gram.txt";
+open(SIXGRAM, ">:utf8",$sixgramfile) or die "Can't create file to store 6grams.\n";
+my $sixgrams = $ngram->ngram(6);
+foreach my $sixgram(sort {$$sixgrams{my $b} <=> $$sixgrams{my $a}} keys %$sixgrams){
+	print SIXGRAM $$sixgrams{$sixgram}, "\t$sixgram\n";
+	if($$sixgrams{$sixgram} > 1){
+		push @sixset, $sixgram;
+	}
+}
+print "Sixgrams created...\n";
+close SIXGRAM;
+system('pause');
+for( my $x = 0; $x < $#sixset; $x++ ){
+	print $sixset[$x]."\n";
+	my $sixtosub = $sixset[$x];
+	$sixtosub =~ s/\s\././g;
+	$sixtosub =~ s/\s,/,/g;
+	$sixtosub =~ s/\s?\(\s?/(/g;
+	$sixtosub =~ s/\s?\)\s?/)/g;
+	$sixtosub =~ s/\s:/:/g;
+	$sixtosub =~ s/\s?-\s?/-/g;
+	#$sixtosub =~ s/\s?\\\s?/\/g;
+	#$sixtosub =~ s/\s?\/\s?///g;
+	$sixtosub =~ s/\b[a-z]\b/[thisisnothingtosubandwontmatchtoanything]/ig;
+	$datatomod =~ s/\Q$sixtosub/ /ig;
+	
+}
+my $sixtohold = "C:/Perl/6gramhold.txt";
+open(SIXHOLD, ">:utf8",$sixtohold) or die "Can't make $sixtohold\n";
+print SIXHOLD $datatomod;
+close SIXHOLD;
+system('pause');
+
+$ngram = Lingua::EN::Ngram->new(file => $sixtohold);
+
+my $fivegramfile = "C:/Perl/5gram.txt";
+open(FIVEGRAM, ">:utf8",$fivegramfile) or die "Can't create file to store 5grams.\n";
+my $fivegrams = $ngram->ngram(5);
+foreach my $fivegram(sort {$$fivegrams{my $b} <=> $$fivegrams{my $a}} keys %$fivegrams){
+	print FIVEGRAM $$fivegrams{$fivegram}, "\t$fivegram\n";
+	if($$fivegrams{$fivegram} > 1){
+		push @fiveset, $fivegram;
+	}
+}
+print "Fivegrams created...\n";
+close FIVEGRAM;
+system('pause');
+for( my $v = 0; $v < $#fiveset; $v++ ){
+	print $fiveset[$v]."\n";
+	my $fivetosub = $fiveset[$v];
+	$fivetosub =~ s/\s\././g;
+	$fivetosub =~ s/\s,/,/g;
+	$fivetosub =~ s/\s?\(\s?/(/g;
+	$fivetosub =~ s/\s?\)\s?/)/g;
+	$fivetosub =~ s/\s:/:/g;
+	$fivetosub =~ s/\s?-\s?/-/g;
+	#$fivetosub =~ s/\s?\\\s?/\/g;
+	#$fivetosub =~ s/\s?\/\s?///g;
+	$fivetosub =~ s/\b[a-z]\b/[thisisnothingtosubandwontmatchtoanything]/ig;
+	$datatomod =~ s/\Q$fivetosub/ /ig;
+	
+}
+my $fivetohold = "C:/Perl/5gramhold.txt";
+open(FIVEHOLD, ">:utf8",$fivetohold) or die "Can't make $fivetohold\n";
+print FIVEHOLD $datatomod;
+close FIVEHOLD;
+system('pause');
+
+$ngram = Lingua::EN::Ngram->new(file => $fivetohold);
+
+my $fourgramfile = "C:/Perl/4gram.txt";
+open(FOURGRAM, ">:utf8",$fourgramfile) or die "Can't create file to store 4grams.\n";
+my $fourgrams = $ngram->ngram(4);
+foreach my $fourgram(sort {$$fourgrams{my $b} <=> $$fourgrams{my $a}} keys %$fourgrams){
+	print FOURGRAM $$fourgrams{$fourgram}, "\t$fourgram\n";
+	if($$fourgrams{$fourgram} > 1){
+		push @fourset, $fourgram;
+	}
+}
+print "Fourgrams created...\n";
+close FOURGRAM;
+system('pause');
+for( my $w = 0; $w < $#fourset; $w++ ){
+	print $fourset[$w]."\n";
+	my $fourtosub = $fourset[$w];
+	$fourtosub =~ s/\s\././g;
+	$fourtosub =~ s/\s,/,/g;
+	$fourtosub =~ s/\s?\(\s?/(/g;
+	$fourtosub =~ s/\s?\)\s?/)/g;
+	$fourtosub =~ s/\s:/:/g;
+	$fourtosub =~ s/\s?-\s?/-/g;
+	#$fourtosub =~ s/\s?\\\s?/\/g;
+	#$fourtosub =~ s/\s?\/\s?///g;
+	$fourtosub =~ s/\b[a-z]\b/[thisisnothingtosubandwontmatchtoanything]/ig;
+	$datatomod =~ s/\Q$fourtosub/ /ig;
+	
+}
+my $fourtohold = "C:/Perl/4gramhold.txt";
+open(FOURHOLD, ">:utf8",$fourtohold) or die "Can't make $fourtohold\n";
+print FOURHOLD $datatomod;
+close FOURHOLD;
+system('pause');
+
+$ngram = Lingua::EN::Ngram->new(file => $fourtohold);
+
+my $threegramfile = "C:/Perl/3gram.txt";
+open(THREEGRAM, ">:utf8",$threegramfile) or die "Can't create file to store 3grams.\n";
+my $trigrams = $ngram->ngram(3);
+foreach my $trigram(sort {$$trigrams{my $b} <=> $$trigrams{my $a}} keys %$trigrams){
+	print THREEGRAM $$trigrams{$trigram}, "\t$trigram\n";
+	if($$trigrams{$trigram} > 5){
+		push @threeset, $trigram;
+	}
+}
+print "Trigrams created...\n";
+close THREEGRAM;
+system('pause');
+for( my $abcd = 0; $abcd < $#threeset; $abcd++ ){
+	print $threeset[$abcd]."\n";
+	my $threetosub = $threeset[$abcd];
+	$threetosub =~ s/\s\././g;
+	$threetosub =~ s/\s,/,/g;
+	$threetosub =~ s/\s?\(\s?/(/g;
+	$threetosub =~ s/\s?\)\s?/)/g;
+	$threetosub =~ s/\s:/:/g;
+	$threetosub =~ s/\s?-\s?/-/g;
+	#$threetosub =~ s/\s?\\\s?/\/g;
+	#$threetosub =~ s/\s?\/\s?///g;
+	$threetosub =~ s/\b[a-z]\b/[thisisnothingtosubandwontmatchtoanything]/ig;
+	$datatomod =~ s/\Q$threetosub/ /ig;
+	
+}
+my $threetohold = "C:/Perl/3gramhold.txt";
+open(THREEHOLD, ">:utf8",$threetohold) or die "Can't make $threetohold\n";
+print THREEHOLD $datatomod;
+close THREEHOLD;
+system('pause');
+
+$ngram = Lingua::EN::Ngram->new(file => $threetohold);
+
+my $twogramfile = "C:/Perl/2gram.txt";
+open(TWOGRAM, ">:utf8",$twogramfile) or die "Can't create file to store 2grams.\n";
+#bigrams to sevengrams to sort
+
+my $bigrams = $ngram->ngram(2);
+foreach my $bigram(sort {$$bigrams{my $b} <=> $$bigrams{my $a}} keys %$bigrams){
+	print TWOGRAM $$bigrams{$bigram}, "\t$bigram\n";
+	if(($$bigrams{$bigram}) > 5){
+		push @twoset, $bigram;
+	}
+}
+print "Bigrams created...\n";
+close TWOGRAM;
+system('pause');
+for( my $defg = 0; $defg < $#twoset; $defg++ ){
+	print $twoset[$defg]."\n";
+	my $twotosub = $twoset[$defg];
+	$twotosub =~ s/\s\././g;
+	$twotosub =~ s/\s,/,/g;
+	$twotosub =~ s/\s?\(\s?/(/g;
+	$twotosub =~ s/\s?\)\s?/)/g;
+	$twotosub =~ s/\s:/:/g;
+	$twotosub =~ s/\s?-\s?/-/g;
+	#$twotosub =~ s/\s?\\\s?/\/g;
+	#$twotosub =~ s/\s?\/\s?///g;
+	$twotosub =~ s/\b[a-z]\b/[thisisnothingtosubandwontmatchtoanything]/ig;
+	$datatomod =~ s/\Q$twotosub/ /ig;
+	
+}
+my $twotohold = "C:/Perl/2gramhold.txt";
+open(TWOHOLD, ">:utf8",$twotohold) or die "Can't make $twotohold\n";
+print TWOHOLD $datatomod;
+close TWOHOLD;
+system('pause');
+
 #use Text::Summarize::En;
 #use Text::Levenshtein::XS qw(distance);
 #use Text::Soundex;
