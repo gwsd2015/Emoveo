@@ -75,6 +75,7 @@ my $textfile = read_file($inputfile);
 print "$textfile\n\n";
 #my $analysistextfile = $textfile;
 my $datatomod = ($textfile);
+$datatomod =~ s/~//g; 
 
 #building some of these file to check that I properly completed steps.
 #necessary to keep in order to hvae file to chain the n-gram removal tool.
