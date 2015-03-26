@@ -314,6 +314,9 @@ while(1){
 				print LOOPER $looper;
 				close LOOPER;
 			}
+			elsif($userinput =~ /exit/i){
+				last;
+			}
 			else{
 				system('pause');
 			}
@@ -344,6 +347,9 @@ while(1){
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
 						close LOOPER;
+					}
+					elsif($userinput =~ /exit/i){
+						last;
 					}
 					else{
 						system('pause');
@@ -376,6 +382,9 @@ while(1){
 						print LOOPER $looper;
 						close LOOPER;
 					}
+					elsif($userinput =~ /exit/i){
+						last;
+					}
 					else{
 						system('pause');
 					}
@@ -406,6 +415,9 @@ while(1){
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
 						close LOOPER;
+					}
+					elsif($userinput =~ /exit/i){
+						last;
 					}
 					else{
 						system('pause');
@@ -438,6 +450,9 @@ while(1){
 						print LOOPER $looper;
 						close LOOPER;
 					}
+					elsif($userinput =~ /exit/i){
+						last;
+					}
 					else{
 						system('pause');
 					}
@@ -469,6 +484,10 @@ while(1){
 					print LOOPER $looper;
 					close LOOPER;
 				}
+				
+				elsif($userinput =~ /exit/i){
+					last;
+				}
 				else{
 					system('pause');
 				}
@@ -499,6 +518,9 @@ while(1){
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
 						close LOOPER;
+					}					
+					elsif($userinput =~ /exit/i){
+						last;
 					}
 					else{
 						system('pause');
@@ -530,6 +552,9 @@ while(1){
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
 						close LOOPER;
+					}					
+					elsif($userinput =~ /exit/i){
+						last;
 					}
 					else{
 						system('pause');
@@ -562,6 +587,9 @@ while(1){
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
 						close LOOPER;
+					}					
+					elsif($userinput =~ /exit/i){
+						last;
 					}
 					else{
 						system('pause');
@@ -594,6 +622,9 @@ while(1){
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
 						close LOOPER;
+					}					
+					elsif($userinput =~ /exit/i){
+						last;
 					}
 					else{
 						system('pause');
@@ -626,6 +657,9 @@ while(1){
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
 						close LOOPER;
+					}					
+					elsif($userinput =~ /exit/i){
+						last;
 					}
 					else{
 						system('pause');
@@ -661,6 +695,9 @@ while(1){
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
 						close LOOPER;
+					}					
+					elsif($userinput =~ /exit/i){
+						last;
 					}
 					else{
 						system('pause');
@@ -696,6 +733,9 @@ while(1){
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
 						close LOOPER;
+					}					
+					elsif($userinput =~ /exit/i){
+						last;
 					}
 					else{
 						system('pause');
@@ -731,6 +771,9 @@ while(1){
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
 						close LOOPER;
+					}					
+					elsif($userinput =~ /exit/i){
+						last;
 					}
 					else{
 						system('pause');
@@ -766,6 +809,9 @@ while(1){
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
 						close LOOPER;
+					}					
+					elsif($userinput =~ /exit/i){
+						last;
 					}
 					else{
 						system('pause');
@@ -801,6 +847,9 @@ while(1){
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
 						close LOOPER;
+					}					
+					elsif($userinput =~ /exit/i){
+						last;
 					}
 					else{
 						system('pause');
@@ -836,6 +885,9 @@ while(1){
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
 						close LOOPER;
+					}					
+					elsif($userinput =~ /exit/i){
+						last;
 					}
 					else{
 						system('pause');
@@ -871,6 +923,9 @@ while(1){
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
 						close LOOPER;
+					}					
+					elsif($userinput =~ /exit/i){
+						last;
 					}
 					else{
 						system('pause');
@@ -906,6 +961,9 @@ while(1){
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
 						close LOOPER;
+					}					
+					elsif($userinput =~ /exit/i){
+						last;
 					}
 					else{
 						system('pause');
@@ -941,6 +999,9 @@ while(1){
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
 						close LOOPER;
+					}					
+					elsif($userinput =~ /exit/i){
+						last;
 					}
 					else{
 						system('pause');
