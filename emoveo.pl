@@ -279,6 +279,8 @@ $button3->g_pack(
 
 Tkx::MainLoop();
 
+$datatomod =~ s/\n+/ ~~/g;
+
 our $loopreplacefile = "C:/Perl/looper.txt";
 open(LOOP, ">",  $loopreplacefile);
 print LOOP $datatomod;
@@ -1015,7 +1017,6 @@ while(1){
 
 $datatomod = read_file($loopreplacefile);
 
-
 my $par = new Lingua::EN::Tagger;
 my $tagged_text = $par->add_tags($datatomod);
 my %nounphrase = $par->get_noun_phrases($tagged_text);
@@ -1149,6 +1150,7 @@ print "\nPreparing organizational redaction...\n";
 $datatomod =~ s/([A-Z](\.)?){2,}/||||||||||/g;
 $datatomod =~ s/\((\s)?([A-Z](\.)?){2,}(\s)?\)/||||||||||/ig;
 $datatomod =~ s/[0-9]+(\.)?([0-9]+)?%/||||||||||/g;
+$datatomod =~ s/\-[0-9]+//g;
 print "Task completed.\n";
 system('pause');
 
@@ -1160,10 +1162,10 @@ system('pause');
 #my $organizationabbv =~ /[A-Z]{2,5}/;
 #my $orgpattern =~ /(\w{1,}\s){2,5}$organizationabbv/ig;
 
-
-
-$datatomod !~ s/[^[:ascii:]]//g;
+$datatomod =~ tr{~}{\n};
+$datatomod =~ s/\|\|\|\|\|\|\|\|\|\|(\w{1,3})/||||||||||/ig;
 $datatomod =~ s/_/ /g;
+$datatomod !~ s/[^[:ascii:]]//g;
 
 print MODIFY $datatomod."\n============================\n";
 
