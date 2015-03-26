@@ -230,7 +230,7 @@ system('pause');
 
 my $form = Tkx::widget->new('.');
 $form->g_wm_title('test object GUI');
-$form->m_configure(-background => "red");
+$form->m_configure(-background => "gray");
 $form->g_wm_minsize(600, 400);
 
 my $button0;
@@ -299,10 +299,16 @@ while(1){
 			my $userinput = <STDIN>;
 			chomp $userinput;
 			if($userinput =~ /no/i){
+				$_ =~ s/\S+\s*//;
+				print "\nHow many chars to remove from the end?\t";
+				my $endremove = <STDIN>;
+				chomp $endremove;
+				for(my $chomper = 0; $chomper < $endremove; $chomper++){
+					$_ =~ s/(\S)$//i;
+				}
+				$_ =~ s/\s{2,}/ /g;
+				print "\n".$_."\n";
 				my $looper = read_file($loopreplacefile);
-				
-				
-				
 				$looper =~ s/\Q$_/||||||||||/i;
 				open(LOOPER, ">",  $loopreplacefile);
 				print LOOPER $looper;
@@ -324,11 +330,17 @@ while(1){
 					my $userinput = <STDIN>;
 					chomp $userinput;
 					if($userinput =~ /no/i){
+						$_ =~ s/\S+\s*//;
+						print "\nHow many chars to remove from the end?\t";
+						my $endremove = <STDIN>;
+						chomp $endremove;
+						for(my $chomper = 0; $chomper < $endremove; $chomper++){
+							$_ =~ s/(\S)$//i;
+						}
+						$_ =~ s/\s{2,}/ /g;
+						print "\n".$_."\n";						
 						my $looper = read_file($loopreplacefile);
 						$looper =~ s/\Q$_/||||||||||/i;
-						
-						
-						
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
 						close LOOPER;
@@ -349,10 +361,16 @@ while(1){
 					my $userinput = <STDIN>;
 					chomp $userinput;
 					if($userinput =~ /no/i){
+						$_ =~ s/\S+\s*//;
+						print "\nHow many chars to remove from the end?\t";
+						my $endremove = <STDIN>;
+						chomp $endremove;
+						for(my $chomper = 0; $chomper < $endremove; $chomper++){
+							$_ =~ s/(\S)$//i;
+						}
+						$_ =~ s/\s{2,}/ /g;
+						print "\n".$_."\n";						
 						my $looper = read_file($loopreplacefile);
-						
-						
-						
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
@@ -374,10 +392,16 @@ while(1){
 					my $userinput = <STDIN>;
 					chomp $userinput;
 					if($userinput =~ /no/i){
+						$_ =~ s/\S+\s*//;
+						print "\nHow many chars to remove from the end?\t";
+						my $endremove = <STDIN>;
+						chomp $endremove;
+						for(my $chomper = 0; $chomper < $endremove; $chomper++){
+							$_ =~ s/(\S)$//i;
+						}
+						$_ =~ s/\s{2,}/ /g;
+						print "\n".$_."\n";						
 						my $looper = read_file($loopreplacefile);
-						
-						
-						
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
@@ -399,10 +423,16 @@ while(1){
 					my $userinput = <STDIN>;
 					chomp $userinput;
 					if($userinput =~ /no/i){
+						$_ =~ s/\S+\s*//;
+						print "\nHow many chars to remove from the end?\t";
+						my $endremove = <STDIN>;
+						chomp $endremove;
+						for(my $chomper = 0; $chomper < $endremove; $chomper++){
+							$_ =~ s/(\S)$//i;
+						}
+						$_ =~ s/\s{2,}/ /g;
+						print "\n".$_."\n";						
 						my $looper = read_file($loopreplacefile);
-						
-						
-						
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
@@ -424,14 +454,20 @@ while(1){
 				my $userinput = <STDIN>;
 				chomp $userinput;
 				if($userinput =~ /no/i){
-						my $looper = read_file($loopreplacefile);
-						
-						
-						
-						$looper =~ s/\Q$_/||||||||||/i;
-						open(LOOPER, ">",  $loopreplacefile);
-						print LOOPER $looper;
-						close LOOPER;
+					$_ =~ s/\S+\s*//;
+					print "\nHow many chars to remove from the end?\t";
+					my $endremove = <STDIN>;
+					chomp $endremove;
+					for(my $chomper = 0; $chomper < $endremove; $chomper++){
+						$_ =~ s/(\S)$//i;
+					}
+					$_ =~ s/\s{2,}/ /g;
+					print "\n".$_."\n";					
+					my $looper = read_file($loopreplacefile);
+					$looper =~ s/\Q$_/||||||||||/i;
+					open(LOOPER, ">",  $loopreplacefile);
+					print LOOPER $looper;
+					close LOOPER;
 				}
 				else{
 					system('pause');
@@ -449,10 +485,16 @@ while(1){
 					my $userinput = <STDIN>;
 					chomp $userinput;
 					if($userinput =~ /no/i){
+						$_ =~ s/\S+\s*//;
+						print "\nHow many chars to remove from the end?\t";
+						my $endremove = <STDIN>;
+						chomp $endremove;
+						for(my $chomper = 0; $chomper < $endremove; $chomper++){
+							$_ =~ s/(\S)$//i;
+						}
+						$_ =~ s/\s{2,}/ /g;
+						print "\n".$_."\n";						
 						my $looper = read_file($loopreplacefile);
-						
-						
-						
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
@@ -474,10 +516,16 @@ while(1){
 					my $userinput = <STDIN>;
 					chomp $userinput;
 					if($userinput =~ /no/i){
+						$_ =~ s/\S+\s*//;
+						print "\nHow many chars to remove from the end?\t";
+						my $endremove = <STDIN>;
+						chomp $endremove;
+						for(my $chomper = 0; $chomper < $endremove; $chomper++){
+							$_ =~ s/(\S)$//i;
+						}
+						$_ =~ s/\s{2,}/ /g;
+						print "\n".$_."\n";
 						my $looper = read_file($loopreplacefile);
-						
-						
-						
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
@@ -499,10 +547,17 @@ while(1){
 					my $userinput = <STDIN>;
 					chomp $userinput;
 					if($userinput =~ /no/i){
+						$_ =~ s/\S+\s*//;
+						print "\nHow many chars to remove from the end?\t";
+						my $endremove = <STDIN>;
+						chomp $endremove;
+						for(my $chomper = 0; $chomper < $endremove; $chomper++){
+							$_ =~ s/(\S)$//i;
+						}
+						$_ =~ s/\s{2,}/ /g;
+						print "\n".$_."\n";
+						
 						my $looper = read_file($loopreplacefile);
-						
-						
-						
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
@@ -524,10 +579,17 @@ while(1){
 					my $userinput = <STDIN>;
 					chomp $userinput;
 					if($userinput =~ /no/i){
+						$_ =~ s/\S+\s*//;
+						print "\nHow many chars to remove from the end?\t";
+						my $endremove = <STDIN>;
+						chomp $endremove;
+						for(my $chomper = 0; $chomper < $endremove; $chomper++){
+							$_ =~ s/(\S)$//i;
+						}
+						$_ =~ s/\s{2,}/ /g;
+						print "\n".$_."\n";
+						
 						my $looper = read_file($loopreplacefile);
-						
-						
-						
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
@@ -549,10 +611,17 @@ while(1){
 					my $userinput = <STDIN>;
 					chomp $userinput;
 					if($userinput =~ /no/i){
+						$_ =~ s/\S+\s*//;
+						print "\nHow many chars to remove from the end?\t";
+						my $endremove = <STDIN>;
+						chomp $endremove;
+						for(my $chomper = 0; $chomper < $endremove; $chomper++){
+							$_ =~ s/(\S)$//i;
+						}
+						$_ =~ s/\s{2,}/ /g;
+						print "\n".$_."\n";
+
 						my $looper = read_file($loopreplacefile);
-						
-						
-						
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
 						print LOOPER $looper;
@@ -574,6 +643,16 @@ while(1){
 					my $userinput = <STDIN>;
 					chomp $userinput;
 					if($userinput =~ /no/i){
+						$_ =~ s/\S+\s*//;
+						print "\nHow many chars to remove from the end?\t";
+						my $endremove = <STDIN>;
+						chomp $endremove;
+						for(my $chomper = 0; $chomper < $endremove; $chomper++){
+							$_ =~ s/(\S)$//i;
+						}
+						$_ =~ s/\s{2,}/ /g;
+						print "\n".$_."\n";
+
 						my $looper = read_file($loopreplacefile);
 						
 						
@@ -599,6 +678,16 @@ while(1){
 					my $userinput = <STDIN>;
 					chomp $userinput;
 					if($userinput =~ /no/i){
+						$_ =~ s/\S+\s*//;
+						print "\nHow many chars to remove from the end?\t";
+						my $endremove = <STDIN>;
+						chomp $endremove;
+						for(my $chomper = 0; $chomper < $endremove; $chomper++){
+							$_ =~ s/(\S)$//i;
+						}
+						$_ =~ s/\s{2,}/ /g;
+						print "\n".$_."\n";
+
 						my $looper = read_file($loopreplacefile);
 						
 						
@@ -624,6 +713,16 @@ while(1){
 					my $userinput = <STDIN>;
 					chomp $userinput;
 					if($userinput =~ /no/i){
+						$_ =~ s/\S+\s*//;
+						print "\nHow many chars to remove from the end?\t";
+						my $endremove = <STDIN>;
+						chomp $endremove;
+						for(my $chomper = 0; $chomper < $endremove; $chomper++){
+							$_ =~ s/(\S)$//i;
+						}
+						$_ =~ s/\s{2,}/ /g;
+						print "\n".$_."\n";
+
 						my $looper = read_file($loopreplacefile);
 						
 						
@@ -649,6 +748,16 @@ while(1){
 					my $userinput = <STDIN>;
 					chomp $userinput;
 					if($userinput =~ /no/i){
+						$_ =~ s/\S+\s*//;
+						print "\nHow many chars to remove from the end?\t";
+						my $endremove = <STDIN>;
+						chomp $endremove;
+						for(my $chomper = 0; $chomper < $endremove; $chomper++){
+							$_ =~ s/(\S)$//i;
+						}
+						$_ =~ s/\s{2,}/ /g;
+						print "\n".$_."\n";
+
 						my $looper = read_file($loopreplacefile);
 						
 						
@@ -674,6 +783,16 @@ while(1){
 					my $userinput = <STDIN>;
 					chomp $userinput;
 					if($userinput =~ /no/i){
+						$_ =~ s/\S+\s*//;
+						print "\nHow many chars to remove from the end?\t";
+						my $endremove = <STDIN>;
+						chomp $endremove;
+						for(my $chomper = 0; $chomper < $endremove; $chomper++){
+							$_ =~ s/(\S)$//i;
+						}
+						$_ =~ s/\s{2,}/ /g;
+						print "\n".$_."\n";
+
 						my $looper = read_file($loopreplacefile);
 						
 						
@@ -699,6 +818,16 @@ while(1){
 					my $userinput = <STDIN>;
 					chomp $userinput;
 					if($userinput =~ /no/i){
+						$_ =~ s/\S+\s*//;
+						print "\nHow many chars to remove from the end?\t";
+						my $endremove = <STDIN>;
+						chomp $endremove;
+						for(my $chomper = 0; $chomper < $endremove; $chomper++){
+							$_ =~ s/(\S)$//i;
+						}
+						$_ =~ s/\s{2,}/ /g;
+						print "\n".$_."\n";
+
 						my $looper = read_file($loopreplacefile);
 						
 						
@@ -724,6 +853,16 @@ while(1){
 					my $userinput = <STDIN>;
 					chomp $userinput;
 					if($userinput =~ /no/i){
+						$_ =~ s/\S+\s*//;
+						print "\nHow many chars to remove from the end?\t";
+						my $endremove = <STDIN>;
+						chomp $endremove;
+						for(my $chomper = 0; $chomper < $endremove; $chomper++){
+							$_ =~ s/(\S)$//i;
+						}
+						$_ =~ s/\s{2,}/ /g;
+						print "\n".$_."\n";
+
 						my $looper = read_file($loopreplacefile);
 						
 						
@@ -749,6 +888,16 @@ while(1){
 					my $userinput = <STDIN>;
 					chomp $userinput;
 					if($userinput =~ /no/i){
+						$_ =~ s/\S+\s*//;
+						print "\nHow many chars to remove from the end?\t";
+						my $endremove = <STDIN>;
+						chomp $endremove;
+						for(my $chomper = 0; $chomper < $endremove; $chomper++){
+							$_ =~ s/(\S)$//i;
+						}
+						$_ =~ s/\s{2,}/ /g;
+						print "\n".$_."\n";
+
 						my $looper = read_file($loopreplacefile);
 						
 						
@@ -774,6 +923,16 @@ while(1){
 					my $userinput = <STDIN>;
 					chomp $userinput;
 					if($userinput =~ /no/i){
+						$_ =~ s/\S+\s*//;
+						print "\nHow many chars to remove from the end?\t";
+						my $endremove = <STDIN>;
+						chomp $endremove;
+						for(my $chomper = 0; $chomper < $endremove; $chomper++){
+							$_ =~ s/(\S)$//i;
+						}
+						$_ =~ s/\s{2,}/ /g;
+						print "\n".$_."\n";
+
 						my $looper = read_file($loopreplacefile);
 						
 						
@@ -943,6 +1102,7 @@ system('pause');
 
 
 $datatomod !~ s/[^[:ascii:]]//g;
+$datatomod =~ s/_/ /g;
 
 print MODIFY $datatomod."\n============================\n";
 
