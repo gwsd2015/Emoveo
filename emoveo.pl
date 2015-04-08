@@ -33,7 +33,7 @@ use Path::Class;
 use Lingua::EN::Fathom;
 use utf8;
 use File::Slurp qw(read_file write_file);
-#use PDL;
+use PDL;
 use LWP::Simple;
 use HTML::TreeBuilder;
 use HTML::FormatText;
@@ -1739,20 +1739,6 @@ while(1){
 
 $datatomod = read_file($loopreplacefile);
 
-my $par = new Lingua::EN::Tagger;
-my $tagged_text = $par->add_tags($datatomod);
-my %nounphrase = $par->get_noun_phrases($tagged_text);
-print %nounphrase;
-my @nountable;
-foreach my $nounkeys(keys %nounphrase){
-	if($nounkeys !~ /(\(|\)|\{|\}|\[|\]|\^|\$|\.|\||\*|\+|\?|\\)/){
-		push @nountable, $nounkeys;
-	}
-}
-system('pause');
-print @nountable;
-system('pause');
-
 #the removal would just be removal of text between selected subsection
 #and next subsection
 
@@ -1783,7 +1769,7 @@ $datatomod =~ s/unclassified/||||||||||/ig;
 
 #print "Removal completed...\n";
 #print "Printing to $modify...\n";
-#open(MODIFY, ">", $modify) or die "Can't open $modify.\n";
+open(MODIFY, ">", $modify) or die "Can't open $modify.\n";
 
 
 
@@ -1905,7 +1891,7 @@ print MODIFY $datatomod;
 
 close MODIFY;
 
-my $rtf = RTF::Writer->new_to_file("C:/Perl/redact.rtf");
+my $rtf = RTF::Writer->new_to_file("C:/Perl/redacted.rtf");
 $rtf->prolog( 'title' => "Insert Title" );
 $rtf->number_pages;
 $rtf->print(
