@@ -75,7 +75,6 @@ my $textfile = read_file($inputfile);
 print "$textfile\n\n";
 #my $analysistextfile = $textfile;
 my $datatomod = ($textfile);
-$datatomod =~ s/~//g; 
 
 #building some of these file to check that I properly completed steps.
 #necessary to keep in order to hvae file to chain the n-gram removal tool.
@@ -1011,6 +1010,54 @@ while(1){
 					}
 		}
 	}
+	elsif($finder =~ /clear all proper/i){
+		my $parserforproper = new Lingua::EN::Tagger;
+		my $parserfile = read_file($loopreplacefile);
+		my $tagged_text = $parserforproper->add_tags($parserfile);
+		#print $tagged_text;
+		my %wordlist = $parserforproper->get_words($parserfile);
+		my @wordlistq;
+		foreach my $parsedkey(keys %wordlist){
+			#print $parsedkey;
+			$parsedkey =~ s/\\\w+//;
+			push @wordlistq, $parsedkey;
+		}
+		for(my $isl = 0; $isl < $#wordlistq; $isl++){
+			my $querty = $wordlistq[$isl];
+			my $concordance20 = Lingua::Concordance->new;
+			my $reader20 = read_file($loopreplacefile);
+			$concordance20->text($reader20);
+			$concordance20->query($querty);
+			foreach($concordance20->lines){
+				print "$_\n";
+				print "Would you like to keep this line?\t";
+				my $userinput = <STDIN>;
+				chomp $userinput;
+				if($userinput =~ /no/i){
+					$_ =~ s/\S+\s*//;
+					print "\nHow many chars to remove from the end?\t";
+					my $endremove = <STDIN>;
+					chomp $endremove;
+					for(my $chomper = 0; $chomper < $endremove; $chomper++){
+						$_ =~ s/(\S)$//i;
+					}
+					$_ =~ s/\s{2,}/ /g;
+					print "\n".$_."\n";
+					my $looper = read_file($loopreplacefile);
+					$looper =~ s/\Q$_/||||||||||/i;
+					open(LOOPER, ">",  $loopreplacefile);
+					print LOOPER $looper;
+					close LOOPER;
+				}
+				elsif($userinput =~ /exit/i){
+					$isl = $#wordlistq;
+				}
+				else{
+				system('pause');
+				}
+			}
+		}	
+	}
 	elsif($finder =~ /0/){
 		last;
 	}
@@ -1045,9 +1092,9 @@ system('pause');
 my $inputfilemod = $inputfile;
 my $modify = $inputfile."redacted.txt";
 #my $modify = "C:/Perl/removal.txt";
-print "Beginning to remove uniquely identifying material in text.\n";
-print "Output will be located in $modify \n";
-print "This process can take a lot of time and memory... please be patient.\n";
+#print "Beginning to remove uniquely identifying material in text.\n";
+#print "Output will be located in $modify \n";
+#print "This process can take a lot of time and memory... please be patient.\n";
 
 $datatomod =~ s/restricted/||||||||||/ig;
 $datatomod =~ s/confidential/||||||||||/ig;
@@ -1060,35 +1107,39 @@ $datatomod =~ s/unclassified/||||||||||/ig;
 #	$datatomod =~ s/\s$wordtomod\s/||||||||||/ig;
 #}
 
-print "Removal completed...\n";
-print "Printing to $modify...\n";
-open(MODIFY, ">", $modify) or die "Can't open $modify.\n";
+#print "Removal completed...\n";
+#print "Printing to $modify...\n";
+#open(MODIFY, ">", $modify) or die "Can't open $modify.\n";
 
 
 
-print "Searching document for generic time indicators.\n";
-my @months = qw/january february march april may june july august september october november december/;
-my @week = qw/monday tuesday wednesday thursday friday saturday sunday/;
-for(my $l = 0; $l < $#months; $l++){
-	my $monthtime = $months[$l];
-	$datatomod =~ s/[0-9]{1,2}(\s)?$monthtime/||||||||||/ig;
-	$datatomod =~ s/$monthtime(\s)?[0-9]{1,2}(\s|\,)?/||||||||||/ig;
-	if($monthtime =~ /may/){
-		$datatomod =~ s/\b$monthtime\b/||||||||||/ig;
+print "\nWould you like Month, days, and weekdays to be removed?\t";
+my $monthdayweekyesno = <STDIN>;
+chomp $monthdayweekyesno;
+if($monthdayweekyesno =~ /yes/i){
+	my @months = qw/january february march april may june july august september october november december/;
+	my @week = qw/monday tuesday wednesday thursday friday saturday sunday/;
+	for(my $l = 0; $l < $#months; $l++){
+		my $monthtime = $months[$l];
+		$datatomod =~ s/[0-9]{1,2}(\s)?$monthtime/||||||||||/ig;
+		$datatomod =~ s/$monthtime(\s)?[0-9]{1,2}(\s|\,)?/||||||||||/ig;
+		if($monthtime =~ /may/){
+			$datatomod =~ s/\b$monthtime\b/||||||||||/ig;
+		}
+		else{
+			$datatomod =~ s/$monthtime/||||||||||/ig;
+		}
+		$datatomod =~ s/[0-9]{2}\//||||||||||/g;
 	}
-	else{
-		$datatomod =~ s/$monthtime/||||||||||/ig;
+	for(my $m = 0; $m < $#week; $m++){
+		my $weektime = $week[$m];
+		$datatomod =~ s/$weektime\s/||||||||||/ig;
 	}
-	$datatomod =~ s/[0-9]{2}\//||||||||||/g;
+	print "Task completed.\n";
+	system('pause');
 }
-for(my $m = 0; $m < $#week; $m++){
-	my $weektime = $week[$m];
-	$datatomod =~ s/$weektime\s/||||||||||/ig;
-}
-print "Task completed.\n";
-system('pause');
 
-print "\nMonth, days, and weekdays are removed. Would you like the year to be removed?\t";
+print "\nWould you like the year to be removed?\t";
 my $timeyearyesno = <STDIN>;
 chomp $timeyearyesno;
 if($timeyearyesno =~ /[Yy][Ee][Ss]/){
@@ -1164,7 +1215,7 @@ system('pause');
 #my $orgpattern =~ /(\w{1,}\s){2,5}$organizationabbv/ig;
 
 $datatomod =~ tr{~}{\n};
-$datatomod =~ s/\|\|\|\|\|\|\|\|\|\|(\w{1,3})/||||||||||/ig;
+$datatomod =~ s/\|\|\|\|\|\|\|\|\|\|(\w+)\s/|||||||||| /ig;
 $datatomod =~ s/_/ /g;
 $datatomod !~ s/[^[:ascii:]]//g;
 
