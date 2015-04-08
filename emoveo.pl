@@ -1662,7 +1662,7 @@ while(1){
 			print "\nWhat to search for (you can type 0 to exit):\t";
 			my $givemeasearch = <STDIN>;
 			chomp $givemeasearch;
-			if($givemeasearch !~ /0/){
+			if($givemeasearch !~ /\b0\b/){
 			my $concordance21 = Lingua::Concordance->new;
 			my $reader21 = read_file($loopreplacefile);
 			$concordance21->text($reader21);
@@ -1729,12 +1729,12 @@ while(1){
 				}
 			}
 			}
-			elsif($givemeasearch =~ /0/){
+			elsif($givemeasearch =~ /\b0\b/){
 				last;
 			}
 		}
 	}
-	elsif($finder =~ /0/){
+	elsif($finder =~ /\b0\b/){
 		last;
 	}
 }
