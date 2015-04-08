@@ -1816,7 +1816,7 @@ $datatomod =~ s/\|\|\|\|\|\|\|\|\|\|(\w+)\s/|||||||||| /ig;
 $datatomod =~ s/_/ /g;
 $datatomod !~ s/[^[:ascii:]]//g;
 
-print MODIFY $datatomod."\n============================\n";
+print MODIFY $datatomod;
 
 close MODIFY;
 
@@ -1828,6 +1828,21 @@ $rtf->print(
 	$datatomod
 );
 $rtf->close;
+
+print "\n\nAre you finished with your redaction? If not, you can save a text file to continue redaction later.\t";
+
+my $areyoudoneyet = <STDIN>;
+chomp $areyoudoneyet;
+
+if($areyoudoneyet =~ /no/i){
+	print "\nEnter the name of the file: ";
+	my $filename = <STDIN>;
+	chomp $filename;
+	my $tryagainfile = $filename.".txt";
+	open(TRY, ">", $tryagainfile) or die;
+	print TRY $datatomod;
+	close TRY;
+}
 
 exit;
 
