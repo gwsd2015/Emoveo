@@ -1655,6 +1655,83 @@ while(1){
 			}
 		}	
 	}
+	elsif($finder =~ /i can do this myself/i){
+			while(1){
+			print "\nWhat to search for (you can type 0 to exit):\t";
+			my $givemeasearch = <STDIN>;
+			chomp $givemeasearch;
+			if($givemeasearch !~ /0/){
+			my $concordance21 = Lingua::Concordance->new;
+			my $reader21 = read_file($loopreplacefile);
+			$concordance21->text($reader21);
+			$concordance21->query($givemeasearch);
+					foreach($concordance21->lines){
+						print "$_\n";
+						if($_ =~ /~~/){
+										print "Would you like to keep this line?\t";
+										my $userinput = <STDIN>;
+										chomp $userinput;
+										if($userinput =~ /no/i){
+											$_ =~ s/\S+\s*//;
+											print "\nHow many chars to remove from the end?\t";
+											my $endremove = <STDIN>;
+											chomp $endremove;
+											for(my $chomper = 0; $chomper < $endremove; $chomper++){
+												$_ =~ s/(\S)$//i;
+											}
+											$_ =~ s/\s{2,}/ /g;
+											print "\n".$_."\n";
+											my $looper = read_file($loopreplacefile);
+											$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
+											open(LOOPER, ">",  $loopreplacefile);
+											print LOOPER $looper;
+											close LOOPER;
+										}
+										elsif($userinput =~ /exit/i){
+											last;
+										}
+										else{
+											system('pause');
+										}
+									}
+				else{
+						print "Would you like to keep this line?\t";
+						my $userinput = <STDIN>;
+						chomp $userinput;
+						if($userinput =~ /no/i){
+							$_ =~ s/\S+\s*//;
+							print "\nHow many chars to remove from the end?\t";
+							my $endremove = <STDIN>;
+							chomp $endremove;
+							for(my $chomper = 0; $chomper < $endremove; $chomper++){
+								$_ =~ s/(\S)$//i;
+							}
+							$_ =~ s/\s{2,}/ /g;
+							print "\n".$_."\n";
+	
+							my $looper = read_file($loopreplacefile);
+							
+							
+							
+							$looper =~ s/\Q$_/||||||||||/i;
+							open(LOOPER, ">",  $loopreplacefile);
+							print LOOPER $looper;
+							close LOOPER;
+						}					
+						elsif($userinput =~ /exit/i){
+							last;
+						}
+						else{
+							system('pause');
+						}
+				}
+			}
+			}
+			elsif($givemeasearch =~ /0/){
+				last;
+			}
+		}
+	}
 	elsif($finder =~ /0/){
 		last;
 	}
@@ -1779,7 +1856,10 @@ else{
 	system('pause');
 }
 
-print "\nNow searching for country names...\n";
+print "\nWould you like to remove country names?\t";
+my $countryyesno = <STDIN>;
+chomp $countryyesno;
+if($countryyesno =~ /yes/i){
 my @countrynames = all_country_names();
 my @morecountries = qw/Bolivia Bonaire Saba Antigua Barbuda Bosnia Herzegovina Carribean Indian Atlantic Pacific Brunei Keeling Cocos Falkland Malvinas Faroe Iran Korea Macedonia Micronesia Moldova Palestine Russia Kitts Nevis Miquelon Taiwan Tanzania Turks Caicos Venezuela/;
 push @countrynames, @morecountries;
@@ -1794,14 +1874,19 @@ for(my $q = 0; $q < $#countrylanguage; $q++){
 }
 print "Task completed.\n";
 system('pause');
+}
 
-print "\nPreparing organizational redaction...\n";
+print "\nWould you like to do organizational redaction?\t";
+my $orgyesno = <STDIN>;
+chomp $orgyesno;
+if($orgyesno =~ /yes/i){
 $datatomod =~ s/([A-Z](\.)?){2,}/||||||||||/g;
 $datatomod =~ s/\((\s)?([A-Z](\.)?){2,}(\s)?\)/||||||||||/ig;
 $datatomod =~ s/[0-9]+(\.)?([0-9]+)?%/||||||||||/g;
 $datatomod =~ s/\-[0-9]+//g;
 print "Task completed.\n";
 system('pause');
+}
 
 #need to use a transliterated list or Regexp::Common to identify quotes and parenthesis
 
