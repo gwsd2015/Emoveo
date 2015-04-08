@@ -267,6 +267,8 @@ $button3->g_pack(
 
 Tkx::MainLoop();
 
+$datatomod = read_file($check);
+
 $datatomod =~ s/\n+/ ~~/g;
 
 our $loopreplacefile = "C:/Perl/looper.txt";
