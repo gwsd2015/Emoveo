@@ -50,10 +50,6 @@ use Lingua::Orthon;
 use Date::Extract;
 use Date::Extract::Surprise;
 use Encode qw(decode encode);
-#to be phased out for Text::TermExtract
-use Lingua::EN::Keywords qw(keywords);
-#to be phased out for Text::TermExtract
-use Text::Context::Porter;
 use Text::TermExtract;
 use RTF::Writer;
 use WWW::Wikipedia;
