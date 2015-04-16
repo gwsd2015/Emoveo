@@ -1795,7 +1795,7 @@ if($monthdayweekyesno =~ /yes/i){
 	}
 	for(my $m = 0; $m < $#week; $m++){
 		my $weektime = $week[$m];
-		$datatomod =~ s/$weektime\s/||||||||||/ig;
+		$datatomod =~ s/$weektime/||||||||||/ig;
 	}
 	print "Task completed.\n";
 	system('pause');
@@ -1886,8 +1886,9 @@ system('pause');
 
 $datatomod =~ tr{~}{\n};
 $datatomod =~ s/\|\|\|\|\|\|\|\|\|\|(\w+)\s/|||||||||| /ig;
+$datatomod =~ s/(\w+)\|\|\|\|\|\|\|\|\|\|/|||||||||| /ig;
 $datatomod =~ s/_/ /g;
-$datatomod !~ s/[^[:ascii:]]//g;
+#$datatomod !~ s/[^[:ascii:]]|'|"|“|”|’|!|\?//g;
 
 print MODIFY $datatomod;
 
