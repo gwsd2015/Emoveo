@@ -143,7 +143,7 @@ for(my $data2 = 0; $data2 < $#datamod; $data2++){
 
 close INT;
 
-$datatomod = "";
+$datatomod = 0;
 
 $datatomod = read_file($intermediatefile);
 
@@ -1836,7 +1836,7 @@ while(1){
 	}
 }
 
-$datatomod = "";
+$datatomod = 0;
 
 $datatomod = read_file($loopreplacefile);
 
@@ -1993,7 +1993,7 @@ print MODIFY $datatomod;
 
 close MODIFY;
 
-$datatomod = "";
+$datatomod = 0;
 $datatomod = read_file($modify);
 
 
