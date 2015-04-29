@@ -33,21 +33,15 @@ use Path::Class;
 use Lingua::EN::Fathom;
 use utf8;
 use File::Slurp qw(read_file write_file);
-use PDL;
-use LWP::Simple;
-use HTML::TreeBuilder;
-use HTML::FormatText;
 use Locale::Country;
 use Locale::Language;
 use Lingua::Concordance;
-use Lingua::EN::Ngram;
 use Encode qw(decode encode);
 use Text::TermExtract;
 use RTF::Writer;
 use WWW::Wikipedia;
 use Lingua::EN::Tagger;
 use Tkx;
-use List::Compare;
 
 #take the input file from the user
 #file slurp and extract the text
@@ -96,58 +90,6 @@ print($text->report);
 print "\n\n";
 system('pause');
 
-$datatomod = read_file($check);
-
-$datatomod =~ s/\n+/ ~~/g;
-
-my @datamod = split(/~~/, $datatomod);
-
-system('pause');
-
-print $datamod[0];
-
-system('pause');
-
-for(my $data = 0; $data < $#datamod; $data++){
-	my $datashow = "$datamod[$data]";
-	my $extra = Text::TermExtract->new();
-	for my $ex($extra->terms_extract($datashow, {max => 5})){
-		print $ex."\n";
-	}
-	print "\nParagraph topics listed. Remove paragraph?\t";
-	while(){
-		my $removeyesno = <STDIN>;
-		chomp $removeyesno;
-		if($removeyesno =~ /yes/ig){
-			$datamod[$data] = '||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||';
-			print $datamod[$data]."\n";
-			last;
-		}
-		else{
-			last;
-		}
-	}
-}
-
-my $intermediatefile = "C:/Perl/intermediate.txt";
-open(INT, ">>", $intermediatefile) or die; 
-
-system('pause');
-print @datamod;
-system('pause');
-
-for(my $data2 = 0; $data2 < $#datamod; $data2++){
-	my $datashow2 = "$datamod[$data2]";
-	print INT $datashow2." ~~";
-}
-
-close INT;
-
-$datatomod = 0;
-
-$datatomod = read_file($intermediatefile);
-
-
 print "Preparing to get up to 20 keywords from the document...\n";
 
 our @initial_keys;
@@ -181,47 +123,8 @@ for my $wordsensing($ext->terms_extract($datatomod,{max =>20})){
 }
 system('pause');
 
-for(my $co = 0; $co < $#initial_keys; $co++){
-	my $keyprint = $initial_keys[$co];
-	print $keyprint."\n";
-}
+print @initial_keys;
 system('pause');
-
-
-
-our @exclude_list;
-our $exclude_list_ref = [@exclude_list];
-
-while(){
-	print "\nAre there any keywords you would like to exclude, (this can include words not listed)?\t";
-	my $userexclude = <STDIN>;
-	chomp $userexclude;
-	if($userexclude =~ /yes/i){
-		while(){
-			print "\nEnter word to exclude (exit to escape):\t";
-			my $wordtoex = <STDIN>;
-			chomp $wordtoex;
-			push @$exclude_list_ref, $wordtoex;
-			if($wordtoex =~ /exit/i){
-				last;
-			}
-		}
-		my $extracting = Text::TermExtract->new();
-		@initial_keys = ();
-		@initial_keys_to_tag = ();
-		$extracting->exclude($exclude_list_ref);
-		for my $wordgets($extracting->terms_extract($datatomod,{max => 20})){
-			print "$wordgets\n";
-			push @initial_keys, $wordgets;
-			push @initial_keys_to_tag, $wordgets;
-		}
-	}
-	else{
-		last;
-	}
-
-}
-
 
 print "\nPreparing to build keyword trees...\n\n";
 
@@ -239,7 +142,6 @@ for(my $counters = 0; $counters < $#initial_keys; $counters++){
 			#my $service = read_file($filewiki);
 			my $wikifile = read_file($filewiki);
 			my $wikiext = Text::TermExtract->new();
-			$wikiext->exclude(['refer','ref']);
 			for my $keyword($wikiext->terms_extract($wikifile,{max =>20})){
 				print $keyword."\n";
 				if($counters == 0){
@@ -307,13 +209,6 @@ for(my $counters = 0; $counters < $#initial_keys; $counters++){
 	}
 }
 
-my $keywordsfile = "C:/Perl/keywords.txt";
-open(KEYFI, ">", $keywordsfile) or die;
-
-print KEYFI "$_\n" for @initial_keys;
-
-close KEYFI;
-
 system('pause');
 
 my $form = Tkx::widget->new('.');
@@ -367,14 +262,14 @@ $button3->g_pack(
 
 Tkx::MainLoop();
 
-$datatomod = read_file($intermediatefile);
+$datatomod = read_file($check);
+
+$datatomod =~ s/\n+/ ~~/g;
 
 our $loopreplacefile = "C:/Perl/looper.txt";
 open(LOOP, ">",  $loopreplacefile);
-print LOOP "$datatomod";
+print LOOP $datatomod;
 close LOOP;
-
-our $integer = int ($num_words*(1/30)+0.5);
 
 while(1){
 	print "Enter the keyword that you would like to search for (enter 0 to escape): ";
@@ -382,7 +277,6 @@ while(1){
 	chomp $finder;
 	if($finder =~ /$initial_keys[0]/){
 		my $concordance0 = Lingua::Concordance->new;
-		$concordance0->radius($integer);
 		my $reader0 = read_file($loopreplacefile);
 		$concordance0->text($reader0);
 		$concordance0->query($initial_keys[0], $keys_for_0[0], $keys_for_0[1], $keys_for_0[2], $keys_for_0[3], $keys_for_0[4], $keys_for_0[5], $keys_for_0[6], $keys_for_0[7], $keys_for_0[8], $keys_for_0[9], $keys_for_0[10], $keys_for_0[11], $keys_for_0[12], $keys_for_0[13], $keys_for_0[14], $keys_for_0[15], $keys_for_0[16], $keys_for_0[17], $keys_for_0[18], $keys_for_0[19]);
@@ -405,7 +299,7 @@ while(1){
 					my $looper = read_file($loopreplacefile);
 					$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 					open(LOOPER, ">",  $loopreplacefile);
-					print LOOPER "$looper";
+					print LOOPER $looper;
 					close LOOPER;
 				}
 				elsif($userinput =~ /exit/i){
@@ -432,7 +326,7 @@ while(1){
 					my $looper = read_file($loopreplacefile);
 					$looper =~ s/\Q$_/||||||||||/i;
 					open(LOOPER, ">",  $loopreplacefile);
-					print LOOPER "$looper";
+					print LOOPER $looper;
 					close LOOPER;
 				}
 				elsif($userinput =~ /exit/i){
@@ -446,7 +340,6 @@ while(1){
 	}
 	elsif($finder =~ /$initial_keys[1]/){
 				my $concordance1 = Lingua::Concordance->new;
-				$concordance1->radius($integer);
 				my $reader1 = read_file($loopreplacefile);
 				$concordance1->text($reader1);
 				$concordance1->query($initial_keys[1], $keys_for_1[0], $keys_for_1[1], $keys_for_1[2], $keys_for_1[3], $keys_for_1[4], $keys_for_1[5], $keys_for_1[6], $keys_for_1[7], $keys_for_1[8], $keys_for_1[9], $keys_for_1[10], $keys_for_1[11], $keys_for_1[12], $keys_for_1[13], $keys_for_1[14], $keys_for_1[15], $keys_for_1[16], $keys_for_1[17], $keys_for_1[18], $keys_for_1[19]);
@@ -469,7 +362,7 @@ while(1){
 										my $looper = read_file($loopreplacefile);
 										$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 										open(LOOPER, ">",  $loopreplacefile);
-										print LOOPER "$looper";
+										print LOOPER $looper;
 										close LOOPER;
 									}
 									elsif($userinput =~ /exit/i){
@@ -496,7 +389,7 @@ while(1){
 						my $looper = read_file($loopreplacefile);
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
-						print LOOPER "$looper";
+						print LOOPER $looper;
 						close LOOPER;
 					}
 					elsif($userinput =~ /exit/i){
@@ -510,7 +403,6 @@ while(1){
 	}
 	elsif($finder =~ /$initial_keys[2]/){
 				my $concordance2 = Lingua::Concordance->new;
-				$concordance2->radius($integer);
 				my $reader2 = read_file($loopreplacefile);
 				$concordance2->text($reader2);
 				$concordance2->query($initial_keys[2], $keys_for_2[0], $keys_for_2[1], $keys_for_2[2], $keys_for_2[3], $keys_for_2[4], $keys_for_2[5], $keys_for_2[6], $keys_for_2[7], $keys_for_2[8], $keys_for_2[9], $keys_for_2[10], $keys_for_2[11], $keys_for_2[12], $keys_for_2[13], $keys_for_2[14], $keys_for_2[15], $keys_for_2[16], $keys_for_2[17], $keys_for_2[18], $keys_for_2[19]);
@@ -533,7 +425,7 @@ while(1){
 										my $looper = read_file($loopreplacefile);
 										$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 										open(LOOPER, ">",  $loopreplacefile);
-										print LOOPER "$looper";
+										print LOOPER $looper;
 										close LOOPER;
 									}
 									elsif($userinput =~ /exit/i){
@@ -560,7 +452,7 @@ while(1){
 						my $looper = read_file($loopreplacefile);
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
-						print LOOPER "$looper";
+						print LOOPER $looper;
 						close LOOPER;
 					}
 					elsif($userinput =~ /exit/i){
@@ -574,7 +466,6 @@ while(1){
 	}
 	elsif($finder =~ /$initial_keys[3]/){
 				my $concordance3 = Lingua::Concordance->new;
-				$concordance3->radius($integer);
 				my $reader3 = read_file($loopreplacefile);
 				$concordance3->text($reader3);
 				$concordance3->query($initial_keys[3], $keys_for_3[0], $keys_for_3[1], $keys_for_3[2], $keys_for_3[3], $keys_for_3[4], $keys_for_3[5], $keys_for_3[6], $keys_for_3[7], $keys_for_3[8], $keys_for_3[9], $keys_for_3[10], $keys_for_3[11], $keys_for_3[12], $keys_for_3[13], $keys_for_3[14], $keys_for_3[15], $keys_for_3[16], $keys_for_3[17], $keys_for_3[18], $keys_for_3[19]);
@@ -597,7 +488,7 @@ while(1){
 										my $looper = read_file($loopreplacefile);
 										$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 										open(LOOPER, ">",  $loopreplacefile);
-										print LOOPER "$looper";
+										print LOOPER $looper;
 										close LOOPER;
 									}
 									elsif($userinput =~ /exit/i){
@@ -624,7 +515,7 @@ while(1){
 						my $looper = read_file($loopreplacefile);
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
-						print LOOPER "$looper";
+						print LOOPER $looper;
 						close LOOPER;
 					}
 					elsif($userinput =~ /exit/i){
@@ -638,7 +529,6 @@ while(1){
 	}
 	elsif($finder =~ /$initial_keys[4]/){
 				my $concordance4 = Lingua::Concordance->new;
-				$concordance4->radius($integer);
 				my $reader4 = read_file($loopreplacefile);
 				$concordance4->text($reader4);
 				$concordance4->query($initial_keys[4], $keys_for_4[0], $keys_for_4[1], $keys_for_4[2], $keys_for_4[3], $keys_for_4[4], $keys_for_4[5], $keys_for_4[6], $keys_for_4[7], $keys_for_4[8], $keys_for_4[9], $keys_for_4[10], $keys_for_4[11], $keys_for_4[12], $keys_for_4[13], $keys_for_4[14], $keys_for_4[15], $keys_for_4[16], $keys_for_4[17], $keys_for_4[18], $keys_for_4[19]);
@@ -661,8 +551,8 @@ while(1){
 										my $looper = read_file($loopreplacefile);
 										$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 										open(LOOPER, ">",  $loopreplacefile);
-										print LOOPER "$looper";
-									close LOOPER;
+										print LOOPER $looper;
+										close LOOPER;
 									}
 									elsif($userinput =~ /exit/i){
 										last;
@@ -688,7 +578,7 @@ while(1){
 						my $looper = read_file($loopreplacefile);
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
-						print LOOPER "$looper";
+						print LOOPER $looper;
 						close LOOPER;
 					}
 					elsif($userinput =~ /exit/i){
@@ -702,7 +592,6 @@ while(1){
 	}
 	elsif($finder =~ /$initial_keys[5]/){
 			my $concordance5 = Lingua::Concordance->new;
-			$concordance5->radius($integer);
 			my $reader5 = read_file($loopreplacefile);
 			$concordance5->text($reader5);
 			$concordance5->query($initial_keys[5], $keys_for_5[0], $keys_for_5[1], $keys_for_5[2], $keys_for_5[3], $keys_for_5[4], $keys_for_5[5], $keys_for_5[6], $keys_for_5[7], $keys_for_5[8], $keys_for_5[9], $keys_for_5[10], $keys_for_5[11], $keys_for_5[12], $keys_for_5[13], $keys_for_5[14], $keys_for_5[15], $keys_for_5[16], $keys_for_5[17], $keys_for_5[18], $keys_for_5[19]);
@@ -725,7 +614,7 @@ while(1){
 									my $looper = read_file($loopreplacefile);
 									$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 									open(LOOPER, ">",  $loopreplacefile);
-									print LOOPER "$looper";
+									print LOOPER $looper;
 									close LOOPER;
 								}
 								elsif($userinput =~ /exit/i){
@@ -752,7 +641,7 @@ while(1){
 					my $looper = read_file($loopreplacefile);
 					$looper =~ s/\Q$_/||||||||||/i;
 					open(LOOPER, ">",  $loopreplacefile);
-					print LOOPER "$looper";
+					print LOOPER $looper;
 					close LOOPER;
 				}
 				
@@ -767,7 +656,6 @@ while(1){
 	}
 	elsif($finder =~ /$initial_keys[6]/){
 		my $concordance6 = Lingua::Concordance->new;
-		$concordance6->radius($integer);
 				my $reader6 = read_file($loopreplacefile);
 				$concordance6->text($reader6);
 				$concordance6->query($initial_keys[6], $keys_for_6[0], $keys_for_6[1], $keys_for_6[2], $keys_for_6[3], $keys_for_6[4], $keys_for_6[5], $keys_for_6[6], $keys_for_6[7], $keys_for_6[8], $keys_for_6[9], $keys_for_6[10], $keys_for_6[11], $keys_for_6[12], $keys_for_6[13], $keys_for_6[14], $keys_for_6[15], $keys_for_6[16], $keys_for_6[17], $keys_for_6[18], $keys_for_6[19]);
@@ -790,7 +678,7 @@ while(1){
 										my $looper = read_file($loopreplacefile);
 										$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 										open(LOOPER, ">",  $loopreplacefile);
-										print LOOPER "$looper";
+										print LOOPER $looper;
 										close LOOPER;
 									}
 									elsif($userinput =~ /exit/i){
@@ -817,7 +705,7 @@ while(1){
 						my $looper = read_file($loopreplacefile);
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
-						print LOOPER "$looper";
+						print LOOPER $looper;
 						close LOOPER;
 					}					
 					elsif($userinput =~ /exit/i){
@@ -831,7 +719,6 @@ while(1){
 	}
 	elsif($finder =~ /$initial_keys[7]/){
 		my $concordance7 = Lingua::Concordance->new;
-		$concordance7->radius($integer);
 				my $reader7 = read_file($loopreplacefile);
 				$concordance7->text($reader7);
 				$concordance7->query($initial_keys[0], $keys_for_7[0], $keys_for_7[1], $keys_for_7[2], $keys_for_7[3], $keys_for_7[4], $keys_for_7[5], $keys_for_7[6], $keys_for_7[7], $keys_for_7[8], $keys_for_7[9], $keys_for_7[10], $keys_for_7[11], $keys_for_7[12], $keys_for_7[13], $keys_for_7[14], $keys_for_7[15], $keys_for_7[16], $keys_for_7[17], $keys_for_7[18], $keys_for_7[19]);
@@ -854,7 +741,7 @@ while(1){
 										my $looper = read_file($loopreplacefile);
 										$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 										open(LOOPER, ">",  $loopreplacefile);
-										print LOOPER "$looper";
+										print LOOPER $looper;
 										close LOOPER;
 									}
 									elsif($userinput =~ /exit/i){
@@ -881,7 +768,7 @@ while(1){
 						my $looper = read_file($loopreplacefile);
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
-						print LOOPER "$looper";
+						print LOOPER $looper;
 						close LOOPER;
 					}					
 					elsif($userinput =~ /exit/i){
@@ -895,7 +782,6 @@ while(1){
 	}
 	elsif($finder =~ /$initial_keys[8]/){
 		my $concordance8 = Lingua::Concordance->new;
-		$concordance8->radius($integer);
 				my $reader8 = read_file($loopreplacefile);
 				$concordance8->text($reader8);
 				$concordance8->query($initial_keys[8], $keys_for_8[0], $keys_for_8[1], $keys_for_8[2], $keys_for_8[3], $keys_for_8[4], $keys_for_8[5], $keys_for_8[6], $keys_for_8[7], $keys_for_8[8], $keys_for_8[9], $keys_for_8[10], $keys_for_8[11], $keys_for_8[12], $keys_for_8[13], $keys_for_8[14], $keys_for_8[15], $keys_for_8[16], $keys_for_8[17], $keys_for_8[18], $keys_for_8[19]);
@@ -918,7 +804,7 @@ while(1){
 										my $looper = read_file($loopreplacefile);
 										$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 										open(LOOPER, ">",  $loopreplacefile);
-										print LOOPER "$looper";
+										print LOOPER $looper;
 										close LOOPER;
 									}
 									elsif($userinput =~ /exit/i){
@@ -946,7 +832,7 @@ while(1){
 						my $looper = read_file($loopreplacefile);
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
-						print LOOPER "$looper";
+						print LOOPER $looper;
 						close LOOPER;
 					}					
 					elsif($userinput =~ /exit/i){
@@ -960,7 +846,6 @@ while(1){
 	}
 	elsif($finder =~ /$initial_keys[9]/){
 		my $concordance9 = Lingua::Concordance->new;
-		$concordance9->radius($integer);
 				my $reader9 = read_file($loopreplacefile);
 				$concordance9->text($reader9);
 				$concordance9->query($initial_keys[9], $keys_for_9[0], $keys_for_9[1], $keys_for_9[2], $keys_for_9[3], $keys_for_9[4], $keys_for_9[5], $keys_for_9[6], $keys_for_9[7], $keys_for_9[8], $keys_for_9[9], $keys_for_9[10], $keys_for_9[11], $keys_for_9[12], $keys_for_9[13], $keys_for_9[14], $keys_for_9[15], $keys_for_9[16], $keys_for_9[17], $keys_for_9[18], $keys_for_9[19]);
@@ -983,7 +868,7 @@ while(1){
 										my $looper = read_file($loopreplacefile);
 										$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 										open(LOOPER, ">",  $loopreplacefile);
-										print LOOPER "$looper";
+										print LOOPER $looper;
 										close LOOPER;
 									}
 									elsif($userinput =~ /exit/i){
@@ -1011,7 +896,7 @@ while(1){
 						my $looper = read_file($loopreplacefile);
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
-						print LOOPER "$looper";
+						print LOOPER $looper;
 						close LOOPER;
 					}					
 					elsif($userinput =~ /exit/i){
@@ -1025,7 +910,6 @@ while(1){
 	}
 	elsif($finder =~ /$initial_keys[10]/){
 		my $concordance10 = Lingua::Concordance->new;
-		$concordance10->radius($integer);
 				my $reader10 = read_file($loopreplacefile);
 				$concordance10->text($reader10);
 				$concordance10->query($initial_keys[10], $keys_for_10[0], $keys_for_10[1], $keys_for_10[2], $keys_for_10[3], $keys_for_10[4], $keys_for_10[5], $keys_for_10[6], $keys_for_10[7], $keys_for_10[8], $keys_for_10[9], $keys_for_10[10], $keys_for_10[11], $keys_for_10[12], $keys_for_10[13], $keys_for_10[14], $keys_for_10[15], $keys_for_10[16], $keys_for_10[17], $keys_for_10[18], $keys_for_10[19]);
@@ -1048,7 +932,7 @@ while(1){
 										my $looper = read_file($loopreplacefile);
 										$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 										open(LOOPER, ">",  $loopreplacefile);
-										print LOOPER "$looper";
+										print LOOPER $looper;
 										close LOOPER;
 									}
 									elsif($userinput =~ /exit/i){
@@ -1076,7 +960,7 @@ while(1){
 						my $looper = read_file($loopreplacefile);
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
-						print LOOPER "$looper";
+						print LOOPER $looper;
 						close LOOPER;
 					}					
 					elsif($userinput =~ /exit/i){
@@ -1090,7 +974,6 @@ while(1){
 	}
 	elsif($finder =~ /$initial_keys[11]/){
 		my $concordance11 = Lingua::Concordance->new;
-		$concordance11->radius($integer);
 				my $reader11 = read_file($loopreplacefile);
 				$concordance11->text($reader11);
 				$concordance11->query($initial_keys[11], $keys_for_11[0], $keys_for_11[1], $keys_for_11[2], $keys_for_11[3], $keys_for_11[4], $keys_for_11[5], $keys_for_11[6], $keys_for_11[7], $keys_for_11[8], $keys_for_11[9], $keys_for_11[10], $keys_for_11[11], $keys_for_11[12], $keys_for_11[13], $keys_for_11[14], $keys_for_11[15], $keys_for_11[16], $keys_for_11[17], $keys_for_11[18], $keys_for_11[19]);
@@ -1113,7 +996,7 @@ while(1){
 										my $looper = read_file($loopreplacefile);
 										$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 										open(LOOPER, ">",  $loopreplacefile);
-										print LOOPER "$looper";
+										print LOOPER $looper;
 										close LOOPER;
 									}
 									elsif($userinput =~ /exit/i){
@@ -1144,7 +1027,7 @@ while(1){
 						
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
-						print LOOPER "$looper";
+						print LOOPER $looper;
 						close LOOPER;
 					}					
 					elsif($userinput =~ /exit/i){
@@ -1158,7 +1041,6 @@ while(1){
 	}
 	elsif($finder =~ /$initial_keys[12]/){
 		my $concordance12 = Lingua::Concordance->new;
-		$concordance12->radius($integer);
 				my $reader12 = read_file($loopreplacefile);
 				$concordance12->text($reader12);
 				$concordance12->query($initial_keys[12], $keys_for_12[0], $keys_for_12[1], $keys_for_12[2], $keys_for_12[3], $keys_for_12[4], $keys_for_12[5], $keys_for_12[6], $keys_for_12[7], $keys_for_12[8], $keys_for_12[9], $keys_for_12[10], $keys_for_12[11], $keys_for_12[12], $keys_for_12[13], $keys_for_12[14], $keys_for_12[15], $keys_for_12[16], $keys_for_12[17], $keys_for_12[18], $keys_for_12[19]);
@@ -1181,7 +1063,7 @@ while(1){
 										my $looper = read_file($loopreplacefile);
 										$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 										open(LOOPER, ">",  $loopreplacefile);
-										print LOOPER "$looper";
+										print LOOPER $looper;
 										close LOOPER;
 									}
 									elsif($userinput =~ /exit/i){
@@ -1212,7 +1094,7 @@ while(1){
 						
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
-						print LOOPER "$looper";
+						print LOOPER $looper;
 						close LOOPER;
 					}					
 					elsif($userinput =~ /exit/i){
@@ -1226,7 +1108,6 @@ while(1){
 	}
 	elsif($finder =~ /$initial_keys[13]/){
 		my $concordance13 = Lingua::Concordance->new;
-		$concordance13->radius($integer);
 				my $reader13 = read_file($loopreplacefile);
 				$concordance13->text($reader13);
 				$concordance13->query($initial_keys[13], $keys_for_13[0], $keys_for_13[1], $keys_for_13[2], $keys_for_13[3], $keys_for_13[4], $keys_for_13[5], $keys_for_13[6], $keys_for_13[7], $keys_for_13[8], $keys_for_13[9], $keys_for_13[10], $keys_for_13[11], $keys_for_13[12], $keys_for_13[13], $keys_for_13[14], $keys_for_13[15], $keys_for_13[16], $keys_for_13[17], $keys_for_13[18], $keys_for_13[19]);
@@ -1249,7 +1130,7 @@ while(1){
 										my $looper = read_file($loopreplacefile);
 										$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 										open(LOOPER, ">",  $loopreplacefile);
-										print LOOPER "$looper";
+										print LOOPER $looper;
 										close LOOPER;
 									}
 									elsif($userinput =~ /exit/i){
@@ -1280,7 +1161,7 @@ while(1){
 						
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
-						print LOOPER "$looper";
+						print LOOPER $looper;
 						close LOOPER;
 					}					
 					elsif($userinput =~ /exit/i){
@@ -1294,7 +1175,6 @@ while(1){
 	}
 	elsif($finder =~ /$initial_keys[14]/){
 		my $concordance14 = Lingua::Concordance->new;
-		$concordance14->radius($integer);
 				my $reader14 = read_file($loopreplacefile);
 				$concordance14->text($reader14);
 				$concordance14->query($initial_keys[14], $keys_for_14[0], $keys_for_14[1], $keys_for_14[2], $keys_for_14[3], $keys_for_14[4], $keys_for_14[5], $keys_for_14[6], $keys_for_14[7], $keys_for_14[8], $keys_for_14[9], $keys_for_14[10], $keys_for_14[11], $keys_for_14[12], $keys_for_14[13], $keys_for_14[14], $keys_for_14[15], $keys_for_14[16], $keys_for_14[17], $keys_for_14[18], $keys_for_14[19]);
@@ -1317,7 +1197,7 @@ while(1){
 										my $looper = read_file($loopreplacefile);
 										$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 										open(LOOPER, ">",  $loopreplacefile);
-										print LOOPER "$looper";
+										print LOOPER $looper;
 										close LOOPER;
 									}
 									elsif($userinput =~ /exit/i){
@@ -1348,7 +1228,7 @@ while(1){
 						
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
-						print LOOPER "$looper";
+						print LOOPER $looper;
 						close LOOPER;
 					}					
 					elsif($userinput =~ /exit/i){
@@ -1362,7 +1242,6 @@ while(1){
 	}
 	elsif($finder =~ /$initial_keys[15]/){
 		my $concordance15 = Lingua::Concordance->new;
-		$concordance15->radius($integer);
 				my $reader15 = read_file($loopreplacefile);
 				$concordance15->text($reader15);
 				$concordance15->query($initial_keys[15], $keys_for_15[0], $keys_for_15[1], $keys_for_15[2], $keys_for_15[3], $keys_for_15[4], $keys_for_15[5], $keys_for_15[6], $keys_for_15[7], $keys_for_15[8], $keys_for_15[9], $keys_for_15[10], $keys_for_15[11], $keys_for_15[12], $keys_for_15[13], $keys_for_15[14], $keys_for_15[15], $keys_for_15[16], $keys_for_15[17], $keys_for_15[18], $keys_for_15[19]);
@@ -1385,7 +1264,7 @@ while(1){
 										my $looper = read_file($loopreplacefile);
 										$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 										open(LOOPER, ">",  $loopreplacefile);
-										print LOOPER "$looper";
+										print LOOPER $looper;
 										close LOOPER;
 									}
 									elsif($userinput =~ /exit/i){
@@ -1416,7 +1295,7 @@ while(1){
 						
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
-						print LOOPER "$looper";
+						print LOOPER $looper;
 						close LOOPER;
 					}					
 					elsif($userinput =~ /exit/i){
@@ -1430,7 +1309,6 @@ while(1){
 	}
 	elsif($finder =~ /$initial_keys[16]/){
 		my $concordance16 = Lingua::Concordance->new;
-		$concordance16->radius($integer);
 				my $reader16 = read_file($loopreplacefile);
 				$concordance16->text($reader16);
 				$concordance16->query($initial_keys[16], $keys_for_16[0], $keys_for_16[1], $keys_for_16[2], $keys_for_16[3], $keys_for_16[4], $keys_for_16[5], $keys_for_16[6], $keys_for_16[7], $keys_for_16[8], $keys_for_16[9], $keys_for_16[10], $keys_for_16[11], $keys_for_16[12], $keys_for_16[13], $keys_for_16[14], $keys_for_16[15], $keys_for_16[16], $keys_for_16[17], $keys_for_16[18], $keys_for_16[19]);
@@ -1453,7 +1331,7 @@ while(1){
 										my $looper = read_file($loopreplacefile);
 										$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 										open(LOOPER, ">",  $loopreplacefile);
-										print LOOPER "$looper";
+										print LOOPER $looper;
 										close LOOPER;
 									}
 									elsif($userinput =~ /exit/i){
@@ -1484,7 +1362,7 @@ while(1){
 						
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
-						print LOOPER "$looper";
+						print LOOPER $looper;
 						close LOOPER;
 					}					
 					elsif($userinput =~ /exit/i){
@@ -1498,7 +1376,6 @@ while(1){
 	}
 	elsif($finder =~ /$initial_keys[17]/){
 		my $concordance17 = Lingua::Concordance->new;
-		$concordance17->radius($integer);
 				my $reader17 = read_file($loopreplacefile);
 				$concordance17->text($reader17);
 				$concordance17->query($initial_keys[17], $keys_for_17[0], $keys_for_17[1], $keys_for_17[2], $keys_for_17[3], $keys_for_17[4], $keys_for_17[5], $keys_for_17[6], $keys_for_17[7], $keys_for_17[8], $keys_for_17[9], $keys_for_17[10], $keys_for_17[11], $keys_for_17[12], $keys_for_17[13], $keys_for_17[14], $keys_for_17[15], $keys_for_17[16], $keys_for_17[17], $keys_for_17[18], $keys_for_17[19]);
@@ -1521,7 +1398,7 @@ while(1){
 										my $looper = read_file($loopreplacefile);
 										$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 										open(LOOPER, ">",  $loopreplacefile);
-										print LOOPER "$looper";
+										print LOOPER $looper;
 										close LOOPER;
 									}
 									elsif($userinput =~ /exit/i){
@@ -1552,7 +1429,7 @@ while(1){
 						
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
-						print LOOPER "$looper";
+						print LOOPER $looper;
 						close LOOPER;
 					}					
 					elsif($userinput =~ /exit/i){
@@ -1566,7 +1443,6 @@ while(1){
 	}
 	elsif($finder =~ /$initial_keys[18]/){
 		my $concordance18 = Lingua::Concordance->new;
-		$concordance18->radius($integer);
 				my $reader18 = read_file($loopreplacefile);
 				$concordance18->text($reader18);
 				$concordance18->query($initial_keys[18], $keys_for_18[0], $keys_for_18[1], $keys_for_18[2], $keys_for_18[3], $keys_for_18[4], $keys_for_18[5], $keys_for_18[6], $keys_for_18[7], $keys_for_18[8], $keys_for_18[9], $keys_for_18[10], $keys_for_18[11], $keys_for_18[12], $keys_for_18[13], $keys_for_18[14], $keys_for_18[15], $keys_for_18[16], $keys_for_18[17], $keys_for_18[18], $keys_for_18[19]);
@@ -1589,7 +1465,7 @@ while(1){
 										my $looper = read_file($loopreplacefile);
 										$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 										open(LOOPER, ">",  $loopreplacefile);
-										print LOOPER "$looper";
+										print LOOPER $looper;
 										close LOOPER;
 									}
 									elsif($userinput =~ /exit/i){
@@ -1620,7 +1496,7 @@ while(1){
 						
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
-						print LOOPER "$looper";
+						print LOOPER $looper;
 						close LOOPER;
 					}					
 					elsif($userinput =~ /exit/i){
@@ -1634,7 +1510,6 @@ while(1){
 	}
 	elsif($finder =~ /$initial_keys[19]/){
 		my $concordance19 = Lingua::Concordance->new;
-		$concordance19->radius($integer);
 				my $reader19 = read_file($loopreplacefile);
 				$concordance19->text($reader19);
 				$concordance19->query($initial_keys[19], $keys_for_19[0], $keys_for_19[1], $keys_for_19[2], $keys_for_19[3], $keys_for_19[4], $keys_for_19[5], $keys_for_19[6], $keys_for_19[7], $keys_for_19[8], $keys_for_19[9], $keys_for_19[10], $keys_for_19[11], $keys_for_19[12], $keys_for_19[13], $keys_for_19[14], $keys_for_19[15], $keys_for_19[16], $keys_for_19[17], $keys_for_19[18], $keys_for_19[19]);
@@ -1657,7 +1532,7 @@ while(1){
 										my $looper = read_file($loopreplacefile);
 										$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 										open(LOOPER, ">",  $loopreplacefile);
-										print LOOPER "$looper";
+										print LOOPER $looper;
 										close LOOPER;
 									}
 									elsif($userinput =~ /exit/i){
@@ -1688,7 +1563,7 @@ while(1){
 						
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
-						print LOOPER "$looper";
+						print LOOPER $looper;
 						close LOOPER;
 					}					
 					elsif($userinput =~ /exit/i){
@@ -1737,7 +1612,7 @@ while(1){
 									my $looper = read_file($loopreplacefile);
 									$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 									open(LOOPER, ">",  $loopreplacefile);
-									print LOOPER "$looper";
+									print LOOPER $looper;
 									close LOOPER;
 								}
 								elsif($userinput =~ /exit/i){
@@ -1764,7 +1639,7 @@ while(1){
 					my $looper = read_file($loopreplacefile);
 					$looper =~ s/\Q$_/||||||||||/i;
 					open(LOOPER, ">",  $loopreplacefile);
-					print LOOPER "$looper";
+					print LOOPER $looper;
 					close LOOPER;
 				}
 				elsif($userinput =~ /exit/i){
@@ -1806,7 +1681,7 @@ while(1){
 											my $looper = read_file($loopreplacefile);
 											$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 											open(LOOPER, ">",  $loopreplacefile);
-											print LOOPER "$looper";
+											print LOOPER $looper;
 											close LOOPER;
 										}
 										elsif($userinput =~ /exit/i){
@@ -1837,7 +1712,7 @@ while(1){
 							
 							$looper =~ s/\Q$_/||||||||||/i;
 							open(LOOPER, ">",  $loopreplacefile);
-							print LOOPER "$looper";
+							print LOOPER $looper;
 							close LOOPER;
 						}					
 						elsif($userinput =~ /exit/i){
@@ -1858,8 +1733,6 @@ while(1){
 		last;
 	}
 }
-
-$datatomod = 0;
 
 $datatomod = read_file($loopreplacefile);
 
@@ -1904,7 +1777,7 @@ if($monthdayweekyesno =~ /yes/i){
 	my @months = qw/january february march april may june july august september october november december/;
 	my @week = qw/monday tuesday wednesday thursday friday saturday sunday/;
 	for(my $l = 0; $l < $#months; $l++){
-		my $monthtime = "$months[$l]";
+		my $monthtime = $months[$l];
 		$datatomod =~ s/[0-9]{1,2}(\s)?$monthtime/||||||||||/ig;
 		$datatomod =~ s/$monthtime(\s)?[0-9]{1,2}(\s|\,)?/||||||||||/ig;
 		if($monthtime =~ /may/){
@@ -1916,7 +1789,7 @@ if($monthdayweekyesno =~ /yes/i){
 		$datatomod =~ s/[0-9]{2}\//||||||||||/g;
 	}
 	for(my $m = 0; $m < $#week; $m++){
-		my $weektime = "$week[$m]";
+		my $weektime = $week[$m];
 		$datatomod =~ s/$weektime/||||||||||/ig;
 	}
 	print "Task completed.\n";
@@ -1942,7 +1815,7 @@ if($timeclockyesno =~ /[Yy][Ee][Ss]/){
 	$datatomod =~ s/\s[0-9]{1,2}:[0-9]{2}\s/||||||||||/g;
 	$datatomod =~ s/\s[0-9]{1,2}\so\'clock/||||||||||/ig;
 	for(my $n = 0; $n < $#suffixhourcounter; $n++){
-		my $timehour = "$suffixhourcounter[$n]";
+		my $timehour = $suffixhourcounter[$n];
 		$datatomod =~ s/$timehour\shour/||||||||||/ig;
 	}
 	print "Task completed.\n";
@@ -1957,7 +1830,7 @@ my $timeindiyesno = <STDIN>;
 chomp $timeindiyesno;
 if($timeindiyesno =~ /[Yy][Ee][Ss]/){
 	for(my $o = 0; $o < $#timeindicators; $o++){
-		my $indicator = "$timeindicators[$o]";
+		my $indicator = $timeindicators[$o];
 		$datatomod =~ s/$indicator\s/||||||||||/ig;
 	}
 	print "Task completed.\n";
@@ -1974,12 +1847,12 @@ my @countrynames = all_country_names();
 my @morecountries = qw/Bolivia Bonaire Saba Antigua Barbuda Bosnia Herzegovina Carribean Indian Atlantic Pacific Brunei Keeling Cocos Falkland Malvinas Faroe Iran Korea Macedonia Micronesia Moldova Palestine Russia Kitts Nevis Miquelon Taiwan Tanzania Turks Caicos Venezuela/;
 push @countrynames, @morecountries;
 for(my $p = 0; $p < $#countrynames; $p++){
-	my $countryparse = "$countrynames[$p]";
+	my $countryparse = $countrynames[$p];
 	$datatomod =~ s/$countryparse([A-Z]+)?/||||||||||/ig;
 }
 my @countrylanguage = all_language_names();
 for(my $q = 0; $q < $#countrylanguage; $q++){
-	my $countrylang = "$countrylanguage[$q]";
+	my $countrylang = $countrylanguage[$q];
 	$datatomod =~ s/$countrylang/||||||||||/ig;
 }
 print "Task completed.\n";
@@ -2016,10 +1889,6 @@ print MODIFY $datatomod;
 
 close MODIFY;
 
-$datatomod = 0;
-$datatomod = read_file($modify);
-
-
 my $rtf = RTF::Writer->new_to_file("C:/Perl/redacted.rtf");
 $rtf->prolog( 'title' => "Insert Title" );
 $rtf->number_pages;
@@ -2043,38 +1912,6 @@ if($areyoudoneyet =~ /no/i){
 	print TRY $datatomod;
 	close TRY;
 }
-
-open(INT2, ">", $intermediatefile) or die;
-print INT2 "";
-close INT2;
-
-my $keywordsfile2 = "C:/Perl/keywords2.txt";
-open(KEYFI2, ">", $keywordsfile2) or die;
-
-my $datatomod2 = read_file($modify);
-
-my @final_keys;
-my $lastextract = Text::TermExtract->new();
-
-for my $words($lastextract->terms_extract($datatomod2,{max => 20})){
-	push @final_keys, $words;
-}
-
-print KEYFI2 "$_\n" for @final_keys;
-
-close KEYFI2;
-
-my $lc = List::Compare->new(\@initial_keys, \@final_keys);
-
-my @intersection = $lc->get_intersection;
-
-print "Keywords that intersect (are in initial keys and final keys)\n";
-print "$_\n" for @intersection;
-
-my @union = $lc->get_union;
-
-print "Keywords that are union (are in initial keys or final keys)\n";
-print "$_\n" for @union;
 
 exit;
 
