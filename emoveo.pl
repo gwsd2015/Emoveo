@@ -47,6 +47,7 @@ use RTF::Writer;
 use WWW::Wikipedia;
 use Lingua::EN::Tagger;
 use Tkx;
+use List::Compare;
 
 #take the input file from the user
 #file slurp and extract the text
@@ -222,7 +223,6 @@ while(){
 }
 
 
-
 print "\nPreparing to build keyword trees...\n\n";
 
 for(my $counters = 0; $counters < $#initial_keys; $counters++){
@@ -305,6 +305,13 @@ for(my $counters = 0; $counters < $#initial_keys; $counters++){
 		}
 	}
 }
+
+my $keywordsfile = "C:/Perl/keywords.txt";
+open(KEYFI, ">", $keywordsfile) or die;
+
+print KEYFI "$_\n" for @initial_keys;
+
+close KEYFI;
 
 system('pause');
 
@@ -647,7 +654,7 @@ while(1){
 										$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 										open(LOOPER, ">",  $loopreplacefile);
 										print LOOPER "$looper";
-										close LOOPER;
+									close LOOPER;
 									}
 									elsif($userinput =~ /exit/i){
 										last;
@@ -2017,6 +2024,34 @@ if($areyoudoneyet =~ /no/i){
 open(INT2, ">", $intermediatefile) or die;
 print INT2 "";
 close INT2;
+
+my $keywordsfile2 = "C:/Perl/keywords2.txt";
+open(KEYFI2, ">", $keywordsfile2) or die;
+
+my $datatomod2 = read_file($modify);
+
+my @final_keys;
+my $lastextract = Text::TermExtract->new();
+
+for my $words($lastextract->terms_extract($datatomod2,{max => 20})){
+	push @final_keys, $words;
+}
+
+print KEYFI2 "$_\n" for @final_keys;
+
+close KEYFI2;
+
+my $lc = List::Compare->new(\@initial_keys, \@final_keys);
+
+my @intersection = $lc->get_intersection;
+
+print "Keywords that intersect (are in initial keys and final keys)\n";
+print "$_\n" for @intersection;
+
+my @union = $lc->get_union;
+
+print "Keywords that are union (are in initial keys or final keys)\n";
+print "$_\n" for @union;
 
 exit;
 
