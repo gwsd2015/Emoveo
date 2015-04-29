@@ -95,6 +95,58 @@ print($text->report);
 print "\n\n";
 system('pause');
 
+$datatomod = read_file($check);
+
+$datatomod =~ s/\n+/ ~~/g;
+
+my @datamod = split(/~~/, $datatomod);
+
+system('pause');
+
+print $datamod[0];
+
+system('pause');
+
+for(my $data = 0; $data < $#datamod; $data++){
+	my $datashow = "$datamod[$data]";
+	my $extra = Text::TermExtract->new();
+	for my $ex($extra->terms_extract($datashow, {max => 5})){
+		print $ex."\n";
+	}
+	print "\nParagraph topics listed. Remove paragraph?\t";
+	while(){
+		my $removeyesno = <STDIN>;
+		chomp $removeyesno;
+		if($removeyesno =~ /yes/ig){
+			$datamod[$data] = '||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||';
+			print $datamod[$data]."\n";
+			last;
+		}
+		else{
+			last;
+		}
+	}
+}
+
+my $intermediatefile = "C:/Perl/intermediate.txt";
+open(INT, ">>", $intermediatefile) or die; 
+
+system('pause');
+print @datamod;
+system('pause');
+
+for(my $data2 = 0; $data2 < $#datamod; $data2++){
+	my $datashow2 = "$datamod[$data2]";
+	print INT $datashow2." ~~";
+}
+
+close INT;
+
+$datatomod = "";
+
+$datatomod = read_file($intermediatefile);
+
+
 print "Preparing to get up to 20 keywords from the document...\n";
 
 our @initial_keys;
@@ -307,13 +359,11 @@ $button3->g_pack(
 
 Tkx::MainLoop();
 
-$datatomod = read_file($check);
-
-$datatomod =~ s/\n+/ ~~/g;
+$datatomod = read_file($intermediatefile);
 
 our $loopreplacefile = "C:/Perl/looper.txt";
 open(LOOP, ">",  $loopreplacefile);
-print LOOP $datatomod;
+print LOOP "$datatomod";
 close LOOP;
 
 while(1){
@@ -344,7 +394,7 @@ while(1){
 					my $looper = read_file($loopreplacefile);
 					$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 					open(LOOPER, ">",  $loopreplacefile);
-					print LOOPER $looper;
+					print LOOPER "$looper";
 					close LOOPER;
 				}
 				elsif($userinput =~ /exit/i){
@@ -371,7 +421,7 @@ while(1){
 					my $looper = read_file($loopreplacefile);
 					$looper =~ s/\Q$_/||||||||||/i;
 					open(LOOPER, ">",  $loopreplacefile);
-					print LOOPER $looper;
+					print LOOPER "$looper";
 					close LOOPER;
 				}
 				elsif($userinput =~ /exit/i){
@@ -407,7 +457,7 @@ while(1){
 										my $looper = read_file($loopreplacefile);
 										$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 										open(LOOPER, ">",  $loopreplacefile);
-										print LOOPER $looper;
+										print LOOPER "$looper";
 										close LOOPER;
 									}
 									elsif($userinput =~ /exit/i){
@@ -434,7 +484,7 @@ while(1){
 						my $looper = read_file($loopreplacefile);
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
-						print LOOPER $looper;
+						print LOOPER "$looper";
 						close LOOPER;
 					}
 					elsif($userinput =~ /exit/i){
@@ -470,7 +520,7 @@ while(1){
 										my $looper = read_file($loopreplacefile);
 										$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 										open(LOOPER, ">",  $loopreplacefile);
-										print LOOPER $looper;
+										print LOOPER "$looper";
 										close LOOPER;
 									}
 									elsif($userinput =~ /exit/i){
@@ -497,7 +547,7 @@ while(1){
 						my $looper = read_file($loopreplacefile);
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
-						print LOOPER $looper;
+						print LOOPER "$looper";
 						close LOOPER;
 					}
 					elsif($userinput =~ /exit/i){
@@ -533,7 +583,7 @@ while(1){
 										my $looper = read_file($loopreplacefile);
 										$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 										open(LOOPER, ">",  $loopreplacefile);
-										print LOOPER $looper;
+										print LOOPER "$looper";
 										close LOOPER;
 									}
 									elsif($userinput =~ /exit/i){
@@ -560,7 +610,7 @@ while(1){
 						my $looper = read_file($loopreplacefile);
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
-						print LOOPER $looper;
+						print LOOPER "$looper";
 						close LOOPER;
 					}
 					elsif($userinput =~ /exit/i){
@@ -596,7 +646,7 @@ while(1){
 										my $looper = read_file($loopreplacefile);
 										$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 										open(LOOPER, ">",  $loopreplacefile);
-										print LOOPER $looper;
+										print LOOPER "$looper";
 										close LOOPER;
 									}
 									elsif($userinput =~ /exit/i){
@@ -623,7 +673,7 @@ while(1){
 						my $looper = read_file($loopreplacefile);
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
-						print LOOPER $looper;
+						print LOOPER "$looper";
 						close LOOPER;
 					}
 					elsif($userinput =~ /exit/i){
@@ -659,7 +709,7 @@ while(1){
 									my $looper = read_file($loopreplacefile);
 									$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 									open(LOOPER, ">",  $loopreplacefile);
-									print LOOPER $looper;
+									print LOOPER "$looper";
 									close LOOPER;
 								}
 								elsif($userinput =~ /exit/i){
@@ -686,7 +736,7 @@ while(1){
 					my $looper = read_file($loopreplacefile);
 					$looper =~ s/\Q$_/||||||||||/i;
 					open(LOOPER, ">",  $loopreplacefile);
-					print LOOPER $looper;
+					print LOOPER "$looper";
 					close LOOPER;
 				}
 				
@@ -723,7 +773,7 @@ while(1){
 										my $looper = read_file($loopreplacefile);
 										$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 										open(LOOPER, ">",  $loopreplacefile);
-										print LOOPER $looper;
+										print LOOPER "$looper";
 										close LOOPER;
 									}
 									elsif($userinput =~ /exit/i){
@@ -750,7 +800,7 @@ while(1){
 						my $looper = read_file($loopreplacefile);
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
-						print LOOPER $looper;
+						print LOOPER "$looper";
 						close LOOPER;
 					}					
 					elsif($userinput =~ /exit/i){
@@ -786,7 +836,7 @@ while(1){
 										my $looper = read_file($loopreplacefile);
 										$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 										open(LOOPER, ">",  $loopreplacefile);
-										print LOOPER $looper;
+										print LOOPER "$looper";
 										close LOOPER;
 									}
 									elsif($userinput =~ /exit/i){
@@ -813,7 +863,7 @@ while(1){
 						my $looper = read_file($loopreplacefile);
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
-						print LOOPER $looper;
+						print LOOPER "$looper";
 						close LOOPER;
 					}					
 					elsif($userinput =~ /exit/i){
@@ -849,7 +899,7 @@ while(1){
 										my $looper = read_file($loopreplacefile);
 										$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 										open(LOOPER, ">",  $loopreplacefile);
-										print LOOPER $looper;
+										print LOOPER "$looper";
 										close LOOPER;
 									}
 									elsif($userinput =~ /exit/i){
@@ -877,7 +927,7 @@ while(1){
 						my $looper = read_file($loopreplacefile);
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
-						print LOOPER $looper;
+						print LOOPER "$looper";
 						close LOOPER;
 					}					
 					elsif($userinput =~ /exit/i){
@@ -913,7 +963,7 @@ while(1){
 										my $looper = read_file($loopreplacefile);
 										$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 										open(LOOPER, ">",  $loopreplacefile);
-										print LOOPER $looper;
+										print LOOPER "$looper";
 										close LOOPER;
 									}
 									elsif($userinput =~ /exit/i){
@@ -941,7 +991,7 @@ while(1){
 						my $looper = read_file($loopreplacefile);
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
-						print LOOPER $looper;
+						print LOOPER "$looper";
 						close LOOPER;
 					}					
 					elsif($userinput =~ /exit/i){
@@ -977,7 +1027,7 @@ while(1){
 										my $looper = read_file($loopreplacefile);
 										$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 										open(LOOPER, ">",  $loopreplacefile);
-										print LOOPER $looper;
+										print LOOPER "$looper";
 										close LOOPER;
 									}
 									elsif($userinput =~ /exit/i){
@@ -1005,7 +1055,7 @@ while(1){
 						my $looper = read_file($loopreplacefile);
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
-						print LOOPER $looper;
+						print LOOPER "$looper";
 						close LOOPER;
 					}					
 					elsif($userinput =~ /exit/i){
@@ -1041,7 +1091,7 @@ while(1){
 										my $looper = read_file($loopreplacefile);
 										$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 										open(LOOPER, ">",  $loopreplacefile);
-										print LOOPER $looper;
+										print LOOPER "$looper";
 										close LOOPER;
 									}
 									elsif($userinput =~ /exit/i){
@@ -1072,7 +1122,7 @@ while(1){
 						
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
-						print LOOPER $looper;
+						print LOOPER "$looper";
 						close LOOPER;
 					}					
 					elsif($userinput =~ /exit/i){
@@ -1108,7 +1158,7 @@ while(1){
 										my $looper = read_file($loopreplacefile);
 										$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 										open(LOOPER, ">",  $loopreplacefile);
-										print LOOPER $looper;
+										print LOOPER "$looper";
 										close LOOPER;
 									}
 									elsif($userinput =~ /exit/i){
@@ -1139,7 +1189,7 @@ while(1){
 						
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
-						print LOOPER $looper;
+						print LOOPER "$looper";
 						close LOOPER;
 					}					
 					elsif($userinput =~ /exit/i){
@@ -1175,7 +1225,7 @@ while(1){
 										my $looper = read_file($loopreplacefile);
 										$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 										open(LOOPER, ">",  $loopreplacefile);
-										print LOOPER $looper;
+										print LOOPER "$looper";
 										close LOOPER;
 									}
 									elsif($userinput =~ /exit/i){
@@ -1206,7 +1256,7 @@ while(1){
 						
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
-						print LOOPER $looper;
+						print LOOPER "$looper";
 						close LOOPER;
 					}					
 					elsif($userinput =~ /exit/i){
@@ -1242,7 +1292,7 @@ while(1){
 										my $looper = read_file($loopreplacefile);
 										$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 										open(LOOPER, ">",  $loopreplacefile);
-										print LOOPER $looper;
+										print LOOPER "$looper";
 										close LOOPER;
 									}
 									elsif($userinput =~ /exit/i){
@@ -1273,7 +1323,7 @@ while(1){
 						
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
-						print LOOPER $looper;
+						print LOOPER "$looper";
 						close LOOPER;
 					}					
 					elsif($userinput =~ /exit/i){
@@ -1309,7 +1359,7 @@ while(1){
 										my $looper = read_file($loopreplacefile);
 										$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 										open(LOOPER, ">",  $loopreplacefile);
-										print LOOPER $looper;
+										print LOOPER "$looper";
 										close LOOPER;
 									}
 									elsif($userinput =~ /exit/i){
@@ -1340,7 +1390,7 @@ while(1){
 						
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
-						print LOOPER $looper;
+						print LOOPER "$looper";
 						close LOOPER;
 					}					
 					elsif($userinput =~ /exit/i){
@@ -1376,7 +1426,7 @@ while(1){
 										my $looper = read_file($loopreplacefile);
 										$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 										open(LOOPER, ">",  $loopreplacefile);
-										print LOOPER $looper;
+										print LOOPER "$looper";
 										close LOOPER;
 									}
 									elsif($userinput =~ /exit/i){
@@ -1407,7 +1457,7 @@ while(1){
 						
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
-						print LOOPER $looper;
+						print LOOPER "$looper";
 						close LOOPER;
 					}					
 					elsif($userinput =~ /exit/i){
@@ -1443,7 +1493,7 @@ while(1){
 										my $looper = read_file($loopreplacefile);
 										$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 										open(LOOPER, ">",  $loopreplacefile);
-										print LOOPER $looper;
+										print LOOPER "$looper";
 										close LOOPER;
 									}
 									elsif($userinput =~ /exit/i){
@@ -1474,7 +1524,7 @@ while(1){
 						
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
-						print LOOPER $looper;
+						print LOOPER "$looper";
 						close LOOPER;
 					}					
 					elsif($userinput =~ /exit/i){
@@ -1510,7 +1560,7 @@ while(1){
 										my $looper = read_file($loopreplacefile);
 										$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 										open(LOOPER, ">",  $loopreplacefile);
-										print LOOPER $looper;
+										print LOOPER "$looper";
 										close LOOPER;
 									}
 									elsif($userinput =~ /exit/i){
@@ -1541,7 +1591,7 @@ while(1){
 						
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
-						print LOOPER $looper;
+						print LOOPER "$looper";
 						close LOOPER;
 					}					
 					elsif($userinput =~ /exit/i){
@@ -1577,7 +1627,7 @@ while(1){
 										my $looper = read_file($loopreplacefile);
 										$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 										open(LOOPER, ">",  $loopreplacefile);
-										print LOOPER $looper;
+										print LOOPER "$looper";
 										close LOOPER;
 									}
 									elsif($userinput =~ /exit/i){
@@ -1608,7 +1658,7 @@ while(1){
 						
 						$looper =~ s/\Q$_/||||||||||/i;
 						open(LOOPER, ">",  $loopreplacefile);
-						print LOOPER $looper;
+						print LOOPER "$looper";
 						close LOOPER;
 					}					
 					elsif($userinput =~ /exit/i){
@@ -1657,7 +1707,7 @@ while(1){
 									my $looper = read_file($loopreplacefile);
 									$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 									open(LOOPER, ">",  $loopreplacefile);
-									print LOOPER $looper;
+									print LOOPER "$looper";
 									close LOOPER;
 								}
 								elsif($userinput =~ /exit/i){
@@ -1684,7 +1734,7 @@ while(1){
 					my $looper = read_file($loopreplacefile);
 					$looper =~ s/\Q$_/||||||||||/i;
 					open(LOOPER, ">",  $loopreplacefile);
-					print LOOPER $looper;
+					print LOOPER "$looper";
 					close LOOPER;
 				}
 				elsif($userinput =~ /exit/i){
@@ -1726,7 +1776,7 @@ while(1){
 											my $looper = read_file($loopreplacefile);
 											$looper =~ s/\Q$_/||||||||||~~||||||||||/i;
 											open(LOOPER, ">",  $loopreplacefile);
-											print LOOPER $looper;
+											print LOOPER "$looper";
 											close LOOPER;
 										}
 										elsif($userinput =~ /exit/i){
@@ -1757,7 +1807,7 @@ while(1){
 							
 							$looper =~ s/\Q$_/||||||||||/i;
 							open(LOOPER, ">",  $loopreplacefile);
-							print LOOPER $looper;
+							print LOOPER "$looper";
 							close LOOPER;
 						}					
 						elsif($userinput =~ /exit/i){
@@ -1778,6 +1828,8 @@ while(1){
 		last;
 	}
 }
+
+$datatomod = "";
 
 $datatomod = read_file($loopreplacefile);
 
@@ -1822,7 +1874,7 @@ if($monthdayweekyesno =~ /yes/i){
 	my @months = qw/january february march april may june july august september october november december/;
 	my @week = qw/monday tuesday wednesday thursday friday saturday sunday/;
 	for(my $l = 0; $l < $#months; $l++){
-		my $monthtime = $months[$l];
+		my $monthtime = "$months[$l]";
 		$datatomod =~ s/[0-9]{1,2}(\s)?$monthtime/||||||||||/ig;
 		$datatomod =~ s/$monthtime(\s)?[0-9]{1,2}(\s|\,)?/||||||||||/ig;
 		if($monthtime =~ /may/){
@@ -1834,7 +1886,7 @@ if($monthdayweekyesno =~ /yes/i){
 		$datatomod =~ s/[0-9]{2}\//||||||||||/g;
 	}
 	for(my $m = 0; $m < $#week; $m++){
-		my $weektime = $week[$m];
+		my $weektime = "$week[$m]";
 		$datatomod =~ s/$weektime/||||||||||/ig;
 	}
 	print "Task completed.\n";
@@ -1860,7 +1912,7 @@ if($timeclockyesno =~ /[Yy][Ee][Ss]/){
 	$datatomod =~ s/\s[0-9]{1,2}:[0-9]{2}\s/||||||||||/g;
 	$datatomod =~ s/\s[0-9]{1,2}\so\'clock/||||||||||/ig;
 	for(my $n = 0; $n < $#suffixhourcounter; $n++){
-		my $timehour = $suffixhourcounter[$n];
+		my $timehour = "$suffixhourcounter[$n]";
 		$datatomod =~ s/$timehour\shour/||||||||||/ig;
 	}
 	print "Task completed.\n";
@@ -1875,7 +1927,7 @@ my $timeindiyesno = <STDIN>;
 chomp $timeindiyesno;
 if($timeindiyesno =~ /[Yy][Ee][Ss]/){
 	for(my $o = 0; $o < $#timeindicators; $o++){
-		my $indicator = $timeindicators[$o];
+		my $indicator = "$timeindicators[$o]";
 		$datatomod =~ s/$indicator\s/||||||||||/ig;
 	}
 	print "Task completed.\n";
@@ -1892,12 +1944,12 @@ my @countrynames = all_country_names();
 my @morecountries = qw/Bolivia Bonaire Saba Antigua Barbuda Bosnia Herzegovina Carribean Indian Atlantic Pacific Brunei Keeling Cocos Falkland Malvinas Faroe Iran Korea Macedonia Micronesia Moldova Palestine Russia Kitts Nevis Miquelon Taiwan Tanzania Turks Caicos Venezuela/;
 push @countrynames, @morecountries;
 for(my $p = 0; $p < $#countrynames; $p++){
-	my $countryparse = $countrynames[$p];
+	my $countryparse = "$countrynames[$p]";
 	$datatomod =~ s/$countryparse([A-Z]+)?/||||||||||/ig;
 }
 my @countrylanguage = all_language_names();
 for(my $q = 0; $q < $#countrylanguage; $q++){
-	my $countrylang = $countrylanguage[$q];
+	my $countrylang = "$countrylanguage[$q]";
 	$datatomod =~ s/$countrylang/||||||||||/ig;
 }
 print "Task completed.\n";
@@ -1934,6 +1986,10 @@ print MODIFY $datatomod;
 
 close MODIFY;
 
+$datatomod = "";
+$datatomod = read_file($modify);
+
+
 my $rtf = RTF::Writer->new_to_file("C:/Perl/redacted.rtf");
 $rtf->prolog( 'title' => "Insert Title" );
 $rtf->number_pages;
@@ -1957,6 +2013,10 @@ if($areyoudoneyet =~ /no/i){
 	print TRY $datatomod;
 	close TRY;
 }
+
+open(INT2, ">", $intermediatefile) or die;
+print INT2 "";
+close INT2;
 
 exit;
 
