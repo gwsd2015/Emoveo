@@ -239,6 +239,7 @@ for(my $counters = 0; $counters < $#initial_keys; $counters++){
 			#my $service = read_file($filewiki);
 			my $wikifile = read_file($filewiki);
 			my $wikiext = Text::TermExtract->new();
+			$wikiext->exclude(['refer','ref']);
 			for my $keyword($wikiext->terms_extract($wikifile,{max =>20})){
 				print $keyword."\n";
 				if($counters == 0){
