@@ -139,33 +139,35 @@ system('pause');
 our @exclude_list;
 our $exclude_list_ref = [@exclude_list];
 
-print "\nAre there any keywords you would like to exclude, (this can include words not listed)?\t";
-my $userexclude = <STDIN>;
-chomp $userexclude;
-if($userexclude =~ /yes/i){
-	while(){
-		print "\nEnter word to exclude (exit to escape):\t";
-		my $wordtoex = <STDIN>;
-		chomp $wordtoex;
-		push @$exclude_list_ref, $wordtoex;
-		if($wordtoex =~ /exit/i){
-			last;
+while(){
+	print "\nAre there any keywords you would like to exclude, (this can include words not listed)?\t";
+	my $userexclude = <STDIN>;
+	chomp $userexclude;
+	if($userexclude =~ /yes/i){
+		while(){
+			print "\nEnter word to exclude (exit to escape):\t";
+			my $wordtoex = <STDIN>;
+			chomp $wordtoex;
+			push @$exclude_list_ref, $wordtoex;
+			if($wordtoex =~ /exit/i){
+				last;
+			}
+		}
+		my $extracting = Text::TermExtract->new();
+		@initial_keys = ();
+		@initial_keys_to_tag = ();
+		$extracting->exclude($exclude_list_ref);
+		for my $wordgets($extracting->terms_extract($datatomod,{max => 20})){
+			print "$wordgets\n";
+			push @initial_keys, $wordgets;
+			push @initial_keys_to_tag, $wordgets;
 		}
 	}
-	my $extracting = Text::TermExtract->new();
-	@initial_keys = ();
-	@initial_keys_to_tag = ();
-	$extracting->exclude($exclude_list_ref);
-	for my $wordgets($extracting->terms_extract($datatomod,{max => 20})){
-		print "$wordgets\n";
-		push @initial_keys, $wordgets;
-		push @initial_keys_to_tag, $wordgets;
+	else{
+		last;
 	}
-}
-else{
-	last;
-}
 
+}
 
 
 
