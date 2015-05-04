@@ -2301,7 +2301,7 @@ chomp $countryyesno;
 if ( $countryyesno =~ /yes/i ) {
     my @countrynames = all_country_names();
     my @morecountries =
-      qw/Bolivia Bonaire Saba Antigua Barbuda Bosnia Herzegovina Carribean Indian Atlantic Pacific Brunei Keeling Cocos Falkland Malvinas Faroe Iran Korea Macedonia Micronesia Moldova Palestine Russia Kitts Nevis Miquelon Taiwan Tanzania Turks Caicos Venezuela/;
+      qw/America Europ Africa Asia North South Bolivia Bonaire Saba Antigua Barbuda Bosnia Herzegovina Carribean Indian Atlantic Pacific Brunei Keeling Cocos Falkland Malvinas Faroe Iran Korea Macedonia Micronesia Moldova Palestine Russia Kitts Nevis Miquelon Taiwan Tanzania Turks Caicos Venezuela/;
     push @countrynames, @morecountries;
     for ( my $p = 0 ; $p < $#countrynames ; $p++ ) {
         my $countryparse = "$countrynames[$p]";
