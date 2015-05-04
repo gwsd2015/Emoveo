@@ -409,14 +409,18 @@ open( LOOP, ">", $loopreplacefile );
 print LOOP "$datatomod";
 close LOOP;
 
+our $integer;
+
 if($num_words < 5000){
-    our $integer = int( $num_words * ( 1 / 50 ) + 0.5 );
+    my $integer2 = int( $num_words * ( 1 / 25 ) + 0.5 );
+    $integer = $integer2;
 }
 elsif($num_words >= 5000 && $num_words < 10000){
-    our $integer = int( $num_words * ( 1 / 400 ) + 0.5 );
+    my $integer3 = int( $num_words * ( 1 / 400 ) + 0.5 );
+    $integer = $integer3;
 } 
 else{
-    our $integer = 30;
+    $integer = 30;
 }
 
 while (1) {
@@ -2324,6 +2328,7 @@ if ( $orgyesno =~ /yes/i ) {
     $datatomod =~ s/\((\s)?([A-Z](\.)?){2,}(\s)?\)/||||||||||/ig;
     $datatomod =~ s/[0-9]+(\.)?([0-9]+)?%/||||||||||/g;
     $datatomod =~ s/\-[0-9]+//g;
+    $datatomod =~ s/(([A-Z])([a-z]+)\s?){2,5}/||||||||||/g;
     print "Task completed.\n";
     system('pause');
 }
