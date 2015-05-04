@@ -104,6 +104,7 @@ $datatomod = read_file($check);
 $datatomod =~ s/\n+/ ~~/g;
 
 my @datamod = split( /~~/, $datatomod );
+my @datasen = split( /\./, $datatomod );
 
 system('pause');
 
@@ -111,24 +112,43 @@ print $datamod[0];
 
 system('pause');
 
-for ( my $data = 0 ; $data < $#datamod ; $data++ ) {
-    my $datashow = "$datamod[$data]";
-    my $extra    = Text::TermExtract->new();
-    for my $ex ( $extra->terms_extract( $datashow, { max => 5 } ) ) {
-        print $ex. "\n";
-    }
-    print "\nParagraph topics listed. Remove paragraph?\t";
-    while () {
-        my $removeyesno = <STDIN>;
-        chomp $removeyesno;
-        if ( $removeyesno =~ /yes/ig ) {
-            $datamod[$data] =
-'||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||';
-            print $datamod[$data] . "\n";
-            last;
+if ( $num_paragraphs < 50 ) {
+    for ( my $data = 0 ; $data < $#datamod ; $data++ ) {
+        my $datashow = "$datamod[$data]";
+        my $extra    = Text::TermExtract->new();
+        for my $ex ( $extra->terms_extract( $datashow, { max => 5 } ) ) {
+            print $ex. "\n";
         }
-        else {
-            last;
+        print "\nParagraph topics listed. Remove paragraph?\t";
+        while () {
+            my $removeyesno = <STDIN>;
+            chomp $removeyesno;
+            if ( $removeyesno =~ /yes/ig ) {
+                $datamod[$data] =
+'||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||';
+                print $datamod[$data] . "\n";
+                last;
+            }
+            else {
+                last;
+            }
+        }
+    }
+}
+else {
+    print
+"File too large to do paragraph analysis.\n Give 3 topics to remove, separated by commas:\t";
+    my $usertoinput = <STDIN>;
+    chomp $usertoinput;
+    my @usertopics = split( /,/, $usertoinput );
+    for ( my $u = 0 ; $u < $#usertopics ; $u++ ) {
+        my $topic_to_clear = $usertopics[$u];
+        for ( my $ui = 0 ; $ui < $#datasen ; $ui++ ) {
+            my $sen_to_an = $datasen[$ui];
+            if ( $sen_to_an =~ /\b$topic_to_clear\b/ ) {
+                $datasen[$ui] =
+                  '||||||||||||||||||||||||||||||||||||||||||||||||||';
+            }
         }
     }
 }
@@ -140,9 +160,17 @@ system('pause');
 print @datamod;
 system('pause');
 
-for ( my $data2 = 0 ; $data2 < $#datamod ; $data2++ ) {
-    my $datashow2 = "$datamod[$data2]";
-    print INT $datashow2 . " ~~";
+if ( $num_paragraphs < 50 ) {
+    for ( my $data2 = 0 ; $data2 < $#datamod ; $data2++ ) {
+        my $datashow2 = "$datamod[$data2]";
+        print INT $datashow2 . " ~~";
+    }
+}
+else {
+    for ( my $uidat = 0 ; $uidat < $#datasen ; $uidat++ ) {
+        my $uidataprint = "$datasen[$uidat]";
+        print INT $uidataprint . " ";
+    }
 }
 
 close INT;
@@ -2326,7 +2354,8 @@ $rtf->print(
 );
 $rtf->close;
 
-print "\n\nAre you finished with your redaction? If not, you can save a text file to continue redaction later.\t";
+print
+"\n\nAre you finished with your redaction? If not, you can save a text file to continue redaction later.\t";
 
 my $areyoudoneyet = <STDIN>;
 chomp $areyoudoneyet;
