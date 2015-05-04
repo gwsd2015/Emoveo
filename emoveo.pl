@@ -104,7 +104,7 @@ $datatomod = read_file($check);
 $datatomod =~ s/\n+/ ~~/g;
 
 my @datamod = split( /~~/, $datatomod );
-my @datasen = split(/\./, $datatomod); 
+my @datasen = split( /\./, $datatomod );
 
 system('pause');
 
@@ -112,7 +112,7 @@ print $datamod[0];
 
 system('pause');
 
-if($num_paragraphs < 50){
+if ( $num_paragraphs < 50 ) {
     for ( my $data = 0 ; $data < $#datamod ; $data++ ) {
         my $datashow = "$datamod[$data]";
         my $extra    = Text::TermExtract->new();
@@ -124,30 +124,33 @@ if($num_paragraphs < 50){
             my $removeyesno = <STDIN>;
             chomp $removeyesno;
             if ( $removeyesno =~ /yes/ig ) {
-                $datamod[$data] = '||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||';
+                $datamod[$data] =
+'||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||';
                 print $datamod[$data] . "\n";
                 last;
             }
-            else { 
+            else {
                 last;
             }
         }
     }
 }
-else{
-        print "File too large to do paragraph analysis.\n Give 3 topics to remove, separated by commas:\t";
-        my $usertoinput = <STDIN>;
-        chomp $usertoinput;
-        my @usertopics = split(/,/, $usertoinput);
-        for(my $u = 0; $u < $#usertopics; $u++){
-            my $topic_to_clear = $usertopics[$u];
-            for(my $ui = 0; $ui < $#datasen; $ui++){
-                my $sen_to_an = $datasen[$ui];
-                if($sen_to_an =~ /\b$topic_to_clear\b/){
-                    $datasen[$ui] = '||||||||||||||||||||||||||||||||||||||||||||||||||';
-                }
+else {
+    print
+"File too large to do paragraph analysis.\n Give 3 topics to remove, separated by commas:\t";
+    my $usertoinput = <STDIN>;
+    chomp $usertoinput;
+    my @usertopics = split( /,/, $usertoinput );
+    for ( my $u = 0 ; $u < $#usertopics ; $u++ ) {
+        my $topic_to_clear = $usertopics[$u];
+        for ( my $ui = 0 ; $ui < $#datasen ; $ui++ ) {
+            my $sen_to_an = $datasen[$ui];
+            if ( $sen_to_an =~ /\b$topic_to_clear\b/ ) {
+                $datasen[$ui] =
+                  '||||||||||||||||||||||||||||||||||||||||||||||||||';
             }
         }
+    }
 }
 
 my $intermediatefile = "C:/Perl/intermediate.txt";
@@ -157,16 +160,16 @@ system('pause');
 print @datamod;
 system('pause');
 
-if($num_paragraphs < 50){
+if ( $num_paragraphs < 50 ) {
     for ( my $data2 = 0 ; $data2 < $#datamod ; $data2++ ) {
         my $datashow2 = "$datamod[$data2]";
         print INT $datashow2 . " ~~";
     }
 }
-else{
-    for(my $uidat = 0; $uidat < $#datasen; $uidat++){
+else {
+    for ( my $uidat = 0 ; $uidat < $#datasen ; $uidat++ ) {
         my $uidataprint = "$datasen[$uidat]";
-        print INT $uidataprint." ";
+        print INT $uidataprint . " ";
     }
 }
 
@@ -202,6 +205,144 @@ our @keys_for_18;
 our @keys_for_19;
 
 my $ext = Text::TermExtract->new();
+$ext->exclude(
+    [
+        'said',          'a',            'able',          'about',
+        'above',         'abst',         'accordance',    'according',
+        'accordingly',   'across',       'act',           'actually',
+        'added',         'adj',          'affected',      'affecting',
+        'affects',       'after',        'afterwards',    'again',
+        'against',       'ah',           'all',           'almost',
+        'alone',         'along',        'already',       'also',
+        'although',      'always',       'am',            'among',
+        'amongst',       'an',           'and',           'announce',
+        'another',       'any',          'anybody',       'anyhow',
+        'anymore',       'anyone',       'anything',      'anyway',
+        'anyways',       'anywhere',     'apparently',    'approximately',
+        'are',           'aren',         'arent',         'arise',
+        'around',        'as',           'aside',         'ask',
+        'asking',        'at',           'auth',          'available',
+        'away',          'awfully',      'b',             'back',
+        'be',            'became',       'because',       'become',
+        'becomes',       'becoming',     'been',          'before',
+        'beforehand',    'begin',        'beginning',     'beginnings',
+        'begins',        'behind',       'being',         'believe',
+        'below',         'beside',       'besides',       'between',
+        'beyond',        'biol',         'both',          'brief',
+        'briefly',       'but',          'by',            'c',
+        'ca',            'came',         'can',           'cannot',
+        'ca',            'cause',        'causes',        'certain',
+        'certainly',     'co',           'com',           'come',
+        'comes',         'contain',      'containing',    'contains',
+        'could',         'could',        'd',             'date',
+        'did',           'did',          'different',     'do',
+        'does',          'does',         'doing',         'done',
+        'do',            'down',         'downwards',     'due',
+        'during',        'e',            'each',          'ed',
+        'edu',           'effect',       'eg',            'eight',
+        'eighty',        'either',       'else',          'elsewhere',
+        'end',           'ending',       'enough',        'especially',
+        'et',            'et-al',        'etc',           'even',
+        'ever',          'every',        'everybody',     'everyone',
+        'everything',    'everywhere',   'ex',            'except',
+        'f',             'far',          'few',           'ff',
+        'fifth',         'first',        'five',          'fix',
+        'followed',      'following',    'follows',       'for',
+        'former',        'formerly',     'forth',         'found',
+        'four',          'from',         'further',       'furthermore',
+        'g',             'gave',         'get',           'gets',
+        'getting',       'give',         'given',         'gives',
+        'giving',        'go',           'goes',          'gone',
+        'got',           'gotten',       'h',             'had',
+        'happens',       'hardly',       'has',           'has',
+        'have',          'have',         'having',        'he',
+        'hed',           'hence',        'her',           'here',
+        'hereafter',     'hereby',       'herein',        'heres',
+        'hereupon',      'hers',         'herself',       'hes',
+        'hi',            'hid',          'him',           'himself',
+        'his',           'hither',       'home',          'how',
+        'howbeit',       'however',      'hundred',       'i',
+        'id',            'ie',           'if',            'i',
+        'im',            'immediate',    'immediately',   'importance',
+        'important',     'in',           'inc',           'indeed',
+        'index',         'information',  'instead',       'into',
+        'invention',     'inward',       'is',            'is',
+        'it',            'itd',          'it',            'its',
+        'itself',        'i',            'j',             'just',
+        'k',             'keep',         'keeps',         'kept',
+        'kg',            'km',           'know',          'known',
+        'knows',         'l',            'largely',       'last',
+        'lately',        'later',        'latter',        'latterly',
+        'least',         'less',         'lest',          'let',
+        'lets',          'like',         'liked',         'likely',
+        'line',          'little',       '',              'look',
+        'looking',       'looks',        'ltd',           'm',
+        'made',          'mainly',       'make',          'makes',
+        'many',          'may',          'maybe',         'me',
+        'mean',          'means',        'meantime',      'meanwhile',
+        'merely',        'mg',           'might',         'million',
+        'miss',          'ml',           'more',          'moreover',
+        'most',          'mostly',       'mr',            'mrs',
+        'much',          'mug',          'must',          'my',
+        'myself',        'n',            'na',            'name',
+        'namely',        'nay',          'nd',            'near',
+        'nearly',        'necessarily',  'necessary',     'need',
+        'needs',         'neither',      'never',         'nevertheless',
+        'new',           'next',         'nine',          'ninety',
+        'no',            'nobody',       'non',           'none',
+        'nonetheless',   'noone',        'nor',           'normally',
+        'nos',           'not',          'noted',         'nothing',
+        'now',           'nowhere',      'o',             'obtain',
+        'obtained',      'obviously',    'of',            'off',
+        'often',         'oh',           'ok',            'okay',
+        'old',           'omitted',      'on',            'once',
+        'one',           'ones',         'only',          'onto',
+        'or',            'ord',          'other',         'others',
+        'otherwise',     'ought',        'our',           'ours',
+        'ourselves',     'out',          'outside',       'over',
+        'overall',       'owing',        'own',           'p',
+        'page',          'pages',        'part',          'particular',
+        'particularly',  'past',         'per',           'perhaps',
+        'placed',        'please',       'plus',          'poorly',
+        'possible',      'possibly',     'potentially',   'pp',
+        'predominantly', 'present',      'previously',    'primarily',
+        'probably',      'promptly',     'proud',         'provides',
+        'put',           'q',            'que',           'quickly',
+        'quite',         'qv',           'r',             'ran',
+        'rather',        'rd',           're',            'readily',
+        'really',        'recent',       'recently',      'ref',
+        'refs',          'regarding',    'regardless',    'regards',
+        'related',       'relatively',   'research',      'respectively',
+        'resulted',      'resulting',    'results',       'right',
+        'run',           's',            'said',          'same',
+        'saw',           'say',          'saying',        'says',
+        'sec',           'section',      'see',           'seeing',
+        'seem',          'seemed',       'seeming',       'seems',
+        'seen',          'self',         'selves',        'sent',
+        'seven',         'several',      'shall',         'she',
+        'shed',          'she',          'shes',          'should',
+        'should',        'show',         'showed',        'shown',
+        'showns',        'shows',        'significant',   'significantly',
+        'similar',       'similarly',    'since',         'six',
+        'slightly',      'so',           'some',          'somebody',
+        'somehow',       'someone',      'somethan',      'something',
+        'sometime',      'sometimes',    'somewhat',      'somewhere',
+        'soon',          'sorry',        'specifically',  'specified',
+        'specify',       'specifying',   'still',         'stop',
+        'strongly',      'sub',          'substantially', 'successfully',
+        'such',          'sufficiently', 'suggest',       'sup',
+        'sure',          'I',            'a',             'about',
+        'an',            'are',          'as',            'at',
+        'be',            'by',           'com',           'for',
+        'from',          'how',          'in',            'is',
+        'it',            'of',           'on',            'or',
+        'that',          'the',          'this',          'to',
+        'was',           'what',         'when',          'where',
+        'who',           'will',         'with',          'the',
+        'www'
+    ]
+);
+
 for my $wordsensing ( $ext->terms_extract( $datatomod, { max => 20 } ) ) {
     print "$wordsensing\n";
     push @initial_keys,        $wordsensing;
@@ -237,6 +378,275 @@ while () {
         @initial_keys        = ();
         @initial_keys_to_tag = ();
         $extracting->exclude($exclude_list_ref);
+        $extracting->exclude(
+            [
+                'said',          'a',
+                'able',          'about',
+                'above',         'abst',
+                'accordance',    'according',
+                'accordingly',   'across',
+                'act',           'actually',
+                'added',         'adj',
+                'affected',      'affecting',
+                'affects',       'after',
+                'afterwards',    'again',
+                'against',       'ah',
+                'all',           'almost',
+                'alone',         'along',
+                'already',       'also',
+                'although',      'always',
+                'am',            'among',
+                'amongst',       'an',
+                'and',           'announce',
+                'another',       'any',
+                'anybody',       'anyhow',
+                'anymore',       'anyone',
+                'anything',      'anyway',
+                'anyways',       'anywhere',
+                'apparently',    'approximately',
+                'are',           'aren',
+                'arent',         'arise',
+                'around',        'as',
+                'aside',         'ask',
+                'asking',        'at',
+                'auth',          'available',
+                'away',          'awfully',
+                'b',             'back',
+                'be',            'became',
+                'because',       'become',
+                'becomes',       'becoming',
+                'been',          'before',
+                'beforehand',    'begin',
+                'beginning',     'beginnings',
+                'begins',        'behind',
+                'being',         'believe',
+                'below',         'beside',
+                'besides',       'between',
+                'beyond',        'biol',
+                'both',          'brief',
+                'briefly',       'but',
+                'by',            'c',
+                'ca',            'came',
+                'can',           'cannot',
+                'ca',            'cause',
+                'causes',        'certain',
+                'certainly',     'co',
+                'com',           'come',
+                'comes',         'contain',
+                'containing',    'contains',
+                'could',         'could',
+                'd',             'date',
+                'did',           'did',
+                'different',     'do',
+                'does',          'does',
+                'doing',         'done',
+                'do',            'down',
+                'downwards',     'due',
+                'during',        'e',
+                'each',          'ed',
+                'edu',           'effect',
+                'eg',            'eight',
+                'eighty',        'either',
+                'else',          'elsewhere',
+                'end',           'ending',
+                'enough',        'especially',
+                'et',            'et-al',
+                'etc',           'even',
+                'ever',          'every',
+                'everybody',     'everyone',
+                'everything',    'everywhere',
+                'ex',            'except',
+                'f',             'far',
+                'few',           'ff',
+                'fifth',         'first',
+                'five',          'fix',
+                'followed',      'following',
+                'follows',       'for',
+                'former',        'formerly',
+                'forth',         'found',
+                'four',          'from',
+                'further',       'furthermore',
+                'g',             'gave',
+                'get',           'gets',
+                'getting',       'give',
+                'given',         'gives',
+                'giving',        'go',
+                'goes',          'gone',
+                'got',           'gotten',
+                'h',             'had',
+                'happens',       'hardly',
+                'has',           'has',
+                'have',          'have',
+                'having',        'he',
+                'hed',           'hence',
+                'her',           'here',
+                'hereafter',     'hereby',
+                'herein',        'heres',
+                'hereupon',      'hers',
+                'herself',       'hes',
+                'hi',            'hid',
+                'him',           'himself',
+                'his',           'hither',
+                'home',          'how',
+                'howbeit',       'however',
+                'hundred',       'i',
+                'id',            'ie',
+                'if',            'i',
+                'im',            'immediate',
+                'immediately',   'importance',
+                'important',     'in',
+                'inc',           'indeed',
+                'index',         'information',
+                'instead',       'into',
+                'invention',     'inward',
+                'is',            'is',
+                'it',            'itd',
+                'it',            'its',
+                'itself',        'i',
+                'j',             'just',
+                'k',             'keep',
+                'keeps',         'kept',
+                'kg',            'km',
+                'know',          'known',
+                'knows',         'l',
+                'largely',       'last',
+                'lately',        'later',
+                'latter',        'latterly',
+                'least',         'less',
+                'lest',          'let',
+                'lets',          'like',
+                'liked',         'likely',
+                'line',          'little',
+                '',              'look',
+                'looking',       'looks',
+                'ltd',           'm',
+                'made',          'mainly',
+                'make',          'makes',
+                'many',          'may',
+                'maybe',         'me',
+                'mean',          'means',
+                'meantime',      'meanwhile',
+                'merely',        'mg',
+                'might',         'million',
+                'miss',          'ml',
+                'more',          'moreover',
+                'most',          'mostly',
+                'mr',            'mrs',
+                'much',          'mug',
+                'must',          'my',
+                'myself',        'n',
+                'na',            'name',
+                'namely',        'nay',
+                'nd',            'near',
+                'nearly',        'necessarily',
+                'necessary',     'need',
+                'needs',         'neither',
+                'never',         'nevertheless',
+                'new',           'next',
+                'nine',          'ninety',
+                'no',            'nobody',
+                'non',           'none',
+                'nonetheless',   'noone',
+                'nor',           'normally',
+                'nos',           'not',
+                'noted',         'nothing',
+                'now',           'nowhere',
+                'o',             'obtain',
+                'obtained',      'obviously',
+                'of',            'off',
+                'often',         'oh',
+                'ok',            'okay',
+                'old',           'omitted',
+                'on',            'once',
+                'one',           'ones',
+                'only',          'onto',
+                'or',            'ord',
+                'other',         'others',
+                'otherwise',     'ought',
+                'our',           'ours',
+                'ourselves',     'out',
+                'outside',       'over',
+                'overall',       'owing',
+                'own',           'p',
+                'page',          'pages',
+                'part',          'particular',
+                'particularly',  'past',
+                'per',           'perhaps',
+                'placed',        'please',
+                'plus',          'poorly',
+                'possible',      'possibly',
+                'potentially',   'pp',
+                'predominantly', 'present',
+                'previously',    'primarily',
+                'probably',      'promptly',
+                'proud',         'provides',
+                'put',           'q',
+                'que',           'quickly',
+                'quite',         'qv',
+                'r',             'ran',
+                'rather',        'rd',
+                're',            'readily',
+                'really',        'recent',
+                'recently',      'ref',
+                'refs',          'regarding',
+                'regardless',    'regards',
+                'related',       'relatively',
+                'research',      'respectively',
+                'resulted',      'resulting',
+                'results',       'right',
+                'run',           's',
+                'said',          'same',
+                'saw',           'say',
+                'saying',        'says',
+                'sec',           'section',
+                'see',           'seeing',
+                'seem',          'seemed',
+                'seeming',       'seems',
+                'seen',          'self',
+                'selves',        'sent',
+                'seven',         'several',
+                'shall',         'she',
+                'shed',          'she',
+                'shes',          'should',
+                'should',        'show',
+                'showed',        'shown',
+                'showns',        'shows',
+                'significant',   'significantly',
+                'similar',       'similarly',
+                'since',         'six',
+                'slightly',      'so',
+                'some',          'somebody',
+                'somehow',       'someone',
+                'somethan',      'something',
+                'sometime',      'sometimes',
+                'somewhat',      'somewhere',
+                'soon',          'sorry',
+                'specifically',  'specified',
+                'specify',       'specifying',
+                'still',         'stop',
+                'strongly',      'sub',
+                'substantially', 'successfully',
+                'such',          'sufficiently',
+                'suggest',       'sup',
+                'sure',          'I',
+                'a',             'about',
+                'an',            'are',
+                'as',            'at',
+                'be',            'by',
+                'com',           'for',
+                'from',          'how',
+                'in',            'is',
+                'it',            'of',
+                'on',            'or',
+                'that',          'the',
+                'this',          'to',
+                'was',           'what',
+                'when',          'where',
+                'who',           'will',
+                'with',          'the',
+                'www'
+            ]
+        );
         for my $wordgets (
             $extracting->terms_extract( $datatomod, { max => 20 } ) )
         {
@@ -411,15 +821,15 @@ close LOOP;
 
 our $integer;
 
-if($num_words < 5000){
+if ( $num_words < 5000 ) {
     my $integer2 = int( $num_words * ( 1 / 25 ) + 0.5 );
     $integer = $integer2;
 }
-elsif($num_words >= 5000 && $num_words < 10000){
+elsif ( $num_words >= 5000 && $num_words < 10000 ) {
     my $integer3 = int( $num_words * ( 1 / 400 ) + 0.5 );
     $integer = $integer3;
-} 
-else{
+}
+else {
     $integer = 30;
 }
 
@@ -2364,7 +2774,8 @@ $rtf->print(
 );
 $rtf->close;
 
-print "\n\nAre you finished with your redaction? If not, you can save a text file to continue redaction later.\t";
+print
+"\n\nAre you finished with your redaction? If not, you can save a text file to continue redaction later.\t";
 
 my $areyoudoneyet = <STDIN>;
 chomp $areyoudoneyet;
