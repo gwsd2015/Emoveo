@@ -409,7 +409,15 @@ open( LOOP, ">", $loopreplacefile );
 print LOOP "$datatomod";
 close LOOP;
 
-our $integer = int( $num_words * ( 1 / 30 ) + 0.5 );
+if($num_words < 5000){
+    our $integer = int( $num_words * ( 1 / 50 ) + 0.5 );
+}
+elsif($num_words >= 5000 && $num_words < 10000){
+    our $integer = int( $num_words * ( 1 / 400 ) + 0.5 );
+} 
+else{
+    our $integer = 30;
+}
 
 while (1) {
     print
