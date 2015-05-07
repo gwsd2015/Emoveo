@@ -20,7 +20,18 @@ my $decoded = decode_base64($encoded);
 print "$encoded\n";
 print "$decoded\n";
 
+$key = "";
+
 system('pause');
+
+print "\nEnter the key to decrypt:\t";
+
+
+my $inputnow = <STDIN>;
+
+chomp $inputnow;
+
+$key = $inputnow;
 
 my $decryption = RC4($key, $decoded);
 print "$decryption\n";
