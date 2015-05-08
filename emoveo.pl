@@ -73,7 +73,7 @@ my $datatomod = ($textfile);
 
 #building some of these file to check that I properly completed steps.
 #necessary to keep in order to hvae file to chain the n-gram removal tool.
-my $check = "C:/Perl/checkfile.txt";
+my $check = "C:/Perl/".$inputfile."checkfile.txt";
 open( CHK, ">", $check ) or die "Can't generate $check\n";
 print "File $check generated.\n";
 print CHK "$textfile";
@@ -160,7 +160,7 @@ else {
     }
 }
 
-my $intermediatefile = "C:/Perl/intermediate.txt";
+my $intermediatefile = "C:/Perl/".$inputfile."intermediate.txt";
 open( INT, ">>", $intermediatefile ) or die;
 
 system('pause');
@@ -675,7 +675,7 @@ for ( my $counters = 0 ; $counters < $#initial_keys ; $counters++ ) {
     my $key_to_search = $initial_keys[$counters];
     my $wiki          = WWW::Wikipedia->new();
     my $result        = $wiki->search($key_to_search);
-    my $filewiki      = "C:/Perl/wikistore.txt";
+    my $filewiki      = "C:/Perl/".$inputfile."wikistore.txt";
     open( WIKI, ">", $filewiki ) or die;
     if ( $result !~ /^$/ ) {
         if ( $result->text() ) {
@@ -1031,7 +1031,7 @@ for ( my $counters = 0 ; $counters < $#initial_keys ; $counters++ ) {
     }
 }
 
-my $keywordsfile = "C:/Perl/keywords.txt";
+my $keywordsfile = "C:/Perl/".$inputfile."keywords.txt";
 open( KEYFI, ">", $keywordsfile ) or die;
 
 print KEYFI "$_\n" for @initial_keys;
@@ -1097,7 +1097,7 @@ Tkx::MainLoop();
 
 $datatomod = read_file($intermediatefile);
 
-our $loopreplacefile = "C:/Perl/looper.txt";
+our $loopreplacefile = "C:/Perl/".$inputfile."looper.txt";
 open( LOOP, ">", $loopreplacefile );
 print LOOP "$datatomod";
 close LOOP;
@@ -2630,7 +2630,7 @@ while (1) {
         }
     }
     elsif ( $finder =~ /clear all proper/i ) {
-        my $properfile = "C:/Perl/proper.txt";
+        my $properfile = "C:/Perl/".$inputfile."proper.txt";
         open( PROP, ">", $properfile );
         my $parserforproper = new Lingua::EN::Tagger;
         my $parserfile      = read_file($loopreplacefile);
@@ -3085,7 +3085,7 @@ open( INT2, ">", $intermediatefile ) or die;
 print INT2 "";
 close INT2;
 
-my $keywordsfile2 = "C:/Perl/keywords2.txt";
+my $keywordsfile2 = "C:/Perl/".$inputfile."keywords2.txt";
 open( KEYFI2, ">", $keywordsfile2 ) or die;
 
 my $datatomod2 = read_file($modify);
@@ -3277,4 +3277,3 @@ print "\n\n";
 system('pause');
 
 exit;
-
