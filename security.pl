@@ -10,12 +10,20 @@ print $key."\n";
 
 system('pause');
 
-my $input = "C:/Perl/hk.txt";
+my $input = <STDIN>;
+chomp $input;
 
 my $plaintext = read_file($input);
 my $encryption = RC4($key, $plaintext);
 
 my $encoded = encode_base64($encryption);
+
+open(FILE, ">", $input);
+
+print FILE $encoded;
+
+close FILE;
+
 my $decoded = decode_base64($encoded);
 print "$encoded\n";
 print "$decoded\n";
